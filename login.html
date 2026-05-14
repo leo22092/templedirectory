@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login — KeralaDevasthanam</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --gold: #C8932A; --deep: #1C0A02; --maroon: #7B1C1C;
+      --cream: #FDF6E3; --border: rgba(100,60,20,0.18);
+      --font: 'Segoe UI', system-ui, sans-serif;
+    }
+    body {
+      font-family: var(--font);
+      background: linear-gradient(135deg, #1C0A02 0%, #2d1200 60%, #1a3a0a 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .login-box {
+      background: var(--cream);
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 380px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .login-logo {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .login-logo .lamp { font-size: 2.5rem; display: block; margin-bottom: 0.4rem; }
+    .login-logo h1 {
+      font-size: 1.1rem;
+      color: var(--deep);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+    .login-logo p { font-size: 0.78rem; color: #888; margin-top: 4px; }
+
+    .form-group { margin-bottom: 1.1rem; }
+    label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #666;
+      margin-bottom: 5px;
+    }
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-family: var(--font);
+      font-size: 0.95rem;
+      color: var(--deep);
+      background: #fff;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    input:focus { border-color: var(--gold); }
+
+    .login-btn {
+      width: 100%;
+      padding: 12px;
+      background: var(--maroon);
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      font-family: var(--font);
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: background 0.15s, transform 0.15s;
+    }
+    .login-btn:hover { background: #9a2424; transform: translateY(-1px); }
+
+    .error-msg {
+      background: #fff1f2;
+      color: #9f1239;
+      border: 1px solid #fecdd3;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.88rem;
+      margin-bottom: 1rem;
+      display: none;
+    }
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 1.25rem;
+      font-size: 0.82rem;
+      color: #888;
+      text-decoration: none;
+    }
+    .back-link:hover { color: var(--maroon); }
+    .security-note {
+      font-size: 0.72rem;
+      color: #aaa;
+      text-align: center;
+      margin-top: 1.5rem;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <div class="login-logo">
+      <span class="lamp">🪔</span>
+      <h1>KeralaDevasthanam</h1>
+      <p>Admin Panel</p>
+    </div>
+
+    <div class="error-msg" id="error-msg">Incorrect username or password.</div>
+
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input type="text" id="username" placeholder="admin" autocomplete="username" />
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" />
+    </div>
+
+    <button class="login-btn" onclick="doLogin()">Sign in →</button>
+
+    <a href="../index.html" class="back-link">← Back to site</a>
+
+    <p class="security-note">
+      This area is for authorised editors only.<br>
+      Change your password after first login.
+    </p>
+  </div>
+
+  <script>
+    // ── Credentials — CHANGE THESE ────────────────────────────────────
+    // For production, replace with a real backend authentication system.
+    const ADMIN_USERNAME = 'admin';
+    const ADMIN_PASSWORD = 'temple@2026';
+    // ─────────────────────────────────────────────────────────────────
+
+    // Redirect if already logged in
+    if (sessionStorage.getItem('kd_admin_auth') === 'true') {
+      window.location.href = 'dashboard.html';
+    }
+
+    function doLogin() {
+      const u = document.getElementById('username').value.trim();
+      const p = document.getElementById('password').value;
+      const err = document.getElementById('error-msg');
+
+      if (u === ADMIN_USERNAME && p === ADMIN_PASSWORD) {
+        sessionStorage.setItem('kd_admin_auth', 'true');
+        window.location.href = 'dashboard.html';
+      } else {
+        err.style.display = 'block';
+        document.getElementById('password').value = '';
+      }
+    }
+
+    // Allow Enter key
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter') doLogin();
+    });
+  </script>
+</body>
+</html>

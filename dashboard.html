@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard — KeralaDevasthanam</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --gold: #C8932A; --deep: #1C0A02; --maroon: #7B1C1C;
+      --cream: #FDF6E3; --border: rgba(100,60,20,0.18);
+      --green: #065f46; --green-bg: #ecfdf5;
+      --red: #9f1239;   --red-bg: #fff1f2;
+      --font: 'Segoe UI', system-ui, sans-serif;
+      --radius: 10px;
+    }
+    body { font-family: var(--font); background: #f5f0e8; color: #1C0A02; min-height: 100vh; }
+
+    /* ── TOP BAR ── */
+    .topbar {
+      background: var(--deep);
+      border-bottom: 2px solid var(--gold);
+      padding: 0 1.5rem;
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .topbar-brand { display: flex; align-items: center; gap: 10px; }
+    .topbar-brand span { font-size: 1.3rem; }
+    .topbar-brand h1 { font-size: 1rem; color: var(--gold); font-weight: 700; }
+    .topbar-brand p  { font-size: 0.7rem; color: #888; letter-spacing: 2px; text-transform: uppercase; }
+    .topbar-actions { display: flex; gap: 0.75rem; align-items: center; }
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 16px; border-radius: 999px; font-family: var(--font); font-size: 0.82rem; font-weight: 700; cursor: pointer; border: none; transition: background 0.15s, transform 0.15s; text-decoration: none; }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-gold   { background: var(--gold); color: var(--deep); }
+    .btn-gold:hover { background: #E8B84B; }
+    .btn-outline { background: transparent; border: 1.5px solid #555; color: #ccc; }
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+    .btn-danger { background: var(--maroon); color: #fff; }
+    .btn-danger:hover { background: #9a2424; }
+    .btn-sm { padding: 5px 12px; font-size: 0.78rem; }
+
+    /* ── LAYOUT ── */
+    .layout { display: grid; grid-template-columns: 220px 1fr; min-height: calc(100vh - 58px); }
+
+    /* ── SIDEBAR ── */
+    .sidebar { background: #fff; border-right: 1px solid var(--border); padding: 1.5rem 0; }
+    .sidebar-section { padding: 0 1rem 1rem; }
+    .sidebar-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #bbb; padding: 0 0.5rem; margin-bottom: 0.4rem; display: block; }
+    .sidebar-link {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 12px; border-radius: var(--radius);
+      font-size: 0.88rem; color: #555; text-decoration: none;
+      cursor: pointer; border: none; background: none; width: 100%; text-align: left;
+      font-family: var(--font); transition: background 0.12s, color 0.12s;
+    }
+    .sidebar-link:hover, .sidebar-link.active { background: #FEF3DC; color: var(--maroon); font-weight: 600; }
+    .sidebar-divider { border: none; border-top: 1px solid var(--border); margin: 0.75rem 1rem; }
+
+    /* ── MAIN ── */
+    .main { padding: 2rem; overflow-y: auto; }
+
+    /* ── STAT CARDS ── */
+    .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 1.1rem 1.25rem; }
+    .stat-card .sc-num { font-size: 2rem; font-weight: 800; color: var(--maroon); line-height: 1; }
+    .stat-card .sc-label { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px; }
+
+    /* ── SECTION PANELS ── */
+    .panel { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem; }
+    .panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem; }
+    .panel-head h2 { font-size: 1.05rem; color: var(--deep); }
+
+    /* ── FILTER ROW ── */
+    .filter-row { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+    .filter-row input, .filter-row select {
+      padding: 8px 12px; border: 1.5px solid var(--border); border-radius: 8px;
+      font-family: var(--font); font-size: 0.88rem; color: var(--deep);
+      background: var(--cream); outline: none; flex: 1; min-width: 140px;
+    }
+    .filter-row input:focus, .filter-row select:focus { border-color: var(--gold); }
+
+    /* ── TABLE ── */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    th { text-align: left; padding: 8px 12px; background: #f5f0e8; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: #888; border-bottom: 1px solid var(--border); white-space: nowrap; }
+    td { padding: 10px 12px; border-bottom: 1px solid #f0ebe0; vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #fdf8f0; }
+    .td-name { font-weight: 600; color: var(--deep); max-width: 200px; }
+    .td-district { white-space: nowrap; }
+    .badge-famous-sm { font-size: 0.68rem; background: #FEF3DC; color: var(--maroon); border-radius: 20px; padding: 2px 7px; font-weight: 700; }
+    .td-actions { display: flex; gap: 6px; }
+    .no-data { text-align: center; padding: 2.5rem 1rem; color: #bbb; font-size: 0.9rem; }
+
+    /* ── FORM GRID ── */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-grid .full { grid-column: 1 / -1; }
+    .form-group { display: flex; flex-direction: column; gap: 4px; }
+    .form-group label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #888; }
+    .form-group input, .form-group select, .form-group textarea {
+      padding: 9px 12px; border: 1.5px solid var(--border); border-radius: 8px;
+      font-family: var(--font); font-size: 0.9rem; color: var(--deep);
+      background: #fff; outline: none; transition: border-color 0.15s; resize: vertical;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--gold); }
+    .form-row { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.25rem; flex-wrap: wrap; }
+
+    /* ── ALERT ── */
+    .alert { padding: 10px 16px; border-radius: 8px; font-size: 0.88rem; font-weight: 600; margin-bottom: 1rem; display: none; }
+    .alert-success { background: var(--green-bg); color: var(--green); border: 1px solid #a7f3d0; }
+    .alert-error   { background: var(--red-bg);   color: var(--red);   border: 1px solid #fecdd3; }
+
+    /* ── EXPORT BOX ── */
+    .export-box { background: var(--cream); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; }
+    .export-box textarea { width: 100%; height: 180px; font-family: 'Courier New', monospace; font-size: 0.78rem; background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 10px; resize: vertical; }
+    .export-instructions { font-size: 0.82rem; color: #888; line-height: 1.7; margin-bottom: 1rem; }
+    .export-instructions code { background: #eee; padding: 1px 5px; border-radius: 3px; font-size: 0.8rem; }
+
+    /* ── PLEDGE REMINDER ── */
+    .pledge-reminder {
+      background: linear-gradient(135deg, #1C0A02, #2d1200);
+      border-radius: var(--radius);
+      padding: 1.1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .pledge-reminder .pr-icon { font-size: 1.8rem; flex-shrink: 0; }
+    .pledge-reminder p { color: rgba(255,255,255,0.82); font-size: 0.88rem; line-height: 1.6; }
+    .pledge-reminder strong { color: var(--gold); }
+
+    /* ── HIDDEN PANELS ── */
+    .panel-section { display: none; }
+    .panel-section.active { display: block; }
+
+    @media (max-width: 768px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0.75rem; border-right: none; border-bottom: 1px solid var(--border); }
+      .sidebar-section { padding: 0; }
+      .sidebar-label { display: none; }
+      .form-grid { grid-template-columns: 1fr; }
+      .form-grid .full { grid-column: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-brand">
+      <span>🪔</span>
+      <div><h1>KeralaDevasthanam</h1><p>Admin Dashboard</p></div>
+    </div>
+    <div class="topbar-actions">
+      <a href="../index.html" class="btn btn-outline" target="_blank">View Site ↗</a>
+      <button class="btn btn-danger" onclick="logout()">Sign out</button>
+    </div>
+  </div>
+
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <span class="sidebar-label">Menu</span>
+        <button class="sidebar-link active" onclick="showSection('overview', this)">📊 Overview</button>
+        <button class="sidebar-link" onclick="showSection('temples', this)">🛕 Temple List</button>
+        <button class="sidebar-link" onclick="showSection('add', this)">➕ Add Temple</button>
+        <button class="sidebar-link" onclick="showSection('export', this)">💾 Export Data</button>
+      </div>
+      <hr class="sidebar-divider" />
+      <div class="sidebar-section">
+        <span class="sidebar-label">Links</span>
+        <a class="sidebar-link" href="./privacy.html" target="_blank">📄 Privacy Policy</a>
+        <a class="sidebar-link" href="./sitemap.xml" target="_blank">🗺 Sitemap</a>
+        <a class="sidebar-link" href="https://adsense.google.com" target="_blank" rel="noopener">💰 AdSense ↗</a>
+        <a class="sidebar-link" href="https://analytics.google.com" target="_blank" rel="noopener">📈 Analytics ↗</a>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+      <!-- PLEDGE REMINDER -->
+      <div class="pledge-reminder">
+        <div class="pr-icon">🙏</div>
+        <p><strong>Pledge reminder:</strong> 25% of all income from this site goes to elderly temple workers — pauraniks, archakas and lifelong sevaks who gave their lives to God's service. Keep this in mind as the site grows.</p>
+      </div>
+
+      <!-- OVERVIEW -->
+      <div class="panel-section active" id="section-overview">
+        <div class="stats-row" id="stats-row">
+          <!-- Injected by JS -->
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>Recently Added Temples</h2></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>#</th><th>Temple Name</th><th>Deity</th><th>District</th><th>Famous</th></tr></thead>
+              <tbody id="recent-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TEMPLE LIST -->
+      <div class="panel-section" id="section-temples">
+        <div class="panel">
+          <div class="panel-head">
+            <h2>All Temples (<span id="list-count">0</span>)</h2>
+            <button class="btn btn-gold" onclick="showSection('add', document.querySelector('.sidebar-link:nth-child(3)'))">➕ Add Temple</button>
+          </div>
+          <div class="filter-row">
+            <input type="search" id="admin-search" placeholder="Search name, deity, location…" oninput="renderTable()" />
+            <select id="admin-district" onchange="renderTable()">
+              <option value="">All districts</option>
+              <option>Thiruvananthapuram</option><option>Kollam</option><option>Pathanamthitta</option>
+              <option>Alappuzha</option><option>Kottayam</option><option>Idukki</option>
+              <option>Ernakulam</option><option>Thrissur</option><option>Palakkad</option>
+              <option>Malappuram</option><option>Kozhikode</option><option>Wayanad</option>
+              <option>Kannur</option><option>Kasaragod</option>
+            </select>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>ID</th><th>Temple Name</th><th>Deity</th><th>District</th><th>Phone</th><th>Famous</th><th>Actions</th></tr></thead>
+              <tbody id="admin-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADD / EDIT TEMPLE -->
+      <div class="panel-section" id="section-add">
+        <div class="panel">
+          <div class="panel-head">
+            <h2 id="form-heading">➕ Add New Temple</h2>
+          </div>
+          <div class="alert alert-success" id="form-success"></div>
+          <div class="alert alert-error"   id="form-error"></div>
+
+          <div class="form-grid">
+            <input type="hidden" id="f-id" />
+            <div class="form-group full">
+              <label>Temple Name *</label>
+              <input type="text" id="f-name" placeholder="Full official name" />
+            </div>
+            <div class="form-group">
+              <label>Deity *</label>
+              <input type="text" id="f-deity" placeholder="e.g. Lord Shiva" />
+            </div>
+            <div class="form-group">
+              <label>District *</label>
+              <select id="f-district">
+                <option value="">— Select —</option>
+                <option>Thiruvananthapuram</option><option>Kollam</option><option>Pathanamthitta</option>
+                <option>Alappuzha</option><option>Kottayam</option><option>Idukki</option>
+                <option>Ernakulam</option><option>Thrissur</option><option>Palakkad</option>
+                <option>Malappuram</option><option>Kozhikode</option><option>Wayanad</option>
+                <option>Kannur</option><option>Kasaragod</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label>Location / Address</label>
+              <input type="text" id="f-location" placeholder="Village, Town, District" />
+            </div>
+            <div class="form-group">
+              <label>Latitude</label>
+              <input type="number" id="f-lat" placeholder="e.g. 10.5234" step="0.0001" />
+            </div>
+            <div class="form-group">
+              <label>Longitude</label>
+              <input type="number" id="f-lng" placeholder="e.g. 76.2145" step="0.0001" />
+            </div>
+            <div class="form-group">
+              <label>Phone</label>
+              <input type="tel" id="f-phone" placeholder="+91-XXX-XXXXXXX" />
+            </div>
+            <div class="form-group">
+              <label>Darshan Timings</label>
+              <input type="text" id="f-timing" placeholder="6:00 AM – 12:00 PM, 5:00 PM – 8:00 PM" />
+            </div>
+            <div class="form-group full">
+              <label>Description</label>
+              <textarea id="f-description" rows="3" placeholder="2–3 sentences about the temple…"></textarea>
+            </div>
+            <div class="form-group">
+              <label>Dress Code</label>
+              <input type="text" id="f-dressCode" placeholder="Men: Dhoti. Women: Saree…" />
+            </div>
+            <div class="form-group">
+              <label>Photography</label>
+              <input type="text" id="f-photography" placeholder="Not permitted inside." />
+            </div>
+            <div class="form-group">
+              <label>Nearest Bus Stand</label>
+              <input type="text" id="f-nearestBus" placeholder="Bus Stand Name (X km)" />
+            </div>
+            <div class="form-group">
+              <label>Nearest Railway Station</label>
+              <input type="text" id="f-nearestRail" placeholder="Station Name (X km)" />
+            </div>
+            <div class="form-group">
+              <label>Tags (comma-separated)</label>
+              <input type="text" id="f-tags" placeholder="famous, heritage, shiva" />
+            </div>
+            <div class="form-group" style="justify-content:flex-end;flex-direction:row;align-items:center;gap:10px;">
+              <label for="f-famous" style="text-transform:none;font-size:0.9rem;color:#555;cursor:pointer;">
+                <input type="checkbox" id="f-famous" style="width:auto;margin-right:5px;" />
+                Mark as Famous Temple ⭐
+              </label>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <button class="btn btn-outline" onclick="clearForm()">Clear</button>
+            <button class="btn btn-gold" onclick="saveTemple()">Save Temple →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXPORT -->
+      <div class="panel-section" id="section-export">
+        <div class="panel">
+          <div class="panel-head"><h2>💾 Export Temple Data</h2></div>
+          <div class="export-instructions">
+            <p>Click <strong>Generate Export</strong> to create the updated <code>temples-data.js</code> content.</p>
+            <p>Then <strong>copy the text below</strong> and paste it into your <code>temples-data.js</code> file on disk, replacing the entire contents. This is how you make admin changes permanent on the live site.</p>
+            <p>⚠️ The admin panel stores data in your browser's localStorage. If you clear your browser data, unsaved changes will be lost. Always export after making changes.</p>
+          </div>
+          <div class="export-box">
+            <div style="display:flex;gap:0.75rem;margin-bottom:0.75rem;flex-wrap:wrap;">
+              <button class="btn btn-gold" onclick="generateExport()">⚙️ Generate Export</button>
+              <button class="btn btn-outline" onclick="copyExport()">📋 Copy to Clipboard</button>
+            </div>
+            <textarea id="export-output" readonly placeholder="Click Generate Export…"></textarea>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Load the real temple data from parent directory -->
+  <script src="../temples-data.js"></script>
+
+  <script>
+    // ── Auth guard ──────────────────────────────────────────────────
+    if (sessionStorage.getItem('kd_admin_auth') !== 'true') {
+      window.location.href = 'login.html';
+    }
+
+    function logout() {
+      sessionStorage.removeItem('kd_admin_auth');
+      window.location.href = 'login.html';
+    }
+
+    // ── Local data store ────────────────────────────────────────────
+    // Load from localStorage if exists, otherwise seed from temples-data.js
+    let adminTemples = [];
+
+    function loadData() {
+      const saved = localStorage.getItem('kd_admin_temples');
+      if (saved) {
+        try { adminTemples = JSON.parse(saved); } catch(e) { adminTemples = [...TEMPLES]; }
+      } else {
+        adminTemples = JSON.parse(JSON.stringify(TEMPLES)); // deep copy
+      }
+    }
+
+    function saveData() {
+      localStorage.setItem('kd_admin_temples', JSON.stringify(adminTemples));
+    }
+
+    function nextId() {
+      return adminTemples.length > 0 ? Math.max(...adminTemples.map(t => t.id)) + 1 : 1;
+    }
+
+    // ── Navigation ──────────────────────────────────────────────────
+    function showSection(name, btn) {
+      document.querySelectorAll('.panel-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+      document.getElementById('section-' + name).classList.add('active');
+      if (btn) btn.classList.add('active');
+
+      if (name === 'overview') renderOverview();
+      if (name === 'temples')  renderTable();
+      if (name === 'add') {
+        // If switching to add fresh (not editing), clear form
+        if (!document.getElementById('f-id').value) clearForm();
+      }
+    }
+
+    // ── Overview ────────────────────────────────────────────────────
+    function renderOverview() {
+      const districts = [...new Set(adminTemples.map(t => t.district))].length;
+      const famous    = adminTemples.filter(t => t.famous).length;
+      const sr = document.getElementById('stats-row');
+      sr.innerHTML = `
+        <div class="stat-card"><div class="sc-num">${adminTemples.length}</div><div class="sc-label">Total Temples</div></div>
+        <div class="stat-card"><div class="sc-num">${districts}</div><div class="sc-label">Districts</div></div>
+        <div class="stat-card"><div class="sc-num">${famous}</div><div class="sc-label">Famous Temples</div></div>
+        <div class="stat-card"><div class="sc-num">${adminTemples.filter(t=>t.phone).length}</div><div class="sc-label">With Phone</div></div>
+        <div class="stat-card"><div class="sc-num">${adminTemples.filter(t=>t.lat).length}</div><div class="sc-label">With GPS</div></div>
+      `;
+      const recent = [...adminTemples].slice(-8).reverse();
+      const tbody = document.getElementById('recent-tbody');
+      tbody.innerHTML = recent.map(t => `
+        <tr>
+          <td>${t.id}</td>
+          <td class="td-name">${esc(t.name)}</td>
+          <td>${esc(t.deity)}</td>
+          <td class="td-district">${esc(t.district)}</td>
+          <td>${t.famous ? '<span class="badge-famous-sm">⭐ Yes</span>' : '—'}</td>
+        </tr>
+      `).join('') || '<tr><td colspan="5" class="no-data">No temples yet.</td></tr>';
+    }
+
+    // ── Temple Table ─────────────────────────────────────────────────
+    function renderTable() {
+      const q    = (document.getElementById('admin-search')?.value || '').toLowerCase();
+      const dist = document.getElementById('admin-district')?.value || '';
+
+      const rows = adminTemples.filter(t => {
+        const mQ = !q || t.name.toLowerCase().includes(q) || t.deity.toLowerCase().includes(q) || (t.location||'').toLowerCase().includes(q);
+        const mD = !dist || t.district === dist;
+        return mQ && mD;
+      });
+
+      document.getElementById('list-count').textContent = rows.length;
+
+      const tbody = document.getElementById('admin-tbody');
+      tbody.innerHTML = rows.map(t => `
+        <tr>
+          <td>${t.id}</td>
+          <td class="td-name">${esc(t.name)}</td>
+          <td>${esc(t.deity)}</td>
+          <td class="td-district">${esc(t.district)}</td>
+          <td>${t.phone ? `<a href="tel:${esc(t.phone)}" style="color:var(--maroon)">${esc(t.phone)}</a>` : '—'}</td>
+          <td>${t.famous ? '<span class="badge-famous-sm">⭐</span>' : '—'}</td>
+          <td class="td-actions">
+            <button class="btn btn-outline btn-sm" onclick="editTemple(${t.id})">✏️ Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteTemple(${t.id})">🗑️</button>
+          </td>
+        </tr>
+      `).join('') || '<tr><td colspan="7" class="no-data">No temples match your search.</td></tr>';
+    }
+
+    // ── Add / Edit Temple ────────────────────────────────────────────
+    function clearForm() {
+      ['f-id','f-name','f-deity','f-location','f-lat','f-lng','f-phone',
+       'f-timing','f-description','f-dressCode','f-photography',
+       'f-nearestBus','f-nearestRail','f-tags'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+      document.getElementById('f-district').value = '';
+      document.getElementById('f-famous').checked = false;
+      document.getElementById('form-heading').textContent = '➕ Add New Temple';
+      hideAlerts();
+    }
+
+    function editTemple(id) {
+      const t = adminTemples.find(x => x.id === id);
+      if (!t) return;
+      document.getElementById('f-id').value          = t.id;
+      document.getElementById('f-name').value        = t.name || '';
+      document.getElementById('f-deity').value       = t.deity || '';
+      document.getElementById('f-district').value    = t.district || '';
+      document.getElementById('f-location').value    = t.location || '';
+      document.getElementById('f-lat').value         = t.lat || '';
+      document.getElementById('f-lng').value         = t.lng || '';
+      document.getElementById('f-phone').value       = t.phone || '';
+      document.getElementById('f-timing').value      = t.timing || '';
+      document.getElementById('f-description').value = t.description || '';
+      document.getElementById('f-dressCode').value   = t.dressCode || '';
+      document.getElementById('f-photography').value = t.photography || '';
+      document.getElementById('f-nearestBus').value  = t.nearestBus || '';
+      document.getElementById('f-nearestRail').value = t.nearestRail || '';
+      document.getElementById('f-tags').value        = (t.tags || []).join(', ');
+      document.getElementById('f-famous').checked    = !!t.famous;
+      document.getElementById('form-heading').textContent = '✏️ Edit Temple: ' + t.name;
+      showSection('add', document.querySelectorAll('.sidebar-link')[2]);
+      hideAlerts();
+    }
+
+    function saveTemple() {
+      const name     = document.getElementById('f-name').value.trim();
+      const deity    = document.getElementById('f-deity').value.trim();
+      const district = document.getElementById('f-district').value;
+
+      if (!name || !deity || !district) {
+        showAlert('form-error', '⚠️ Temple name, deity and district are required.');
+        return;
+      }
+
+      const id = parseInt(document.getElementById('f-id').value) || null;
+      const tagsRaw = document.getElementById('f-tags').value;
+
+      const record = {
+        id       : id || nextId(),
+        name,
+        deity,
+        district,
+        location : document.getElementById('f-location').value.trim(),
+        lat      : parseFloat(document.getElementById('f-lat').value) || null,
+        lng      : parseFloat(document.getElementById('f-lng').value) || null,
+        phone    : document.getElementById('f-phone').value.trim(),
+        timing   : document.getElementById('f-timing').value.trim(),
+        description : document.getElementById('f-description').value.trim(),
+        famous   : document.getElementById('f-famous').checked,
+        tags     : tagsRaw ? tagsRaw.split(',').map(s => s.trim()).filter(Boolean) : [],
+        dressCode    : document.getElementById('f-dressCode').value.trim(),
+        photography  : document.getElementById('f-photography').value.trim(),
+        nearestBus   : document.getElementById('f-nearestBus').value.trim(),
+        nearestRail  : document.getElementById('f-nearestRail').value.trim(),
+      };
+
+      if (id) {
+        const idx = adminTemples.findIndex(t => t.id === id);
+        if (idx > -1) adminTemples[idx] = record;
+      } else {
+        adminTemples.push(record);
+      }
+
+      saveData();
+      showAlert('form-success', id ? '✅ Temple updated! Export data when ready.' : '✅ Temple added! Export data when ready.');
+      clearForm();
+    }
+
+    function deleteTemple(id) {
+      const t = adminTemples.find(x => x.id === id);
+      if (!t) return;
+      if (!confirm(`Delete "${t.name}"?\n\nThis cannot be undone.`)) return;
+      adminTemples = adminTemples.filter(x => x.id !== id);
+      saveData();
+      renderTable();
+      renderOverview();
+    }
+
+    // ── Export ───────────────────────────────────────────────────────
+    function generateExport() {
+      const lines = adminTemples.map(t => '  ' + JSON.stringify(t, null, 0).replace(/,(?=")/g, ',\n    '));
+      const out = `// temples-data.js — KeralaDevasthanam\n// Generated: ${new Date().toLocaleString()}\n// Total temples: ${adminTemples.length}\n\nconst TEMPLES = [\n${adminTemples.map(t => '  ' + JSON.stringify(t)).join(',\n')}\n];\n`;
+      document.getElementById('export-output').value = out;
+    }
+
+    function copyExport() {
+      const ta = document.getElementById('export-output');
+      if (!ta.value) { generateExport(); }
+      ta.select();
+      document.execCommand('copy');
+      alert('✅ Copied! Paste this into your temples-data.js file.');
+    }
+
+    // ── Alerts ───────────────────────────────────────────────────────
+    function showAlert(id, msg) {
+      hideAlerts();
+      const el = document.getElementById(id);
+      el.textContent = msg;
+      el.style.display = 'block';
+      setTimeout(() => { el.style.display = 'none'; }, 5000);
+    }
+    function hideAlerts() {
+      ['form-success','form-error'].forEach(id => {
+        document.getElementById(id).style.display = 'none';
+      });
+    }
+
+    function esc(str) {
+      return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    // ── Init ─────────────────────────────────────────────────────────
+    loadData();
+    renderOverview();
+  </script>
+</body>
+</html>

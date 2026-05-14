@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <title>Temple Map — KeralaDevasthanam</title>
+
+  <!-- Your existing CSS -->
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Leaflet CSS -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet/dist/leaflet.css"
+  />
+
+  <style>
+
+    /* ─────────────────────────────────────────
+       MAP PAGE ONLY STYLES
+    ───────────────────────────────────────── */
+
+    .map-page {
+      padding: 2rem 1rem 3rem;
+    }
+
+    .map-layout {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    .map-sidebar {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      position: sticky;
+      top: 90px;
+    }
+
+    .map-sidebar h2 {
+      margin-bottom: 1rem;
+      color: var(--maroon);
+      font-size: 1.1rem;
+    }
+
+    .filter-group {
+      margin-bottom: 1rem;
+    }
+
+    .filter-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.82rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .filter-group select,
+    .filter-group input {
+      width: 100%;
+      padding: 10px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      font-family: var(--font-body);
+      background: var(--cream);
+    }
+
+    .map-box {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    #map {
+      width: 100%;
+      height: 80vh;
+      min-height: 600px;
+    }
+
+    .map-count {
+      padding: 0.9rem 1rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--cream-dark);
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .leaflet-popup-content {
+      line-height: 1.5;
+      font-family: var(--font-body);
+    }
+
+    .popup-title {
+      font-weight: bold;
+      color: var(--maroon);
+      margin-bottom: 5px;
+    }
+
+    .popup-link {
+      display: inline-block;
+      margin-top: 8px;
+      text-decoration: none;
+      color: var(--maroon);
+      font-weight: bold;
+    }
+
+    .popup-link:hover {
+      color: var(--gold);
+    }
+
+    #clear-map-filters {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      background: var(--maroon);
+      color: white;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #clear-map-filters:hover {
+      background: var(--deep);
+    }
+
+    @media (max-width: 900px) {
+
+      .map-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .map-sidebar {
+        position: static;
+      }
+
+      #map {
+        height: 70vh;
+      }
+
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <nav class="nav-inner">
+
+      <a href="index.html" class="logo">
+        <span class="logo-main">KeralaDevasthanam</span>
+        <span class="logo-sub">Temple Directory</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="map.html" aria-current="page">Temple Map</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul>
+
+    </nav>
+  </header>
+
+  <!-- PAGE -->
+  <main class="map-page container">
+
+    <div class="map-layout">
+
+      <!-- SIDEBAR -->
+      <aside class="map-sidebar">
+
+        <h2>Map Filters</h2>
+
+        <!-- DISTRICT -->
+        <div class="filter-group">
+          <label for="district-filter">District</label>
+
+         <select id="district-filter"><option value="">All Districts</option></select>
+        </div>
+
+        <!-- DEITY -->
+        <div class="filter-group">
+
+          <label for="deity-filter">Deity</label>
+
+          <select id="deity-filter"><option value="">All Deities</option></select>
+
+
+        </div>
+
+        <!-- FAMOUS -->
+        <div class="filter-group">
+
+          <label for="famous-filter">Special</label>
+
+          <select id="famous-filter">
+            <option value="">All Temples</option>
+            <option value="famous">Only Famous Temples</option>
+          </select>
+
+        </div>
+
+        <!-- SEARCH -->
+        <div class="filter-group">
+
+          <label for="search-filter">Search</label>
+
+          <input
+            type="text"
+            id="search-filter"
+            placeholder="Temple name..."
+          />
+
+        </div>
+
+        <button id="clear-map-filters">
+          Clear Filters
+        </button>
+
+      </aside>
+
+      <!-- MAP -->
+      <section class="map-box">
+
+        <div class="map-count">
+          <span id="visible-count">0</span> temples visible on map
+        </div>
+
+        <div id="map"></div>
+
+      </section>
+
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner container">
+      <p>
+        © 2026 BharathaDevasthanam
+      </p>
+    </div>
+  </footer>
+
+  <!-- LEAFLET JS -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <!-- YOUR DATA -->
+<script src="kerala-data.js"></script>
+<script src="tamil-nadu-data.js"></script>
+<script src="karnataka-data.js"></script>
+<script src="map.js"></script>
+
+  <script>
+
+    /* ─────────────────────────────────────────
+       INITIALIZE MAP
+    ───────────────────────────────────────── */
+
+    const map = L.map('map').setView([10.8505, 76.2711], 7);
+
+    /* OPENSTREETMAP TILES */
+
+    L.tileLayer(
+      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      {
+        attribution: '&copy; OpenStreetMap contributors'
+      }
+    ).addTo(map);
+
+    /* ─────────────────────────────────────────
+       FILTER ELEMENTS
+    ───────────────────────────────────────── */
+
+    const districtFilter = document.getElementById('district-filter');
+    const deityFilter   = document.getElementById('deity-filter');
+    const famousFilter  = document.getElementById('famous-filter');
+    const searchFilter  = document.getElementById('search-filter');
+    const visibleCount  = document.getElementById('visible-count');
+    const clearBtn      = document.getElementById('clear-map-filters');
+
+    /* MARKER STORAGE */
+
+    let markers = [];
+
+    /* ─────────────────────────────────────────
+       RENDER MARKERS
+    ───────────────────────────────────────── */
+
+    function renderMarkers() {
+
+      /* REMOVE OLD MARKERS */
+
+      markers.forEach(marker => {
+        map.removeLayer(marker);
+      });
+
+      markers = [];
+
+      /* FILTER VALUES */
+
+      const district = districtFilter.value;
+      const deity    = deityFilter.value;
+      const famous   = famousFilter.value;
+      const search   = searchFilter.value.toLowerCase().trim();
+
+      /* FILTER TEMPLES */
+
+      const filtered = activeTemples.filter(t => {
+
+        const districtMatch =
+          !district || t.district === district;
+
+        const deityMatch =
+          !deity || t.deity === deity;
+
+        const famousMatch =
+          !famous || t.famous === true;
+
+        const searchMatch =
+          !search ||
+          t.name.toLowerCase().includes(search) ||
+          t.location.toLowerCase().includes(search);
+
+        return (
+          districtMatch &&
+          deityMatch &&
+          famousMatch &&
+          searchMatch
+        );
+
+      });
+
+      /* UPDATE COUNT */
+
+      visibleCount.textContent = filtered.length;
+
+      /* CREATE MARKERS */
+
+      filtered.forEach(t => {
+
+        if (!t.lat || !t.lng) return;
+
+        const marker = L.marker([t.lat, t.lng]).addTo(map);
+
+        marker.bindPopup(`
+
+          <div class="popup-title">
+            ${t.name}
+          </div>
+
+          <div>
+            <strong>Deity:</strong>
+            ${t.deity}
+          </div>
+
+          <div>
+            <strong>District:</strong>
+            ${t.district}
+          </div>
+
+          <div>
+            <strong>Location:</strong>
+            ${t.location}
+          </div>
+
+          <div>
+            <strong>Timing:</strong>
+            ${t.timing || 'N/A'}
+          </div>
+
+          <a
+            class="popup-link"
+            target="_blank"
+            href="https://www.google.com/maps?q=${t.lat},${t.lng}"
+          >
+            Open in Google Maps
+          </a>
+
+        `);
+
+        markers.push(marker);
+
+      });
+
+    }
+
+    /* ─────────────────────────────────────────
+       EVENT LISTENERS
+    ───────────────────────────────────────── */
+
+    districtFilter.addEventListener('change', renderMarkers);
+
+    deityFilter.addEventListener('change', renderMarkers);
+
+    famousFilter.addEventListener('change', renderMarkers);
+
+    searchFilter.addEventListener('input', renderMarkers);
+
+    /* CLEAR BUTTON */
+
+    clearBtn.addEventListener('click', () => {
+
+      districtFilter.value = '';
+      deityFilter.value = '';
+      famousFilter.value = '';
+      searchFilter.value = '';
+
+      renderMarkers();
+
+    });
+
+    /* INITIAL LOAD */
+
+    renderMarkers();
+
+  </script>
+
+</body>
+</html>

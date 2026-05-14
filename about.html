@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About KeralaDevasthanam — Kerala's Temple Directory</title>
+  <meta name="description" content="Learn about KeralaDevasthanam — a free, community-built directory of Hindu temples across Kerala, India. Our mission, data sources, team and expansion plans." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://www.keraladevasthanam.in/about.html" />
+
+  <meta property="og:title" content="About KeralaDevasthanam" />
+  <meta property="og:description" content="Free, community-built directory of Hindu temples across Kerala. Learn about our mission and data sources." />
+  <meta property="og:url" content="https://www.keraladevasthanam.in/about.html" />
+  <meta property="og:type" content="website" />
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    /* ── About-page specific styles ── */
+    .about-hero {
+      background:
+        linear-gradient(160deg, rgba(74,13,26,0.93) 0%, rgba(28,16,8,0.90) 55%, rgba(45,90,39,0.86) 100%),
+        url('hero-bg.jpg') center / cover no-repeat;
+      padding: 4rem 1.5rem 3.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .about-hero::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg, transparent, var(--gold, #C8932A), #e8832a, var(--gold, #C8932A), transparent);
+    }
+    .about-hero-inner { max-width: 680px; margin: 0 auto; position: relative; }
+    .about-hero .hero-eyebrow { font-size: 0.78rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold, #C8932A); margin-bottom: 0.75rem; font-weight: 600; }
+    .about-hero h1 { color: #fff; font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 1rem; text-shadow: 0 2px 20px rgba(0,0,0,0.4); }
+    .about-hero p { color: rgba(255,255,255,0.80); font-size: 1.05rem; line-height: 1.75; }
+
+    .about-body { max-width: 900px; margin: 0 auto; padding: 3rem 1.25rem 4rem; }
+
+    /* Mission strip */
+    .mission-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.25rem;
+      margin: 2.5rem 0;
+    }
+    .mission-card {
+      background: #fff;
+      border: 1px solid var(--border, rgba(100,60,20,0.18));
+      border-radius: 14px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    .mission-card .mc-icon { font-size: 2.2rem; display: block; margin-bottom: 0.75rem; line-height: 1; }
+    .mission-card h3 { font-size: 1rem; color: var(--deep, #1C0A02); margin-bottom: 0.4rem; }
+    .mission-card p { font-size: 0.88rem; color: var(--text-muted, #6B5040); margin: 0; }
+
+    /* Two-col layout */
+    .about-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; margin: 2.5rem 0; }
+    @media (max-width: 640px) { .about-cols { grid-template-columns: 1fr; } .mission-strip { grid-template-columns: 1fr 1fr; } }
+
+    /* Section heading style */
+    .about-body h2 {
+      font-size: 1.5rem;
+      color: var(--maroon, #7B1C1C);
+      margin: 2.5rem 0 0.9rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--border, rgba(100,60,20,0.15));
+    }
+    .about-body h3 { font-size: 1.05rem; margin: 1.25rem 0 0.4rem; }
+    .about-body p, .about-body li { color: var(--text, #2A1A0A); line-height: 1.8; }
+    .about-body ul { padding-left: 1.4rem; margin: 0.5rem 0 1rem; }
+    .about-body ul li { margin-bottom: 0.3rem; }
+    .about-body a { color: var(--maroon, #7B1C1C); }
+
+    /* Stats bar */
+    .about-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0;
+      background: var(--deep, #1C0A02);
+      border-radius: 14px;
+      overflow: hidden;
+      margin: 2rem 0;
+    }
+    .about-stat {
+      flex: 1;
+      min-width: 130px;
+      padding: 1.25rem 1rem;
+      text-align: center;
+      border-right: 1px solid rgba(200,147,42,0.2);
+    }
+    .about-stat:last-child { border-right: none; }
+    .about-stat strong { display: block; font-size: 1.8rem; color: var(--gold, #C8932A); font-family: var(--font-display, Georgia,serif); line-height: 1; }
+    .about-stat span { font-size: 0.75rem; color: #aaa; text-transform: uppercase; letter-spacing: 0.12em; margin-top: 4px; display: block; }
+
+    /* Timeline */
+    .timeline { list-style: none; padding: 0; margin: 1rem 0 0; position: relative; }
+    .timeline::before { content: ''; position: absolute; left: 10px; top: 6px; bottom: 6px; width: 2px; background: var(--border, rgba(100,60,20,0.18)); }
+    .timeline li { padding: 0 0 1.4rem 2.4rem; position: relative; }
+    .timeline li::before { content: ''; position: absolute; left: 4px; top: 6px; width: 14px; height: 14px; border-radius: 50%; background: var(--gold, #C8932A); border: 2px solid var(--deep, #1C0A02); }
+    .timeline-year { font-weight: 700; font-size: 0.8rem; color: var(--maroon, #7B1C1C); text-transform: uppercase; letter-spacing: 0.1em; display: block; margin-bottom: 3px; }
+
+    /* CTA box */
+    .about-cta {
+      background: linear-gradient(135deg, #2d1200 0%, #1a3a0a 100%);
+      border-radius: 16px;
+      padding: 2rem 2.5rem;
+      text-align: center;
+      margin: 3rem 0 0;
+    }
+    .about-cta h2 { color: var(--gold, #C8932A); border: none; margin: 0 0 0.6rem; padding: 0; font-size: 1.4rem; }
+    .about-cta p { color: rgba(255,255,255,0.78); margin-bottom: 1.25rem; }
+    .about-cta-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      display: inline-block; padding: 12px 28px; background: var(--gold, #C8932A);
+      color: #1C0A02; border-radius: 999px; font-weight: 800; text-decoration: none;
+      transition: background 0.18s, transform 0.18s;
+    }
+    .btn-primary:hover { background: #E8B84B; color: #1C0A02; transform: translateY(-2px); }
+    .btn-outline {
+      display: inline-block; padding: 12px 28px; border: 2px solid rgba(200,147,42,0.5);
+      color: var(--gold, #C8932A); border-radius: 999px; font-weight: 700; text-decoration: none;
+      transition: border-color 0.18s, color 0.18s;
+    }
+    .btn-outline:hover { border-color: var(--gold, #C8932A); color: #E8B84B; }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ COOKIE CONSENT ═══ -->
+  <div id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite">
+    <p>We use cookies and Google AdSense to serve personalised ads and improve your experience.
+      <a href="privacy.html">Privacy Policy</a> · <a href="privacy.html#cookies">Cookie Policy</a>
+    </p>
+    <div class="cookie-actions">
+      <button onclick="acceptCookies()" class="btn-accept">Accept all</button>
+      <button onclick="declineCookies()" class="btn-decline">Essential only</button>
+    </div>
+  </div>
+
+  <!-- ═══ HEADER ═══ -->
+  <header>
+    <nav class="nav-inner" aria-label="Main navigation">
+      <a href="/" class="logo" aria-label="KeralaDevasthanam home">
+        <span class="logo-main">KeralaDevasthanam</span>
+        <span class="logo-sub">Temple Directory</span>
+      </a>
+      <button class="nav-toggle" id="nav-toggle" aria-controls="nav-menu" aria-expanded="false" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="nav-menu" role="list">
+        <li><a href="/">Home</a></li>
+        <li><a href="map.html">Temples in Map</a></li>
+        <li><a href="/#directory">Directory</a></li>
+        <li><a href="districts.html">Districts</a></li>
+        <li><a href="festivals.html">Festivals</a></li>
+        <li><a href="about.html" aria-current="page">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- ═══ HERO ═══ -->
+  <section class="about-hero" aria-labelledby="about-heading">
+    <div class="about-hero-inner">
+      <p class="hero-eyebrow">Our Story</p>
+      <h1 id="about-heading">About KeralaDevasthanam</h1>
+      <p>A free, community-maintained directory of Hindu temples across Kerala — built to help devotees, pilgrims, and travellers find accurate information in one place.</p>
+    </div>
+  </section>
+
+  <!-- ═══ MAIN CONTENT ═══ -->
+  <main class="about-body">
+
+    <!-- Mission cards -->
+    <div class="mission-strip" aria-label="Our core values">
+      <div class="mission-card">
+        <span class="mc-icon" aria-hidden="true">🛕</span>
+        <h3>Serve devotees</h3>
+        <p>Accurate timings, contacts, and travel info so every pilgrimage starts right.</p>
+      </div>
+      <div class="mission-card">
+        <span class="mc-icon" aria-hidden="true">📖</span>
+        <h3>Preserve heritage</h3>
+        <p>Document Kerala's thousands of temples — famous and forgotten — before they fade from memory.</p>
+      </div>
+      <div class="mission-card">
+        <span class="mc-icon" aria-hidden="true">🌐</span>
+        <h3>Scale to India</h3>
+        <p>Starting with Kerala, expanding to Tamil Nadu, Karnataka, and all of India.</p>
+      </div>
+      <div class="mission-card">
+        <span class="mc-icon" aria-hidden="true">🤝</span>
+        <h3>Community first</h3>
+        <p>Free to use, free to contribute. Anyone can submit a temple listing.</p>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="about-stats" aria-label="Directory statistics">
+      <div class="about-stat"><strong>1,200+</strong><span>Temples listed</span></div>
+      <div class="about-stat"><strong>14</strong><span>Districts covered</span></div>
+      <div class="about-stat"><strong>300+</strong><span>Festivals documented</span></div>
+      <div class="about-stat"><strong>Free</strong><span>Always free to use</span></div>
+    </div>
+
+    <!-- What we list -->
+    <h2>What we list for each temple</h2>
+    <p>Every temple entry in our directory includes as much of the following as we can verify:</p>
+    <div class="about-cols">
+      <ul>
+        <li>Temple name and presiding deity</li>
+        <li>Full address and district</li>
+        <li>Darshan / puja timings</li>
+        <li>Contact phone number</li>
+        <li>Brief history and description</li>
+        <li>Dress code requirements</li>
+      </ul>
+      <ul>
+        <li>Photography rules</li>
+        <li>Nearest bus stand and railway station</li>
+        <li>GPS coordinates (for map view)</li>
+        <li>Annual festivals and special days</li>
+        <li>Nearby accommodation (coming soon)</li>
+        <li>Puja booking links (coming soon)</li>
+      </ul>
+    </div>
+
+    <!-- Data sources -->
+    <h2>Our data sources</h2>
+    <p>We gather and cross-verify temple information from multiple public sources:</p>
+    <ul>
+      <li><strong>Travancore Devaswom Board</strong> — official data for temples under TDB</li>
+      <li><strong>Cochin Devaswom Board</strong> — official data for temples under CDB</li>
+      <li><strong>Malabar Devaswom Board</strong> — official data for temples under MDB</li>
+      <li><strong>Temple Facebook pages</strong> — for timings, events, and contact numbers</li>
+      <li><strong>Google Maps</strong> — for coordinates, phone numbers, and photos</li>
+      <li><strong>Community contributions</strong> — devotees and local contacts who know their temples</li>
+    </ul>
+    <p>We do our best to verify every entry, but timings and contact details can change. If you spot an error, please <a href="contact.html">let us know</a>.</p>
+
+    <!-- Expansion roadmap -->
+    <h2>Expansion roadmap</h2>
+    <ol class="timeline">
+      <li>
+        <span class="timeline-year">Phase 1 — 2025</span>
+        Complete Kerala coverage: all 14 districts, 1,200+ temples, with timings, contacts, and GPS coordinates.
+      </li>
+      <li>
+        <span class="timeline-year">Phase 2 — 2025–26</span>
+        Tamil Nadu expansion — starting with the major Shaivite and Vaishnavite temples of the Kaveri belt and Madurai.
+      </li>
+      <li>
+        <span class="timeline-year">Phase 3 — 2026</span>
+        Karnataka and Andhra Pradesh coverage. Introduction of festival calendars and pilgrim guides.
+      </li>
+      <li>
+        <span class="timeline-year">Phase 4 — 2026–27</span>
+        All-India directory. Hindi and regional language versions. Puja booking integrations.
+      </li>
+    </ol>
+
+    <!-- Who we are -->
+    <h2>Who built this</h2>
+    <p>KeralaDevasthanam was started by a small team of Kerala natives who were frustrated by how hard it was to find basic, accurate information about temples — even famous ones. Phone numbers were outdated, timings were wrong, and dress codes were nowhere to be found.</p>
+    <p>We built the directory we wished existed. It is independently run, free to use, and supported by advertising (Google AdSense). We have no affiliation with any Devaswom Board or religious organisation.</p>
+    <p>Want to help? You can <a href="submit.html">submit a temple</a>, <a href="contact.html">report an error</a>, or simply share the site with fellow devotees.</p>
+
+    <!-- Ad slot -->
+    <div class="ad-container ad-mid" aria-label="Advertisement" style="margin: 2.5rem 0;">
+      <span class="ad-label">Advertisement</span>
+      <div class="ad-placeholder"><p>Ad slot — 728×90 banner</p></div>
+    </div>
+
+    <!-- CTA -->
+    <div class="about-cta">
+      <h2>Help us grow the directory</h2>
+      <p>Know a temple we've missed? Spotted wrong timings or a disconnected number? Tell us — every correction helps thousands of devotees.</p>
+      <div class="about-cta-btns">
+        <a href="submit.html" class="btn-primary">Submit a temple</a>
+        <a href="contact.html" class="btn-outline">Report an error</a>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer>
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <p class="footer-logo">KeralaDevasthanam</p>
+        <p class="footer-tagline">Temples of God's Own Country</p>
+      </div>
+      <nav class="footer-links" aria-label="Footer navigation">
+        <div class="footer-col">
+          <h3>Directory</h3>
+          <ul role="list">
+            <li><a href="districts.html">By district</a></li>
+            <li><a href="deities.html">By deity</a></li>
+            <li><a href="festivals.html">Festivals</a></li>
+            <li><a href="pilgrim-guide.html">Pilgrim guide</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3>Site</h3>
+          <ul role="list">
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="submit.html">Submit a temple</a></li>
+            <li><a href="sitemap.xml">Sitemap</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3>Legal</h3>
+          <ul role="list">
+            <li><a href="privacy.html">Privacy policy</a></li>
+            <li><a href="privacy.html#cookies">Cookie policy</a></li>
+            <li><a href="terms.html">Terms of use</a></li>
+            <li><a href="disclaimer.html">Disclaimer</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; <span id="year"></span> KeralaDevasthanam. All rights reserved.</p>
+      <p>This site participates in Google AdSense. <a href="privacy.html#ads">Ad policy</a></p>
+    </div>
+  </footer>
+
+  <script>
+    // Footer year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Mobile nav
+    const toggle = document.getElementById('nav-toggle');
+    const menu   = document.getElementById('nav-menu');
+    if (toggle && menu) {
+      toggle.addEventListener('click', () => {
+        const expanded = toggle.getAttribute('aria-expanded') === 'true';
+        toggle.setAttribute('aria-expanded', String(!expanded));
+        menu.classList.toggle('open', !expanded);
+      });
+    }
+
+    // Cookie banner
+    const banner = document.getElementById('cookie-banner');
+    if (localStorage.getItem('kd_cookie_choice') && banner) banner.classList.add('hidden');
+    window.acceptCookies  = () => { localStorage.setItem('kd_cookie_choice','accepted'); if(banner) banner.classList.add('hidden'); };
+    window.declineCookies = () => { localStorage.setItem('kd_cookie_choice','essential'); if(banner) banner.classList.add('hidden'); };
+  </script>
+</body>
+</html>
