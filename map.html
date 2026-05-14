@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-  <title>Temple Map — KeralaDevasthanam</title>
+  <title>Temple Map — BharatDevasthanam</title>
 
   <!-- Your existing CSS -->
   <link rel="stylesheet" href="style.css" />
@@ -156,7 +156,7 @@
     <nav class="nav-inner">
 
       <a href="index.html" class="logo">
-        <span class="logo-main">KeralaDevasthanam</span>
+        <span class="logo-main">BharatDevasthanam</span>
         <span class="logo-sub">Temple Directory</span>
       </a>
 
@@ -176,6 +176,13 @@
 
       <!-- SIDEBAR -->
       <aside class="map-sidebar">
+
+        <h2>Select State</h2>
+        <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+          <a href="?state=kerala" style="padding: 10px; background: #FEF3DC; text-decoration: none; color: #7B1C1C; border-radius: 5px; font-weight: bold; border: 1px solid #7B1C1C;">🌴 Kerala</a>
+          <a href="?state=tamil-nadu" style="padding: 10px; background: #FEF3DC; text-decoration: none; color: #7B1C1C; border-radius: 5px; font-weight: bold; border: 1px solid #7B1C1C;">🏛️ Tamil Nadu</a>
+          <a href="?state=karnataka" style="padding: 10px; background: #FEF3DC; text-decoration: none; color: #7B1C1C; border-radius: 5px; font-weight: bold; border: 1px solid #7B1C1C;">🏔️ Karnataka</a>
+        </div>
 
         <h2>Map Filters</h2>
 
@@ -261,169 +268,7 @@
 <script src="map.js"></script>
 
   <script>
-
-    /* ─────────────────────────────────────────
-       INITIALIZE MAP
-    ───────────────────────────────────────── */
-
-    const map = L.map('map').setView([10.8505, 76.2711], 7);
-
-    /* OPENSTREETMAP TILES */
-
-    L.tileLayer(
-      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      {
-        attribution: '&copy; OpenStreetMap contributors'
-      }
-    ).addTo(map);
-
-    /* ─────────────────────────────────────────
-       FILTER ELEMENTS
-    ───────────────────────────────────────── */
-
-    const districtFilter = document.getElementById('district-filter');
-    const deityFilter   = document.getElementById('deity-filter');
-    const famousFilter  = document.getElementById('famous-filter');
-    const searchFilter  = document.getElementById('search-filter');
-    const visibleCount  = document.getElementById('visible-count');
-    const clearBtn      = document.getElementById('clear-map-filters');
-
-    /* MARKER STORAGE */
-
-    let markers = [];
-
-    /* ─────────────────────────────────────────
-       RENDER MARKERS
-    ───────────────────────────────────────── */
-
-    function renderMarkers() {
-
-      /* REMOVE OLD MARKERS */
-
-      markers.forEach(marker => {
-        map.removeLayer(marker);
-      });
-
-      markers = [];
-
-      /* FILTER VALUES */
-
-      const district = districtFilter.value;
-      const deity    = deityFilter.value;
-      const famous   = famousFilter.value;
-      const search   = searchFilter.value.toLowerCase().trim();
-
-      /* FILTER TEMPLES */
-
-      const filtered = activeTemples.filter(t => {
-
-        const districtMatch =
-          !district || t.district === district;
-
-        const deityMatch =
-          !deity || t.deity === deity;
-
-        const famousMatch =
-          !famous || t.famous === true;
-
-        const searchMatch =
-          !search ||
-          t.name.toLowerCase().includes(search) ||
-          t.location.toLowerCase().includes(search);
-
-        return (
-          districtMatch &&
-          deityMatch &&
-          famousMatch &&
-          searchMatch
-        );
-
-      });
-
-      /* UPDATE COUNT */
-
-      visibleCount.textContent = filtered.length;
-
-      /* CREATE MARKERS */
-
-      filtered.forEach(t => {
-
-        if (!t.lat || !t.lng) return;
-
-        const marker = L.marker([t.lat, t.lng]).addTo(map);
-
-        marker.bindPopup(`
-
-          <div class="popup-title">
-            ${t.name}
-          </div>
-
-          <div>
-            <strong>Deity:</strong>
-            ${t.deity}
-          </div>
-
-          <div>
-            <strong>District:</strong>
-            ${t.district}
-          </div>
-
-          <div>
-            <strong>Location:</strong>
-            ${t.location}
-          </div>
-
-          <div>
-            <strong>Timing:</strong>
-            ${t.timing || 'N/A'}
-          </div>
-
-          <a
-            class="popup-link"
-            target="_blank"
-            href="https://www.google.com/maps?q=${t.lat},${t.lng}"
-          >
-            Open in Google Maps
-          </a>
-
-        `);
-
-        markers.push(marker);
-
-      });
-
-    }
-
-    /* ─────────────────────────────────────────
-       EVENT LISTENERS
-    ───────────────────────────────────────── */
-
-    districtFilter.addEventListener('change', renderMarkers);
-
-    deityFilter.addEventListener('change', renderMarkers);
-
-    famousFilter.addEventListener('change', renderMarkers);
-
-    searchFilter.addEventListener('input', renderMarkers);
-
-    /* CLEAR BUTTON */
-
-    clearBtn.addEventListener('click', () => {
-
-      districtFilter.value = '';
-      deityFilter.value = '';
-      famousFilter.value = '';
-      searchFilter.value = '';
-
-      renderMarkers();
-
-    });
-
-    /* INITIAL LOAD */
-
-    renderMarkers();
-
+    // Inline map initialization removed to prevent duplication. map.js handles initialization and logic.
   </script>
-
 </body>
 </html>

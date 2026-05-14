@@ -496,5 +496,3 @@ const DEITY_COLORS = {
   "Lord Nagaraja":      "#1A237E",
 };
 
-const ALL_DISTRICTS = [...new Set(TEMPLES.map(t => t.district))].sort();
-const ALL_DEITIES   = [...new Set(TEMPLES.map(t => t.deity))].sort();

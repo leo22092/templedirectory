@@ -21,9 +21,20 @@
   <meta name="twitter:description" content="Find any temple across India — search by state, district, deity, or name." />
   <meta name="geo.region" content="IN" />
   <meta name="geo.placename" content="India" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
-  <link rel="manifest" href="site.webmanifest" />
+  
+  
+  
+  
+  
+  <link rel="icon" type="image/png" href="/flavicon/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="/flavicon/favicon.svg" />
+<link rel="shortcut icon" href="/flavicon/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="/flavicon/apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-title" content="templesdirectory" />
+<link rel="manifest" href="/flavicon/site.webmanifest" />
+  
+
+
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -77,8 +88,8 @@
         <li><a href="index.html">Home</a></li>
         <li><a href="map.html">Temples on Map</a></li>
         <li><a href="#directory">Directory</a></li>
-        <li><a href="districts.html">Districts</a></li>
-        <li><a href="festivals.html">Festivals</a></li>
+        <li><a href="#quick-districts">Districts</a></li>
+      <!--  <li><a href="festivals.html">Festivals</a></li>  -->
         <li><a href="about.html">About</a></li>
         <li><a href="contact.html">Contact</a></li>
       </ul>
@@ -285,6 +296,19 @@
     </div>
   </section>
 
+  <!-- ═══ CONTRIBUTE SECTION ═══ -->
+  <section class="contribute-section" style="background: var(--cream); padding: 4rem 1.5rem; text-align: center; border-top: 1px solid var(--border);">
+    <div class="container">
+      <h2 style="font-family: var(--font-display); color: var(--garnet-deep); font-size: 2.2rem; margin-bottom: 1rem; font-weight: 700;">Is your temple not listed?</h2>
+      <p style="color: var(--ink-soft); font-size: 1.1rem; max-width: 650px; margin: 0 auto 2rem; line-height: 1.6;">
+        Contribute what you know! We rely on devotees like you to keep our directory accurate and comprehensive. Help us preserve our rich heritage by adding missing temples or suggesting corrections to existing ones.
+      </p>
+      <button onclick="window.openSubmitModal(null)" class="map-btn" style="background: var(--saffron); color: #fff; box-shadow: 0 4px 15px rgba(232,101,26,0.3); border: none; cursor: pointer;">
+        ➕ Submit a Temple / Suggest Correction
+      </button>
+    </div>
+  </section>
+
   <!-- ═══ FOOTER ═══ -->
   <footer>
     <div class="container footer-inner">
@@ -299,7 +323,7 @@
           <ul role="list">
             <li><a href="?state=kerala">Kerala Temples</a></li>
             <li><a href="?state=tamil-nadu">Tamil Nadu Temples</a></li>
-            <li><a href="?state=tamil-nadu">Karnataka Temples</a></li>
+            <li><a href="?state=karnataka">Karnataka Temples</a></li>
             <li><a href="festivals.html">Festivals</a></li>
             <li><a href="pilgrim-guide.html">Pilgrim Guide</a></li>
           </ul>
@@ -309,7 +333,7 @@
           <ul role="list">
             <li><a href="about.html">About</a></li>
             <li><a href="contact.html">Contact</a></li>
-            <li><a href="submit.html">Submit a temple</a></li>
+            <li><a href="#" onclick="event.preventDefault(); window.openSubmitModal(null);">Submit a temple</a></li>
             <li><a href="sitemap.xml">Sitemap</a></li>
           </ul>
         </div>

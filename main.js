@@ -148,6 +148,10 @@
     document.body.classList.add(cfg.bodyClass);
 
     // Update hero
+    const heroSection = document.getElementById('hero-section');
+    if (heroSection && cfg.heroImage) {
+      heroSection.style.background = `linear-gradient(160deg, rgba(74,13,26,0.92) 0%, rgba(28,16,8,0.88) 55%, rgba(45,90,39,0.85) 100%), url('${cfg.heroImage}') center center / cover no-repeat`;
+    }
     if (heroEyebrow)   heroEyebrow.textContent  = cfg.eyebrow;
     if (heroStateName) heroStateName.textContent = cfg.label;
     if (heroSubEl)     heroSubEl.innerHTML       = cfg.heroSub;
@@ -511,10 +515,10 @@
     submitOverlay.innerHTML = `
       <div class="modal">
         <div class="modal-header">
-          <div class="modal-name">Suggest a Correction</div>
+          <div class="modal-name">Suggest/Add Temple</div>
           <button class="modal-close" aria-label="Close">✕</button>
         </div>
-        <div class="modal-body">
+        <div class="modal-body" style="max-height: 70vh; overflow-y: auto; padding-right: 15px;">
           <div class="submit-form">
             <div class="sf-row">
               <div class="sf-group">
@@ -522,34 +526,75 @@
                 <input type="text" id="sf-temple" placeholder="Temple name" />
               </div>
               <div class="sf-group">
-                <label for="sf-district">District</label>
-                <input type="text" id="sf-district" placeholder="District" />
+                <label for="sf-deity">Deity</label>
+                <input type="text" id="sf-deity" placeholder="e.g. Lord Shiva" />
               </div>
             </div>
             <div class="sf-row">
               <div class="sf-group">
-                <label for="sf-deity">Deity</label>
-                <input type="text" id="sf-deity" placeholder="e.g. Lord Shiva" />
+                <label for="sf-district">District</label>
+                <input type="text" id="sf-district" placeholder="District" />
               </div>
               <div class="sf-group">
                 <label for="sf-location">Location / Address</label>
-                <input type="text" id="sf-location" placeholder="Village, Town, District" />
+                <input type="text" id="sf-location" placeholder="Town, District" />
+              </div>
+            </div>
+            <div class="sf-row">
+              <div class="sf-group">
+                <label for="sf-lat">Latitude</label>
+                <input type="number" step="any" id="sf-lat" placeholder="e.g. 10.7828" />
+              </div>
+              <div class="sf-group">
+                <label for="sf-lng">Longitude</label>
+                <input type="number" step="any" id="sf-lng" placeholder="e.g. 79.1318" />
               </div>
             </div>
             <div class="sf-row">
               <div class="sf-group">
                 <label for="sf-phone">Phone number</label>
-                <input type="tel" id="sf-phone" placeholder="+91-XXX-XXXXXXX" />
+                <input type="tel" id="sf-phone" placeholder="+91-..." />
               </div>
               <div class="sf-group">
                 <label for="sf-timing">Darshan timings</label>
-                <input type="text" id="sf-timing" placeholder="e.g. 6 AM – 12 PM, 5 – 8 PM" />
+                <input type="text" id="sf-timing" placeholder="6 AM - 12 PM" />
               </div>
             </div>
             <div class="sf-group">
-              <label for="sf-notes">Corrections / additional info</label>
-              <textarea id="sf-notes" rows="3" placeholder="Anything that's wrong or missing…"></textarea>
+              <label for="sf-description">Description</label>
+              <textarea id="sf-description" rows="3" placeholder="Brief history and significance..."></textarea>
             </div>
+            <div class="sf-row">
+              <div class="sf-group">
+                <label for="sf-tags">Tags (comma-separated)</label>
+                <input type="text" id="sf-tags" placeholder="shiva, famous, heritage" />
+              </div>
+              <div class="sf-group" style="align-items: center; flex-direction: row; gap: 8px; margin-top: 22px;">
+                <input type="checkbox" id="sf-famous" style="width: auto;"/>
+                <label for="sf-famous" style="margin:0;">Famous ⭐</label>
+              </div>
+            </div>
+            <div class="sf-row">
+              <div class="sf-group">
+                <label for="sf-dressCode">Dress Code</label>
+                <input type="text" id="sf-dressCode" placeholder="Men: Dhoti..." />
+              </div>
+              <div class="sf-group">
+                <label for="sf-photography">Photography Rules</label>
+                <input type="text" id="sf-photography" placeholder="Restricted inside sanctum" />
+              </div>
+            </div>
+            <div class="sf-row">
+              <div class="sf-group">
+                <label for="sf-nearestBus">Nearest Bus Stand</label>
+                <input type="text" id="sf-nearestBus" placeholder="Bus Stand (2 km)" />
+              </div>
+              <div class="sf-group">
+                <label for="sf-nearestRail">Nearest Railway</label>
+                <input type="text" id="sf-nearestRail" placeholder="Junction (5 km)" />
+              </div>
+            </div>
+            <hr style="margin: 15px 0; border: 0; border-top: 1px solid #E8D5A8;" />
             <div class="sf-row">
               <div class="sf-group">
                 <label for="sf-name">Your name <span class="sf-req">*</span></label>
@@ -578,12 +623,21 @@
 
   function openSubmitModal(t) {
     if (t) {
-      submitOverlay.querySelector('#sf-temple').value   = t.name     || '';
-      submitOverlay.querySelector('#sf-district').value = t.district || '';
-      submitOverlay.querySelector('#sf-deity').value    = t.deity    || '';
-      submitOverlay.querySelector('#sf-location').value = t.location || '';
-      submitOverlay.querySelector('#sf-phone').value    = t.phone    || '';
-      submitOverlay.querySelector('#sf-timing').value   = t.timing   || '';
+      submitOverlay.querySelector('#sf-temple').value      = t.name     || '';
+      submitOverlay.querySelector('#sf-district').value    = t.district || '';
+      submitOverlay.querySelector('#sf-deity').value       = t.deity    || '';
+      submitOverlay.querySelector('#sf-location').value    = t.location || '';
+      submitOverlay.querySelector('#sf-phone').value       = t.phone    || '';
+      submitOverlay.querySelector('#sf-timing').value      = t.timing   || '';
+      submitOverlay.querySelector('#sf-lat').value         = t.lat      || '';
+      submitOverlay.querySelector('#sf-lng').value         = t.lng      || '';
+      submitOverlay.querySelector('#sf-description').value = t.description || '';
+      submitOverlay.querySelector('#sf-tags').value        = (t.tags || []).join(', ');
+      submitOverlay.querySelector('#sf-famous').checked    = t.famous   || false;
+      submitOverlay.querySelector('#sf-dressCode').value   = t.dressCode || '';
+      submitOverlay.querySelector('#sf-photography').value = t.photography || '';
+      submitOverlay.querySelector('#sf-nearestBus').value  = t.nearestBus || '';
+      submitOverlay.querySelector('#sf-nearestRail').value = t.nearestRail || '';
     }
     const msg = submitOverlay.querySelector('#sf-msg');
     msg.hidden = true; msg.textContent = '';
@@ -599,26 +653,41 @@
 
   function handleSubmit() {
     const temple = submitOverlay.querySelector('#sf-temple').value.trim();
-    const name   = submitOverlay.querySelector('#sf-name').value.trim();
+    const submitter   = submitOverlay.querySelector('#sf-name').value.trim();
+    const email  = submitOverlay.querySelector('#sf-email').value.trim();
     const msg    = submitOverlay.querySelector('#sf-msg');
+
     if (!temple) { showMsg(msg, 'error', 'Please enter the temple name.'); return; }
-    if (!name)   { showMsg(msg, 'error', 'Please enter your name.'); return; }
-    const payload = {
-      state:    activeState,
-      temple,
-      district: submitOverlay.querySelector('#sf-district').value,
-      deity:    submitOverlay.querySelector('#sf-deity').value.trim(),
-      location: submitOverlay.querySelector('#sf-location').value.trim(),
-      phone:    submitOverlay.querySelector('#sf-phone').value.trim(),
-      timing:   submitOverlay.querySelector('#sf-timing').value.trim(),
-      notes:    submitOverlay.querySelector('#sf-notes').value.trim(),
-      name,
-      email:    submitOverlay.querySelector('#sf-email').value.trim(),
-      submitted: new Date().toISOString(),
-    };
-    const body   = Object.entries(payload).map(([k, v]) => `${k}: ${v}`).join('\n');
+    if (!submitter)   { showMsg(msg, 'error', 'Please enter your name.'); return; }
+
+    const tagsVal = submitOverlay.querySelector('#sf-tags').value;
+    const tagsArr = tagsVal ? tagsVal.split(',').map(s=>s.trim()).filter(Boolean) : [];
+    const latVal = submitOverlay.querySelector('#sf-lat').value;
+    const lngVal = submitOverlay.querySelector('#sf-lng').value;
+    const desc = submitOverlay.querySelector('#sf-description').value.trim().replace(/"/g, '\\"');
+
+    const objStr = `  {
+    id: "NEW",
+    name: "${temple}",
+    deity: "${submitOverlay.querySelector('#sf-deity').value.trim()}",
+    district: "${submitOverlay.querySelector('#sf-district').value.trim()}",
+    location: "${submitOverlay.querySelector('#sf-location').value.trim()}",
+    lat: ${latVal ? latVal : 'null'}, lng: ${lngVal ? lngVal : 'null'},
+    timing: "${submitOverlay.querySelector('#sf-timing').value.trim()}",
+    phone: "${submitOverlay.querySelector('#sf-phone').value.trim()}",
+    description: "${desc}",
+    famous: ${submitOverlay.querySelector('#sf-famous').checked},
+    tags: ${JSON.stringify(tagsArr)},
+    dressCode: "${submitOverlay.querySelector('#sf-dressCode').value.trim()}",
+    photography: "${submitOverlay.querySelector('#sf-photography').value.trim()}",
+    nearestBus: "${submitOverlay.querySelector('#sf-nearestBus').value.trim()}",
+    nearestRail: "${submitOverlay.querySelector('#sf-nearestRail').value.trim()}"
+  }`;
+
+    const body = `Submitted by: ${submitter} (${email})\\nState: ${activeState}\\n\\nHere is the temple data object ready to be added to site:\\n\\n${objStr}`;
     const mailto = `mailto:mymail2837@gmail.com?subject=${encodeURIComponent('Temple Submission: ' + temple)}&body=${encodeURIComponent(body)}`;
-    showMsg(msg, 'success', '✅ Thank you! Opening your email  to send the submission…');
+
+    showMsg(msg, 'success', '✅ Thank you! Opening your email client to send the submission…');
     setTimeout(() => { window.location.href = mailto; }, 1200);
   }
 
@@ -686,6 +755,9 @@
   function debounce(fn, ms) {
     let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
   }
+
+  /* ── Global Exports ── */
+  window.openSubmitModal = openSubmitModal;
 
   /* ── Kick off ── */
   if (document.readyState === 'loading') {

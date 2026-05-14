@@ -1,4 +1,4 @@
-# KeralaDevasthanam — Complete Site Guide
+# BharatDevasthanam — Complete Site Guide
 
 > A free directory of Hindu temples across Kerala, India.
 > **25% of all income earned from this site is pledged to elderly temple workers and pauraniks.**
@@ -78,7 +78,7 @@ Google requires original, useful content before approving AdSense.
 - Your site must be live on a real domain (not localhost)
 
 ### Step 2: Buy a domain
-Purchase `keraladevasthanam.in` (or `.com`) from GoDaddy, Namecheap, or BigRock (~₹800–1200/year).
+Purchase `bharatdevasthanam.in` (or `.com`) from GoDaddy, Namecheap, or BigRock (~₹800–1200/year).
 
 ### Step 3: Host the site (free options)
 | Option | Cost | Best for |
@@ -163,7 +163,7 @@ fetch('https://formspree.io/f/xabcdefg', {
 })
 .catch(() => showMsg(msg, 'error', 'Submission failed. Check your connection.'));
 ```
-Also replace `submit@keraladevasthanam.in` in `main.js` with your real email.
+Also replace `submit@bharatdevasthanam.in` in `main.js` with your real email.
 
 ---
 
@@ -237,7 +237,7 @@ Recommended: 1920×900px, compressed under 300KB at [squoosh.app](https://squoos
 - [ ] Add Search Console verification `<meta>` tag to all page `<head>` sections
 - [ ] Create `og-image.jpg` (1200×630px) for WhatsApp / Facebook previews
 - [ ] Add real `favicon.svg` (lamp or temple icon)
-- [ ] Replace `submit@keraladevasthanam.in` with your real email in `main.js`
+- [ ] Replace `submit@bharatdevasthanam.in` with your real email in `main.js`
 - [ ] Change admin password in `admin/login.html`
 - [ ] Activate Google Analytics (see Step 7 above)
 - [ ] Activate AdSense after approval (see Step 5–6 above)
@@ -268,9 +268,9 @@ Replace these placeholders in all files once you have a domain:
 
 | Purpose | Placeholder | Replace with |
 |---------|-------------|--------------|
-| General | `contact@keraladevasthanam.in` | Your real email |
-| Submissions | `submit@keraladevasthanam.in` | Your real email |
-| Privacy | `privacy@keraladevasthanam.in` | Your real email |
-| Site URL | `https://www.keraladevasthanam.in/` | Your real domain |
+| General | `contact@bharatdevasthanam.in` | Your real email |
+| Submissions | `submit@bharatdevasthanam.in` | Your real email |
+| Privacy | `privacy@bharatdevasthanam.in` | Your real email |
+| Site URL | `https://www.bharatdevasthanam.in/` | Your real domain |
 | AdSense ID | `ca-pub-XXXXXXXXXXXXXXXX` | Your publisher ID |
 | Analytics ID | `G-XXXXXXXXXX` | Your GA4 measurement ID |

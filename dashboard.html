@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Dashboard — KeralaDevasthanam</title>
+  <title>Admin Dashboard — BharatDevasthanam</title>
   <meta name="robots" content="noindex, nofollow" />
-  <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+  <link rel="icon" type="image/svg+xml" href="favicon/favicon.svg" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -155,10 +155,10 @@
   <div class="topbar">
     <div class="topbar-brand">
       <span>🪔</span>
-      <div><h1>KeralaDevasthanam</h1><p>Admin Dashboard</p></div>
+      <div><h1>BharatDevasthanam</h1><p>Admin Dashboard</p></div>
     </div>
     <div class="topbar-actions">
-      <a href="../index.html" class="btn btn-outline" target="_blank">View Site ↗</a>
+      <a href="index.html" class="btn btn-outline" target="_blank">View Site ↗</a>
       <button class="btn btn-danger" onclick="logout()">Sign out</button>
     </div>
   </div>
@@ -348,8 +348,16 @@
     </main>
   </div>
 
-  <!-- Load the real temple data from parent directory -->
-  <script src="../temples-data.js"></script>
+  <!-- Load the real temple data from state files -->
+  <script src="kerala-data.js"></script>
+  <script src="tamil-nadu-data.js"></script>
+  <script src="karnataka-data.js"></script>
+  <script>
+    const TEMPLES = []
+      .concat(typeof TEMPLES_KERALA !== 'undefined' ? TEMPLES_KERALA : [])
+      .concat(typeof TEMPLES_TN !== 'undefined' ? TEMPLES_TN : [])
+      .concat(typeof TEMPLES_KA !== 'undefined' ? TEMPLES_KA : []);
+  </script>
 
   <script>
     // ── Auth guard ──────────────────────────────────────────────────
@@ -548,7 +556,7 @@
     // ── Export ───────────────────────────────────────────────────────
     function generateExport() {
       const lines = adminTemples.map(t => '  ' + JSON.stringify(t, null, 0).replace(/,(?=")/g, ',\n    '));
-      const out = `// temples-data.js — KeralaDevasthanam\n// Generated: ${new Date().toLocaleString()}\n// Total temples: ${adminTemples.length}\n\nconst TEMPLES = [\n${adminTemples.map(t => '  ' + JSON.stringify(t)).join(',\n')}\n];\n`;
+      const out = `// temples-data.js — BharatDevasthanam\n// Generated: ${new Date().toLocaleString()}\n// Total temples: ${adminTemples.length}\n\nconst TEMPLES = [\n${adminTemples.map(t => '  ' + JSON.stringify(t)).join(',\n')}\n];\n`;
       document.getElementById('export-output').value = out;
     }
 
