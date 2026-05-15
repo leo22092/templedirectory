@@ -685,7 +685,7 @@
   }`;
 
     const body = `Submitted by: ${submitter} (${email})\\nState: ${activeState}\\n\\nHere is the temple data object ready to be added to site:\\n\\n${objStr}`;
-    const mailto = `mailto:mymail2837@gmail.com?subject=${encodeURIComponent('Temple Submission: ' + temple)}&body=${encodeURIComponent(body)}`;
+    const mailto = `mailto:submit@templediary.in?subject=${encodeURIComponent('Temple Submission: ' + temple)}&body=${encodeURIComponent(body)}`;
 
     showMsg(msg, 'success', '✅ Thank you! Opening your email client to send the submission…');
     setTimeout(() => { window.location.href = mailto; }, 1200);
