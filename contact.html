@@ -1,68 +1,494 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Contact - BharatDevasthanam</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Us — TempleDiary</title>
+  <meta name="description" content="Contact TempleDiary — submit a temple listing, report an error, or get in touch. We are on WhatsApp, Facebook and Instagram." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://www.templediary.in/contact.html" />
+
+  <meta property="og:title" content="Contact TempleDiary" />
+  <meta property="og:description" content="Submit a temple, report a correction, or get in touch with the TempleDiary team." />
+  <meta property="og:url" content="https://www.templediary.in/contact.html" />
+  <meta property="og:type" content="website" />
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    /* ── Contact page specific ── */
+    .contact-hero {
+      background: linear-gradient(160deg, #1C0A02 0%, #2d1200 55%, #1a3a0a 100%);
+      padding: 3.5rem 1.5rem 3rem;
+      text-align: center;
+      border-bottom: 3px solid var(--gold, #C8932A);
+      position: relative;
+      overflow: hidden;
+    }
+    .contact-hero::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, transparent, var(--gold, #C8932A), #e8832a, var(--gold, #C8932A), transparent);
+    }
+    .contact-hero h1 {
+      font-family: var(--font-display, Georgia, serif);
+      color: #fff;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      margin-bottom: 0.6rem;
+    }
+    .contact-hero p { color: rgba(255,255,255,0.72); font-size: 1rem; line-height: 1.7; }
+
+    .contact-body {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 3rem 1.25rem 4rem;
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 2.5rem;
+      align-items: start;
+    }
+
+    /* ── Form ── */
+    .contact-form-box {
+      background: #fff;
+      border: 1px solid var(--border, rgba(100,60,20,0.18));
+      border-radius: 16px;
+      padding: 2rem;
+    }
+    .contact-form-box h2 {
+      font-size: 1.2rem;
+      color: var(--maroon, #7B1C1C);
+      margin-bottom: 0.4rem;
+    }
+    .contact-form-box .form-intro {
+      font-size: 0.88rem;
+      color: var(--text-muted, #6B5040);
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+    .cf-group { display: flex; flex-direction: column; gap: 4px; margin-bottom: 1rem; }
+    .cf-group label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-muted, #6B5040);
+    }
+    .cf-group input,
+    .cf-group select,
+    .cf-group textarea {
+      padding: 10px 13px;
+      border: 1.5px solid var(--border, rgba(100,60,20,0.18));
+      border-radius: 8px;
+      font-family: var(--font-body, sans-serif);
+      font-size: 0.92rem;
+      color: var(--text, #2A1A0A);
+      background: var(--cream, #FDF6E3);
+      outline: none;
+      transition: border-color 0.15s;
+      resize: vertical;
+    }
+    .cf-group input:focus,
+    .cf-group select:focus,
+    .cf-group textarea:focus { border-color: var(--gold, #C8932A); background: #fff; }
+    .cf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .cf-submit {
+      width: 100%;
+      padding: 13px;
+      background: var(--maroon, #7B1C1C);
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      font-family: var(--font-body, sans-serif);
+      font-size: 0.95rem;
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: background 0.15s, transform 0.15s;
+      letter-spacing: 0.02em;
+    }
+    .cf-submit:hover { background: #9a2424; transform: translateY(-1px); }
+    .cf-msg {
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      margin-top: 0.75rem;
+      display: none;
+    }
+    .cf-msg.success { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+    .cf-msg.error   { background: #fff1f2; color: #9f1239; border: 1px solid #fecdd3; }
+
+    /* ── Right column ── */
+    .contact-sidebar { display: flex; flex-direction: column; gap: 1.25rem; }
+
+    /* Info card */
+    .contact-info-card {
+      background: #fff;
+      border: 1px solid var(--border, rgba(100,60,20,0.18));
+      border-radius: 16px;
+      padding: 1.5rem;
+    }
+    .contact-info-card h2 {
+      font-size: 1rem;
+      color: var(--maroon, #7B1C1C);
+      margin-bottom: 1rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 1px solid var(--border, rgba(100,60,20,0.15));
+      font-family: var(--font-display, Georgia, serif);
+    }
+    .contact-info-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 0.9rem;
+      font-size: 0.88rem;
+      color: var(--text, #2A1A0A);
+    }
+    .contact-info-row:last-child { margin-bottom: 0; }
+    .ci-icon {
+      font-size: 1.1rem;
+      width: 28px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .ci-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-muted, #6B5040);
+      display: block;
+      margin-bottom: 2px;
+    }
+    .contact-info-row a {
+      color: var(--maroon, #7B1C1C);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .contact-info-row a:hover { color: var(--gold, #C8932A); }
+
+    /* Social card */
+    .social-card {
+      background: linear-gradient(135deg, #1C0A02 0%, #2d1200 100%);
+      border-radius: 16px;
+      padding: 1.5rem;
+    }
+    .social-card h2 {
+      font-size: 1rem;
+      color: var(--gold, #C8932A);
+      margin-bottom: 0.4rem;
+      font-family: var(--font-display, Georgia, serif);
+    }
+    .social-card p {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 1.1rem;
+      line-height: 1.6;
+    }
+    .social-links { display: flex; flex-direction: column; gap: 0.6rem; }
+    .social-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 14px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 700;
+      transition: transform 0.15s, opacity 0.15s;
+    }
+    .social-link:hover { transform: translateX(4px); opacity: 0.9; }
+    .social-link .sl-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+    .social-link .sl-text { display: flex; flex-direction: column; }
+    .social-link .sl-name { font-size: 0.88rem; font-weight: 700; line-height: 1.2; }
+    .social-link .sl-handle { font-size: 0.72rem; font-weight: 400; opacity: 0.75; }
+
+    /* WhatsApp */
+    .sl-whatsapp { background: rgba(37,211,102,0.12); color: #25D366; }
+    .sl-whatsapp .sl-icon { background: #25D366; color: #fff; }
+
+    /* Facebook */
+    .sl-facebook { background: rgba(24,119,242,0.12); color: #1877F2; }
+    .sl-facebook .sl-icon { background: #1877F2; color: #fff; }
+
+    /* Instagram */
+    .sl-instagram { background: rgba(225,48,108,0.12); color: #E1306C; }
+    .sl-instagram .sl-icon {
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      color: #fff;
+    }
+
+    /* Coming-soon badge */
+    .sl-soon {
+      font-size: 0.65rem;
+      background: rgba(200,147,42,0.2);
+      color: var(--gold, #C8932A);
+      border: 1px solid rgba(200,147,42,0.4);
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-weight: 700;
+      margin-left: auto;
+      white-space: nowrap;
+    }
+
+    /* Pledge card */
+    .pledge-contact-card {
+      background: var(--cream-dark, #F0E6CC);
+      border: 1px solid rgba(200,147,42,0.3);
+      border-radius: 16px;
+      padding: 1.25rem 1.5rem;
+      font-size: 0.88rem;
+      color: var(--text, #2A1A0A);
+      line-height: 1.7;
+    }
+    .pledge-contact-card strong { color: var(--maroon, #7B1C1C); }
+
+    /* Responsive */
+    @media (max-width: 760px) {
+      .contact-body { grid-template-columns: 1fr; }
+      .cf-row { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
 
-<header>
-      <nav class="nav-inner" aria-label="Main navigation">
-      <a href="/" class="logo" aria-label="BharatDevasthanam home">
-        <span class="logo-main">BharatDevasthanam</span>
-        <span class="logo-sub">Temple Directory</span>
+  <!-- ═══ COOKIE CONSENT ═══ -->
+  <div id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite">
+    <p>We use cookies and Google AdSense to serve personalised ads.
+      <a href="privacy.html">Privacy Policy</a> · <a href="privacy.html#cookies">Cookie Policy</a>
+    </p>
+    <div class="cookie-actions">
+      <button onclick="acceptCookies()" class="btn-accept">Accept all</button>
+      <button onclick="declineCookies()" class="btn-decline">Essential only</button>
+    </div>
+  </div>
+
+  <!-- ═══ HEADER ═══ -->
+  <header>
+    <nav class="nav-inner" aria-label="Main navigation">
+      <a href="index.html" class="logo" aria-label="TempleDiary home">
+        <span class="logo-main">TempleDiary</span>
+        <span class="logo-sub">India Temple Directory</span>
       </a>
       <button class="nav-toggle" id="nav-toggle" aria-controls="nav-menu" aria-expanded="false" aria-label="Open menu">
         <span></span><span></span><span></span>
       </button>
       <ul class="nav-links" id="nav-menu" role="list">
         <li><a href="index.html">Home</a></li>
-        <li><a href="map.html">Temples in Map</a></li>
-        <li><a href="/#directory">Directory</a></li>
-        <li><a href="districts.html">Districts</a></li>
-        <li><a href="festivals.html">Festivals</a></li>
-        <li><a href="about.html" aria-current="page">About</a></li>
-        <li><a href="contact.html">Contact</a></li>
+        <li><a href="map.html">Temple Map</a></li>
+        <li><a href="index.html#directory">Directory</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html" aria-current="page">Contact</a></li>
       </ul>
     </nav>
-</header>
+  </header>
 
-<main class="container">
-  <h1>Contact Us</h1>
+  <!-- ═══ HERO ═══ -->
+  <section class="contact-hero" aria-labelledby="contact-heading">
+    <h1 id="contact-heading">Get in Touch</h1>
+    <p>Submit a temple listing · Report wrong information · Ask a question<br>We read every message and reply within 2–3 days.</p>
+  </section>
 
-  <p>Email: info@bharatdevasthanam.in</p>
+  <!-- ═══ BODY ═══ -->
+  <div class="contact-body">
 
-  <p>Facebook:
-    <a href="https://facebook.com/...">Facebook Page</a>
-  </p>
-</main>
+    <!-- LEFT — Contact form -->
+    <div class="contact-form-box">
+      <h2>Send us a message</h2>
+      <p class="form-intro">Use this form to submit a new temple, report an error in an existing listing, or ask us anything. All fields marked * are required.</p>
 
+      <div class="cf-row">
+        <div class="cf-group">
+          <label for="cf-name">Your name *</label>
+          <input type="text" id="cf-name" placeholder="Your name" autocomplete="name" />
+        </div>
+        <div class="cf-group">
+          <label for="cf-email">Email address *</label>
+          <input type="email" id="cf-email" placeholder="you@example.com" autocomplete="email" />
+        </div>
+      </div>
 
- <!-- ═══ FOOTER ═══ -->
+      <div class="cf-group">
+        <label for="cf-subject">Subject *</label>
+        <select id="cf-subject">
+          <option value="">— Select a topic —</option>
+          <option value="submit">Submit a new temple</option>
+          <option value="correction">Report wrong information</option>
+          <option value="timing">Update temple timings</option>
+          <option value="photo">Submit a temple photo</option>
+          <option value="general">General question</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <div class="cf-group">
+        <label for="cf-temple">Temple name (if applicable)</label>
+        <input type="text" id="cf-temple" placeholder="e.g. Guruvayur Sree Krishna Temple" />
+      </div>
+
+      <div class="cf-group">
+        <label for="cf-message">Message *</label>
+        <textarea id="cf-message" rows="5" placeholder="Tell us what you know, what's wrong, or what you'd like to add…"></textarea>
+      </div>
+
+      <div class="cf-group">
+        <label for="cf-phone">WhatsApp / Phone (optional — for quick follow-up)</label>
+        <input type="tel" id="cf-phone" placeholder="+91 XXXXX XXXXX" autocomplete="tel" />
+      </div>
+
+      <button class="cf-submit" onclick="submitContactForm()">Send Message →</button>
+      <div class="cf-msg" id="cf-msg"></div>
+    </div>
+
+    <!-- RIGHT — sidebar -->
+    <div class="contact-sidebar">
+
+      <!-- Direct contact info -->
+      <div class="contact-info-card">
+        <h2>Direct contact</h2>
+
+        <div class="contact-info-row">
+          <span class="ci-icon">📧</span>
+          <div>
+            <span class="ci-label">General enquiries</span>
+            <a href="mailto:contact@templediary.in">contact@templediary.in</a>
+          </div>
+        </div>
+
+        <div class="contact-info-row">
+          <span class="ci-icon">🛕</span>
+          <div>
+            <span class="ci-label">Submit a temple</span>
+            <a href="mailto:submit@templediary.in">submit@templediary.in</a>
+          </div>
+        </div>
+
+        <div class="contact-info-row">
+          <span class="ci-icon">🔒</span>
+          <div>
+            <span class="ci-label">Privacy &amp; data requests</span>
+            <a href="mailto:privacy@templediary.in">privacy@templediary.in</a>
+          </div>
+        </div>
+
+        <div class="contact-info-row">
+          <span class="ci-icon">⏱️</span>
+          <div>
+            <span class="ci-label">Response time</span>
+            We aim to reply within 2–3 working days.
+          </div>
+        </div>
+      </div>
+
+      <!-- Social links -->
+      <div class="social-card">
+        <h2>Follow TempleDiary</h2>
+        <p>Stay updated with new temple listings, festival calendars, and pilgrimage guides.</p>
+
+        <div class="social-links">
+
+          <!-- WhatsApp — update href to your WhatsApp number: https://wa.me/91XXXXXXXXXX -->
+          <a href="https://wa.me/91XXXXXXXXXX"
+             class="social-link sl-whatsapp"
+             target="_blank"
+             rel="noopener noreferrer"
+             aria-label="WhatsApp TempleDiary">
+            <div class="sl-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+              </svg>
+            </div>
+            <div class="sl-text">
+              <span class="sl-name">WhatsApp</span>
+              <span class="sl-handle">Send us a message directly</span>
+            </div>
+            <span class="sl-soon">Coming soon</span>
+          </a>
+
+          <!-- Facebook — update href to your page: https://facebook.com/templediary -->
+          <a href="https://www.facebook.com/templediary"
+             class="social-link sl-facebook"
+             target="_blank"
+             rel="noopener noreferrer"
+             aria-label="TempleDiary on Facebook">
+            <div class="sl-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
+            </div>
+            <div class="sl-text">
+              <span class="sl-name">Facebook</span>
+              <span class="sl-handle">facebook.com/templediary</span>
+            </div>
+            <span class="sl-soon">Coming soon</span>
+          </a>
+
+          <!-- Instagram — update href to your page: https://instagram.com/templediary -->
+          <a href="https://www.instagram.com/templediary"
+             class="social-link sl-instagram"
+             target="_blank"
+             rel="noopener noreferrer"
+             aria-label="TempleDiary on Instagram">
+            <div class="sl-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+              </svg>
+            </div>
+            <div class="sl-text">
+              <span class="sl-name">Instagram</span>
+              <span class="sl-handle">instagram.com/templediary</span>
+            </div>
+            <span class="sl-soon">Coming soon</span>
+          </a>
+
+        </div>
+      </div>
+
+      <!-- Pledge reminder -->
+      <div class="pledge-contact-card">
+        <span style="font-size:1.4rem">🪔</span>
+        <p style="margin-top:0.5rem;margin-bottom:0">
+          <strong>Our pledge:</strong> 25% of any income this site earns goes to elderly pauraniks, archakas, and temple workers who spent their lives in devotion — often without financial security. Your support and engagement with this site directly contributes to that cause.
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ FOOTER ═══ -->
   <footer>
     <div class="container footer-inner">
       <div class="footer-brand">
-        <p class="footer-logo">BharatDevasthanam</p>
-        <p class="footer-tagline">Temples of God's Own Country</p>
+        <p class="footer-logo">TempleDiary</p>
+        <p class="footer-tagline">India Temple Directory</p>
+        <p>🪔 25% of revenue supports temple sevaks</p>
       </div>
-
       <nav class="footer-links" aria-label="Footer navigation">
         <div class="footer-col">
           <h3>Directory</h3>
           <ul role="list">
-            <li><a href="districts.html">By district</a></li>
-            <li><a href="deities.html">By deity</a></li>
-            <li><a href="festivals.html">Festivals</a></li>
-            <li><a href="pilgrim-guide.html">Pilgrim guide</a></li>
+            <li><a href="index.html#directory">All Temples</a></li>
+            <li><a href="map.html">Temple Map</a></li>
+            <li><a href="about.html#roadmap">Roadmap</a></li>
           </ul>
         </div>
         <div class="footer-col">
           <h3>Site</h3>
           <ul role="list">
+            <li><a href="index.html">Home</a></li>
             <li><a href="about.html">About</a></li>
             <li><a href="contact.html">Contact</a></li>
-            <li><a href="submit.html">Submit a temple</a></li>
             <li><a href="sitemap.xml">Sitemap</a></li>
           </ul>
         </div>
@@ -72,18 +498,93 @@
             <li><a href="privacy.html">Privacy policy</a></li>
             <li><a href="privacy.html#cookies">Cookie policy</a></li>
             <li><a href="terms.html">Terms of use</a></li>
-            <li><a href="disclaimer.html">Disclaimer</a></li>
           </ul>
         </div>
       </nav>
     </div>
-
     <div class="footer-bottom">
-      <p>&copy; <span id="year"></span> BharatDevasthanam. All rights reserved.</p>
+      <p>&copy; <span id="year"></span> TempleDiary. All rights reserved.</p>
       <p>This site participates in Google AdSense. <a href="privacy.html#ads">Ad policy</a></p>
     </div>
-  
-</footer>
+  </footer>
 
+  <script>
+    /* ── Year ── */
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    /* ── Mobile nav ── */
+    const navToggle = document.getElementById('nav-toggle');
+    const navMenu   = document.getElementById('nav-menu');
+    if (navToggle && navMenu) {
+      navToggle.addEventListener('click', () => {
+        const open = !navMenu.classList.contains('open');
+        navMenu.classList.toggle('open', open);
+        navToggle.setAttribute('aria-expanded', String(open));
+      });
+    }
+
+    /* ── Cookie consent ── */
+    const banner = document.getElementById('cookie-banner');
+    if (localStorage.getItem('kd_cookie_choice') && banner) banner.style.display = 'none';
+    window.acceptCookies  = () => { localStorage.setItem('kd_cookie_choice','accepted'); if(banner) banner.style.display='none'; };
+    window.declineCookies = () => { localStorage.setItem('kd_cookie_choice','essential'); if(banner) banner.style.display='none'; };
+
+    /* ── Contact form submit ── */
+    function submitContactForm() {
+      const name    = document.getElementById('cf-name').value.trim();
+      const email   = document.getElementById('cf-email').value.trim();
+      const subject = document.getElementById('cf-subject').value;
+      const message = document.getElementById('cf-message').value.trim();
+      const temple  = document.getElementById('cf-temple').value.trim();
+      const phone   = document.getElementById('cf-phone').value.trim();
+      const msg     = document.getElementById('cf-msg');
+
+      if (!name)    { showMsg('error', 'Please enter your name.'); return; }
+      if (!email || !email.includes('@')) { showMsg('error', 'Please enter a valid email address.'); return; }
+      if (!subject) { showMsg('error', 'Please select a subject.'); return; }
+      if (!message) { showMsg('error', 'Please write a message.'); return; }
+
+      /* ── mailto fallback — replace with Formspree fetch() when ready ── */
+      /*
+        To use Formspree (free, recommended):
+        1. Sign up at formspree.io
+        2. Create a form → get endpoint e.g. https://formspree.io/f/xabcdefg
+        3. Replace the mailto block below with:
+
+        fetch('https://formspree.io/f/xabcdefg', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, subject, temple, message, phone })
+        })
+        .then(r => {
+          if (r.ok) showMsg('success', '✅ Message sent! We will reply within 2–3 days.');
+          else      showMsg('error',   'Something went wrong. Please email us directly.');
+        })
+        .catch(() => showMsg('error', 'Could not send. Please email contact@templediary.in directly.'));
+        return;
+      */
+
+      const body = [
+        `Name: ${name}`,
+        `Email: ${email}`,
+        `Subject: ${subject}`,
+        temple  ? `Temple: ${temple}` : '',
+        phone   ? `Phone/WhatsApp: ${phone}` : '',
+        `\nMessage:\n${message}`,
+      ].filter(Boolean).join('\n');
+
+      const mailto = `mailto:contact@templediary.in?subject=${encodeURIComponent('[TempleDiary] ' + (subject || 'Message'))}&body=${encodeURIComponent(body)}`;
+      showMsg('success', '✅ Opening your email app to send the message…');
+      setTimeout(() => { window.location.href = mailto; }, 1000);
+    }
+
+    function showMsg(type, text) {
+      const el = document.getElementById('cf-msg');
+      el.textContent = text;
+      el.className = 'cf-msg ' + type;
+      el.style.display = 'block';
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  </script>
 </body>
 </html>

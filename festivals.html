@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Temple Festivals — Unusual & Sacred Celebrations | TempleDiary</title>
+  <meta name="description" content="Discover the most unusual, mystical and breathtaking temple festivals of Kerala and India — from cross-dressing devotees at Kottankulangara to the billion-dollar vaults of Padmanabha." />
+  <meta name="keywords" content="Kottankulangara festival, Thrissur Pooram, Bharani festival, Ochira temple, Padmanabha treasure, Kerala temple festivals, unusual Hindu festivals" />
+  <meta name="author" content="TempleDiary.in" />
+  <link rel="canonical" href="https://www.templediary.in/festivals.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Unusual Temple Festivals — TempleDiary" />
+  <meta property="og:url" content="https://www.templediary.in/festivals.html" />
+  <meta property="og:site_name" content="TempleDiary" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── Festivals page overrides & new components ── */
+    :root {
+      --fest-gold: #c8882a;
+      --fest-gold-light: #f0c97a;
+      --fest-deep: #1a0f00;
+      --fest-card-bg: #fffdf8;
+      --fest-card-border: #e8d9b5;
+      --fest-tag-bg: #fdf3e0;
+      --fest-tag-color: #8b5e1a;
+      --fest-red: #b03a2e;
+      --fest-green: #2e7d53;
+      --radius: 14px;
+    }
+
+    /* Hero */
+    .fest-hero {
+      background: linear-gradient(160deg, #1a0800 0%, #2e1200 50%, #0d0500 100%);
+      position: relative;
+      overflow: hidden;
+      padding: 80px 0 60px;
+      text-align: center;
+    }
+    .fest-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 40% at 50% 0%, rgba(200,136,42,0.18) 0%, transparent 70%),
+        url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c8882a' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+    .fest-hero-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    .fest-hero-eyebrow {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--fest-gold);
+      margin-bottom: 16px;
+      opacity: 0.9;
+    }
+    .fest-hero h1 {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: clamp(2.2rem, 5vw, 3.6rem);
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.15;
+      margin-bottom: 18px;
+    }
+    .fest-hero h1 em {
+      font-style: italic;
+      color: var(--fest-gold-light);
+    }
+    .fest-hero-sub {
+      font-family: 'DM Sans', sans-serif;
+      color: rgba(255,255,255,0.65);
+      font-size: 1.05rem;
+      line-height: 1.7;
+      max-width: 560px;
+      margin: 0 auto 32px;
+    }
+    .fest-hero-divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: var(--fest-gold);
+      opacity: 0.5;
+      font-size: 1.3rem;
+      letter-spacing: 6px;
+    }
+
+    /* Filter bar */
+    .fest-filter-bar {
+      background: #fff;
+      border-bottom: 1px solid #ede7d8;
+      padding: 14px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+    .fest-filter-inner {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .fest-filter-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-right: 4px;
+    }
+    .fest-tag-btn {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1.5px solid var(--fest-card-border);
+      background: var(--fest-tag-bg);
+      color: var(--fest-tag-color);
+      cursor: pointer;
+      transition: all 0.18s;
+      white-space: nowrap;
+    }
+    .fest-tag-btn:hover, .fest-tag-btn.active {
+      background: var(--fest-gold);
+      color: #fff;
+      border-color: var(--fest-gold);
+    }
+
+    /* Grid */
+    .fest-section {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 48px 20px 80px;
+    }
+    .fest-section-heading {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 1.1rem;
+      font-weight: 400;
+      color: #999;
+      letter-spacing: 0.05em;
+      margin-bottom: 28px;
+      text-align: center;
+    }
+    .fest-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+      gap: 28px;
+    }
+
+    /* Card */
+    .fest-card {
+      background: var(--fest-card-bg);
+      border: 1.5px solid var(--fest-card-border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.22s ease, box-shadow 0.22s ease;
+      cursor: pointer;
+    }
+    .fest-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.10);
+    }
+    .fest-card-emoji {
+      background: linear-gradient(135deg, #1a0800 0%, #3d1a00 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.2rem;
+      height: 130px;
+      position: relative;
+      overflow: hidden;
+    }
+    .fest-card-emoji::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 120%, rgba(200,136,42,0.22) 0%, transparent 70%);
+    }
+    .fest-card-body {
+      padding: 22px 22px 18px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .fest-card-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .fest-card-tag {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: var(--fest-tag-bg);
+      color: var(--fest-tag-color);
+      border: 1px solid #e8d4a0;
+    }
+    .fest-card-tag.unusual { background: #fef0f0; color: var(--fest-red); border-color: #f5c6c0; }
+    .fest-card-tag.mystery { background: #f0f0fe; color: #4040a0; border-color: #c0c0f0; }
+    .fest-card-tag.treasure { background: #f0fef4; color: var(--fest-green); border-color: #b0e8c4; }
+    .fest-card-tag.travel { background: #f0f8fe; color: #1a6080; border-color: #b0d8f0; }
+
+    .fest-card-title {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 1.32rem;
+      font-weight: 600;
+      color: #1a1000;
+      line-height: 1.3;
+      margin-bottom: 8px;
+    }
+    .fest-card-temple {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      color: var(--fest-gold);
+      font-weight: 500;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .fest-card-temple svg { flex-shrink: 0; }
+    .fest-card-excerpt {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      color: #5a4a30;
+      line-height: 1.65;
+      flex: 1;
+      margin-bottom: 18px;
+    }
+    .fest-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid #ede7d8;
+      padding-top: 14px;
+    }
+    .fest-card-meta {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.75rem;
+      color: #aaa;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .know-more-btn {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--fest-gold);
+      background: none;
+      border: 1.5px solid var(--fest-gold);
+      border-radius: 999px;
+      padding: 5px 16px;
+      cursor: pointer;
+      transition: all 0.16s;
+      text-decoration: none;
+    }
+    .know-more-btn:hover {
+      background: var(--fest-gold);
+      color: #fff;
+    }
+
+    /* Modal */
+    .fest-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10,5,0,0.72);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+      backdrop-filter: blur(4px);
+    }
+    .fest-modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .fest-modal {
+      background: #fffdf8;
+      border-radius: 18px;
+      max-width: 640px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.35);
+      transform: translateY(24px) scale(0.97);
+      transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1);
+      position: relative;
+    }
+    .fest-modal-overlay.open .fest-modal {
+      transform: translateY(0) scale(1);
+    }
+    .fest-modal-header {
+      background: linear-gradient(135deg, #1a0800, #3d1a00);
+      padding: 32px 28px 24px;
+      position: relative;
+      border-radius: 18px 18px 0 0;
+    }
+    .fest-modal-emoji { font-size: 3rem; margin-bottom: 12px; display: block; }
+    .fest-modal-title {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 1.7rem;
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.25;
+      margin-bottom: 6px;
+    }
+    .fest-modal-temple {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      color: var(--fest-gold-light);
+      opacity: 0.85;
+    }
+    .fest-modal-close {
+      position: absolute;
+      top: 16px; right: 18px;
+      background: rgba(255,255,255,0.12);
+      border: none;
+      color: #fff;
+      border-radius: 50%;
+      width: 34px; height: 34px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.16s;
+    }
+    .fest-modal-close:hover { background: rgba(255,255,255,0.25); }
+    .fest-modal-body {
+      padding: 28px 28px 32px;
+    }
+    .fest-modal-tags { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 18px; }
+    .fest-modal-story {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      color: #3a2a10;
+      line-height: 1.8;
+    }
+    .fest-modal-story p { margin-bottom: 14px; }
+    .fest-modal-story p:last-child { margin-bottom: 0; }
+    .fest-modal-info {
+      margin-top: 22px;
+      background: #fdf3e0;
+      border: 1px solid #e8d4a0;
+      border-radius: 10px;
+      padding: 16px 18px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .fest-modal-info-item { font-family: 'DM Sans', sans-serif; font-size: 0.82rem; }
+    .fest-modal-info-item strong { display: block; color: var(--fest-gold); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 2px; }
+    .fest-modal-info-item span { color: #3a2a10; }
+
+    /* No results */
+    .fest-no-results {
+      text-align: center;
+      padding: 60px 20px;
+      font-family: 'DM Sans', sans-serif;
+      color: #aaa;
+      display: none;
+    }
+    .fest-no-results.show { display: block; }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .fest-grid { grid-template-columns: 1fr; }
+      .fest-modal-info { grid-template-columns: 1fr; }
+      .fest-modal-body { padding: 20px 18px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ COOKIE CONSENT BANNER ═══ -->
+  <div id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite">
+    <p>We use cookies and Google AdSense to serve personalised ads and improve your experience.
+      <a href="privacy.html">Privacy Policy</a> · <a href="privacy.html#cookies">Cookie Policy</a>
+    </p>
+    <div class="cookie-actions">
+      <button onclick="acceptCookies()" class="btn-accept">Accept all</button>
+      <button onclick="declineCookies()" class="btn-decline">Essential only</button>
+    </div>
+  </div>
+
+  <!-- ═══ HEADER / NAV ═══ -->
+  <header>
+    <nav class="nav-inner" aria-label="Main navigation">
+      <a href="index.html" class="logo" aria-label="TempleDiary home">
+        <span class="logo-main">TempleDiary</span>
+        <span class="logo-sub">India Temple Directory</span>
+      </a>
+      <button class="nav-toggle" id="nav-toggle" aria-controls="nav-menu" aria-expanded="false" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="nav-menu" role="list">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="map.html">Temples on Map</a></li>
+        <li><a href="index.html#directory">Directory</a></li>
+        <li><a href="districts.html">Districts</a></li>
+        <li><a href="festivals.html" aria-current="page">Festivals</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- ═══ FESTIVALS HERO ═══ -->
+  <section class="fest-hero" aria-labelledby="fest-hero-heading">
+    <div class="fest-hero-inner">
+      <p class="fest-hero-eyebrow">🪔 Sacred & Extraordinary</p>
+      <h1 id="fest-hero-heading">Where Devotion Defies <em>the Ordinary</em></h1>
+      <p class="fest-hero-sub">Beyond the familiar lies a world of rituals that will astonish you — men who become goddesses, elephants dressed in gold, vaults holding billions, and prayers offered to a sword. Kerala's most extraordinary temple stories, told.</p>
+      <div class="fest-hero-divider" aria-hidden="true">· · · · ·</div>
+    </div>
+  </section>
+<!-- Ad slot — top banner -->
+<div class="ad-container ad-top" aria-label="Advertisement">
+  <span class="ad-label">Advertisement</span>
+  <ins class="adsbygoogle"
+       style="display:block"
+       data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+       data-ad-slot="XXXXXXXXXX"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+</div>
+  <!-- ═══ FILTER BAR ═══ -->
+  <div class="fest-filter-bar" role="navigation" aria-label="Filter festivals">
+    <div class="fest-filter-inner">
+      <span class="fest-filter-label">Filter:</span>
+      <button class="fest-tag-btn active" data-filter="all">All</button>
+      <button class="fest-tag-btn" data-filter="unusual">Unusual Rituals</button>
+      <button class="fest-tag-btn" data-filter="mystery">Mystery & Legend</button>
+      <button class="fest-tag-btn" data-filter="treasure">Treasure & Wealth</button>
+      <button class="fest-tag-btn" data-filter="travel">Travel Experience</button>
+    </div>
+  </div>
+
+  <!-- ═══ FESTIVAL CARDS ═══ -->
+  <section class="fest-section" aria-labelledby="fest-grid-heading">
+    <p class="fest-section-heading" id="fest-grid-heading" aria-live="polite">Showing <span id="fest-count">15</span> extraordinary stories</p>
+    <!-- Ad slot — top banner -->
+<div class="ad-container ad-top" aria-label="Advertisement">
+  <span class="ad-label">Advertisement</span>
+  <ins class="adsbygoogle"
+       style="display:block"
+       data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+       data-ad-slot="XXXXXXXXXX"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+</div>
+
+
+    <div class="fest-grid" id="fest-grid" role="list"></div>
+    <div class="fest-no-results" id="fest-no-results" aria-live="assertive">No festivals found for this filter.</div>
+  </section>
+
+  <!-- ═══ MODAL ═══ -->
+  <div class="fest-modal-overlay" id="fest-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-hidden="true">
+    <div class="fest-modal">
+      <div class="fest-modal-header">
+        <span class="fest-modal-emoji" id="modal-emoji" aria-hidden="true"></span>
+        <button class="fest-modal-close" id="modal-close" aria-label="Close">✕</button>
+        <h2 class="fest-modal-title" id="modal-title"></h2>
+        <p class="fest-modal-temple" id="modal-temple"></p>
+      </div>
+      <div class="fest-modal-body">
+        <div class="fest-modal-tags" id="modal-tags"></div>
+        <div class="fest-modal-story" id="modal-story"></div>
+        <div class="fest-modal-info" id="modal-info"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer>
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <p class="footer-logo">TempleDiary</p>
+        <p class="footer-tagline">Temples of Incredible India</p>
+        <p class="footer-pledge-note">🪔 25% of future revenue supports Pauranik welfare · No donations accepted</p>
+      </div>
+      <nav class="footer-links" aria-label="Footer navigation">
+        <div class="footer-col">
+          <h3>Explore</h3>
+          <ul role="list">
+            <li><a href="index.html?state=kerala">Kerala Temples</a></li>
+            <li><a href="index.html?state=tamil-nadu">Tamil Nadu Temples</a></li>
+            <li><a href="festivals.html">Festivals</a></li>
+            <li><a href="pilgrim-guide.html">Pilgrim Guide</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3>Site</h3>
+          <ul role="list">
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="submit.html">Submit a temple</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3>Legal</h3>
+          <ul role="list">
+            <li><a href="privacy.html">Privacy policy</a></li>
+            <li><a href="terms.html">Terms of use</a></li>
+            <li><a href="disclaimer.html">Disclaimer</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; <span id="year"></span> TempleDiary. All rights reserved.</p>
+      <p>This site participates in Google AdSense. <a href="privacy.html#ads">Ad policy</a></p>
+    </div>
+  </footer>
+
+  <script src="festivals-data.js"></script>
+  <script>
+    // ── Render cards ──
+    function renderCards(filter = 'all') {
+      const grid = document.getElementById('fest-grid');
+      const noResults = document.getElementById('fest-no-results');
+      const countEl = document.getElementById('fest-count');
+      const filtered = filter === 'all' ? festivals : festivals.filter(f => f.filters.includes(filter));
+      grid.innerHTML = '';
+      if (filtered.length === 0) {
+        noResults.classList.add('show');
+        countEl.textContent = '0';
+        return;
+      }
+      noResults.classList.remove('show');
+      countEl.textContent = filtered.length;
+      filtered.forEach((f, i) => {
+        const card = document.createElement('article');
+        card.className = 'fest-card';
+        card.setAttribute('role', 'listitem');
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('aria-label', f.title);
+        card.innerHTML = `
+          <div class="fest-card-emoji" aria-hidden="true">${f.emoji}</div>
+          <div class="fest-card-body">
+            <div class="fest-card-tags">
+              ${f.tags.map(t => `<span class="fest-card-tag ${t.cls}">${t.label}</span>`).join('')}
+            </div>
+            <h3 class="fest-card-title">${f.title}</h3>
+            <p class="fest-card-temple">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+              ${f.temple}
+            </p>
+            <p class="fest-card-excerpt">${f.excerpt}</p>
+            <div class="fest-card-footer">
+              <span class="fest-card-meta">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                ${f.when}
+              </span>
+              <button class="know-more-btn" data-id="${i}" aria-haspopup="dialog">Know More</button>
+            </div>
+          </div>`;
+        grid.appendChild(card);
+      });
+
+      // bind know more buttons
+      document.querySelectorAll('.know-more-btn').forEach(btn => {
+        btn.addEventListener('click', e => {
+          e.stopPropagation();
+          openModal(parseInt(btn.dataset.id, 10), filter);
+        });
+      });
+      // card click
+      document.querySelectorAll('.fest-card').forEach((card, idx) => {
+        card.addEventListener('click', () => openModal(idx, filter));
+        card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') openModal(idx, filter); });
+      });
+    }
+
+    function openModal(cardIdx, filter) {
+      const filtered = filter === 'all' ? festivals : festivals.filter(f => f.filters.includes(filter));
+      const f = filtered[cardIdx];
+      document.getElementById('modal-emoji').textContent = f.emoji;
+      document.getElementById('modal-title').textContent = f.title;
+      document.getElementById('modal-temple').textContent = '📍 ' + f.temple + ' · ' + f.location;
+      document.getElementById('modal-tags').innerHTML = f.tags.map(t => `<span class="fest-card-tag ${t.cls}">${t.label}</span>`).join('');
+      document.getElementById('modal-story').innerHTML = f.story.map(p => `<p>${p}</p>`).join('');
+      document.getElementById('modal-info').innerHTML = f.info.map(i => `
+        <div class="fest-modal-info-item"><strong>${i.label}</strong><span>${i.value}</span></div>`).join('');
+      const overlay = document.getElementById('fest-modal');
+      overlay.classList.add('open');
+      overlay.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      document.getElementById('modal-close').focus();
+    }
+
+    function closeModal() {
+      const overlay = document.getElementById('fest-modal');
+      overlay.classList.remove('open');
+      overlay.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    document.getElementById('modal-close').addEventListener('click', closeModal);
+    document.getElementById('fest-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+    // ── Filter buttons ──
+    let activeFilter = 'all';
+    document.querySelectorAll('.fest-tag-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.fest-tag-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeFilter = btn.dataset.filter;
+        renderCards(activeFilter);
+      });
+    });
+
+    // ── Nav toggle ──
+    const navToggle = document.getElementById('nav-toggle');
+    const navMenu = document.getElementById('nav-menu');
+    if (navToggle) {
+      navToggle.addEventListener('click', () => {
+        const open = navMenu.classList.toggle('open');
+        navToggle.setAttribute('aria-expanded', open);
+      });
+    }
+
+    // ── Cookie banner ──
+    function acceptCookies() { localStorage.setItem('cookies','accepted'); document.getElementById('cookie-banner').style.display='none'; }
+    function declineCookies() { localStorage.setItem('cookies','declined'); document.getElementById('cookie-banner').style.display='none'; }
+    if (localStorage.getItem('cookies')) document.getElementById('cookie-banner').style.display='none';
+
+    // ── Year ──
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // ── Init ──
+    renderCards();
+  </script>
+</body>
+</html>

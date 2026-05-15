@@ -1,7 +1,7 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.keraladevasthanam.in/sitemap.xml
+Sitemap: https://www.templediary.in/sitemap.xml
 
 # Block any admin or private paths (add as needed)
 Disallow: /admin/
