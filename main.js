@@ -51,11 +51,37 @@
       getData:      () => (typeof TEMPLES_KA !== 'undefined' ? TEMPLES_KA : []),
       bodyClass:    'state-karnataka',
     },
+   'andhra-pradesh': {
+  label:        'Andhra Pradesh',
+  eyebrow:      'Sacred Land of Telugu Heritage',
+  heroSub:      'Find temples in Andhra Pradesh — from Tirupati and Srisailam to ancient coastal and hill shrines.<br>Timings, contact numbers, travel info and more.',
+  statTemples:  '500+',
+  statDistricts:'26',
+  mapLabel:     'Explore Andhra Pradesh',
+  heroImage:    'sources/andhra_hero.jpeg',
+  getData:      () => (typeof TEMPLES_AP !== 'undefined' ? TEMPLES_AP : []),
+  bodyClass:    'state-andhra-pradesh',
+},
+
+'goa': {
+  label:        'Goa',
+  eyebrow:      'Land of Sacred Serenity',
+  heroSub:      'Discover temples of Goa — from ancient coastal shrines to serene hill temples rooted in Konkani tradition and heritage.<br>Timings, contact numbers, travel info and more.',
+  statTemples:  '150+',
+  statDistricts:'2',
+  mapLabel:     'Explore Goa',
+  heroImage:    'sources/goa_hero.jpeg',
+  getData:      () => (typeof TEMPLES_GOA !== 'undefined' ? TEMPLES_GOA : []),
+  bodyClass:    'state-goa',
+},
   };
 
   /* ── Config ── */
   const PER_PAGE = 12;
   const DEFAULT_STATE = 'kerala';
+  const FORM_SUBMIT_EMAIL = 'mymail2837@gmail.com';
+  const FORM_SUBMIT_ENDPOINT = `https://formsubmit.co/${FORM_SUBMIT_EMAIL}`;
+  const FORM_SUBMIT_AJAX_ENDPOINT = `https://formsubmit.co/ajax/${FORM_SUBMIT_EMAIL}`;
 
   /* ── Active state ── */
   let activeState = DEFAULT_STATE;
@@ -519,98 +545,101 @@
           <button class="modal-close" aria-label="Close">✕</button>
         </div>
         <div class="modal-body" style="max-height: 70vh; overflow-y: auto; padding-right: 15px;">
-          <div class="submit-form">
+          <form class="submit-form" action="${FORM_SUBMIT_ENDPOINT}" method="POST">
+            <input type="hidden" name="_captcha" value="false" />
+            <input type="hidden" name="_template" value="table" />
+            <input type="hidden" id="sf-subject" name="_subject" value="New Temple Submission" />
             <div class="sf-row">
               <div class="sf-group">
                 <label for="sf-temple">Temple name <span class="sf-req">*</span></label>
-                <input type="text" id="sf-temple" placeholder="Temple name" />
+                <input type="text" id="sf-temple" name="Temple" placeholder="Temple name" required />
               </div>
               <div class="sf-group">
                 <label for="sf-deity">Deity</label>
-                <input type="text" id="sf-deity" placeholder="e.g. Lord Shiva" />
+                <input type="text" id="sf-deity" name="Deity" placeholder="e.g. Lord Shiva" />
               </div>
             </div>
             <div class="sf-row">
               <div class="sf-group">
                 <label for="sf-district">District</label>
-                <input type="text" id="sf-district" placeholder="District" />
+                <input type="text" id="sf-district" name="District" placeholder="District" />
               </div>
               <div class="sf-group">
                 <label for="sf-location">Location / Address</label>
-                <input type="text" id="sf-location" placeholder="Town, District" />
+                <input type="text" id="sf-location" name="Location" placeholder="Town, District" />
               </div>
             </div>
             <div class="sf-row">
               <div class="sf-group">
                 <label for="sf-lat">Latitude</label>
-                <input type="number" step="any" id="sf-lat" placeholder="e.g. 10.7828" />
+                <input type="number" step="any" id="sf-lat" name="Latitude" placeholder="e.g. 10.7828" />
               </div>
               <div class="sf-group">
                 <label for="sf-lng">Longitude</label>
-                <input type="number" step="any" id="sf-lng" placeholder="e.g. 79.1318" />
+                <input type="number" step="any" id="sf-lng" name="Longitude" placeholder="e.g. 79.1318" />
               </div>
             </div>
             <div class="sf-row">
               <div class="sf-group">
                 <label for="sf-phone">Phone number</label>
-                <input type="tel" id="sf-phone" placeholder="+91-..." />
+                <input type="tel" id="sf-phone" name="Phone" placeholder="+91-..." />
               </div>
               <div class="sf-group">
                 <label for="sf-timing">Darshan timings</label>
-                <input type="text" id="sf-timing" placeholder="6 AM - 12 PM" />
+                <input type="text" id="sf-timing" name="Timing" placeholder="6 AM - 12 PM" />
               </div>
             </div>
             <div class="sf-group">
               <label for="sf-description">Description</label>
-              <textarea id="sf-description" rows="3" placeholder="Brief history and significance..."></textarea>
+              <textarea id="sf-description" name="Description" rows="3" placeholder="Brief history and significance..."></textarea>
             </div>
             <div class="sf-row">
               <div class="sf-group">
                 <label for="sf-tags">Tags (comma-separated)</label>
-                <input type="text" id="sf-tags" placeholder="shiva, famous, heritage" />
+                <input type="text" id="sf-tags" name="Tags" placeholder="shiva, famous, heritage" />
               </div>
               <div class="sf-group" style="align-items: center; flex-direction: row; gap: 8px; margin-top: 22px;">
-                <input type="checkbox" id="sf-famous" style="width: auto;"/>
+                <input type="checkbox" id="sf-famous" name="Famous" value="Yes" style="width: auto;"/>
                 <label for="sf-famous" style="margin:0;">Famous ⭐</label>
               </div>
             </div>
             <div class="sf-row">
               <div class="sf-group">
                 <label for="sf-dressCode">Dress Code</label>
-                <input type="text" id="sf-dressCode" placeholder="Men: Dhoti..." />
+                <input type="text" id="sf-dressCode" name="Dress Code" placeholder="Men: Dhoti..." />
               </div>
               <div class="sf-group">
                 <label for="sf-photography">Photography Rules</label>
-                <input type="text" id="sf-photography" placeholder="Restricted inside sanctum" />
+                <input type="text" id="sf-photography" name="Photography" placeholder="Restricted inside sanctum" />
               </div>
             </div>
             <div class="sf-row">
               <div class="sf-group">
                 <label for="sf-nearestBus">Nearest Bus Stand</label>
-                <input type="text" id="sf-nearestBus" placeholder="Bus Stand (2 km)" />
+                <input type="text" id="sf-nearestBus" name="Nearest Bus" placeholder="Bus Stand (2 km)" />
               </div>
               <div class="sf-group">
                 <label for="sf-nearestRail">Nearest Railway</label>
-                <input type="text" id="sf-nearestRail" placeholder="Junction (5 km)" />
+                <input type="text" id="sf-nearestRail" name="Nearest Rail" placeholder="Junction (5 km)" />
               </div>
             </div>
             <hr style="margin: 15px 0; border: 0; border-top: 1px solid #E8D5A8;" />
             <div class="sf-row">
               <div class="sf-group">
                 <label for="sf-name">Your name <span class="sf-req">*</span></label>
-                <input type="text" id="sf-name" placeholder="Your name" />
+                <input type="text" id="sf-name" name="Submitted By" placeholder="Your name" required />
               </div>
               <div class="sf-group">
                 <label for="sf-email">Your email (optional)</label>
-                <input type="email" id="sf-email" placeholder="you@example.com" />
+                <input type="email" id="sf-email" name="Submitter Email" placeholder="you@example.com" />
               </div>
             </div>
             <div id="sf-msg" class="sf-msg" aria-live="polite" hidden></div>
             <div class="sf-actions">
-              <button class="sf-cancel">Cancel</button>
-              <button class="sf-submit">Submit →</button>
+              <button type="button" class="sf-cancel">Cancel</button>
+              <button type="submit" class="sf-submit">Submit →</button>
             </div>
-          </div>
+          </form>
         </div>
       </div>`;
     document.body.appendChild(submitOverlay);
@@ -618,7 +647,7 @@
     submitOverlay.querySelector('.sf-cancel').addEventListener('click', closeSubmitModal);
     submitOverlay.addEventListener('click', e => { if (e.target === submitOverlay) closeSubmitModal(); });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSubmitModal(); });
-    submitOverlay.querySelector('.sf-submit').addEventListener('click', handleSubmit);
+    submitOverlay.querySelector('.submit-form').addEventListener('submit', handleSubmit);
   }
 
   function openSubmitModal(t) {
@@ -651,44 +680,124 @@
     document.body.style.overflow = '';
   }
 
-  function handleSubmit() {
-    const temple = submitOverlay.querySelector('#sf-temple').value.trim();
-    const submitter   = submitOverlay.querySelector('#sf-name').value.trim();
-    const email  = submitOverlay.querySelector('#sf-email').value.trim();
-    const msg    = submitOverlay.querySelector('#sf-msg');
+async function handleSubmit(e) {
+  e.preventDefault();
 
-    if (!temple) { showMsg(msg, 'error', 'Please enter the temple name.'); return; }
-    if (!submitter)   { showMsg(msg, 'error', 'Please enter your name.'); return; }
+  const form = e.currentTarget;
+  const temple = submitOverlay.querySelector('#sf-temple').value.trim();
+  const submitter = submitOverlay.querySelector('#sf-name').value.trim();
+  const email = submitOverlay.querySelector('#sf-email').value.trim();
+  const msg = submitOverlay.querySelector('#sf-msg');
+  const submitBtn = submitOverlay.querySelector('.sf-submit');
 
-    const tagsVal = submitOverlay.querySelector('#sf-tags').value;
-    const tagsArr = tagsVal ? tagsVal.split(',').map(s=>s.trim()).filter(Boolean) : [];
-    const latVal = submitOverlay.querySelector('#sf-lat').value;
-    const lngVal = submitOverlay.querySelector('#sf-lng').value;
-    const desc = submitOverlay.querySelector('#sf-description').value.trim().replace(/"/g, '\\"');
+  if (!temple) {
+    showMsg(msg, 'error', 'Please enter the temple name.');
+    return;
+  }
 
-    const objStr = `  {
-    id: "NEW",
-    name: "${temple}",
-    deity: "${submitOverlay.querySelector('#sf-deity').value.trim()}",
-    district: "${submitOverlay.querySelector('#sf-district').value.trim()}",
-    location: "${submitOverlay.querySelector('#sf-location').value.trim()}",
-    lat: ${latVal ? latVal : 'null'}, lng: ${lngVal ? lngVal : 'null'},
-    timing: "${submitOverlay.querySelector('#sf-timing').value.trim()}",
-    phone: "${submitOverlay.querySelector('#sf-phone').value.trim()}",
-    description: "${desc}",
-    famous: ${submitOverlay.querySelector('#sf-famous').checked},
-    tags: ${JSON.stringify(tagsArr)},
-    dressCode: "${submitOverlay.querySelector('#sf-dressCode').value.trim()}",
-    photography: "${submitOverlay.querySelector('#sf-photography').value.trim()}",
-    nearestBus: "${submitOverlay.querySelector('#sf-nearestBus').value.trim()}",
-    nearestRail: "${submitOverlay.querySelector('#sf-nearestRail').value.trim()}"
-  }`;
+  if (!submitter) {
+    showMsg(msg, 'error', 'Please enter your name.');
+    return;
+  }
 
-    const body = `Submitted by: ${submitter} (${email})\\nState: ${activeState}\\n\\nHere is the temple data object ready to be added to site:\\n\\n${objStr}`;
-    const mailto = `mailto:submit@templediary.in?subject=${encodeURIComponent('Temple Submission: ' + temple)}&body=${encodeURIComponent(body)}`;
+  const formData = new FormData();
+  const subject = 'New Temple Submission: ' + temple;
+  const fallbackBody = buildSubmissionEmailBody(temple, submitter, email);
+  const fallbackHref = `mailto:${FORM_SUBMIT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(fallbackBody)}`;
 
-    showMsg(msg, 'success', '✅ Thank you! Opening your email client to send the submission…');
-    setTimeout(() => { window.location.href = mailto; }, 1200);
+  submitOverlay.querySelector('#sf-subject').value = subject;
+  formData.append('_subject', subject);
+  formData.append('_captcha', 'false');
+  formData.append('_template', 'table');
+
+  formData.append('State', activeState);
+  formData.append('Temple', temple);
+  formData.append('Deity', submitOverlay.querySelector('#sf-deity').value.trim());
+  formData.append('District', submitOverlay.querySelector('#sf-district').value.trim());
+  formData.append('Location', submitOverlay.querySelector('#sf-location').value.trim());
+  formData.append('Latitude', submitOverlay.querySelector('#sf-lat').value.trim());
+  formData.append('Longitude', submitOverlay.querySelector('#sf-lng').value.trim());
+  formData.append('Phone', submitOverlay.querySelector('#sf-phone').value.trim());
+  formData.append('Timing', submitOverlay.querySelector('#sf-timing').value.trim());
+  formData.append('Description', submitOverlay.querySelector('#sf-description').value.trim());
+  formData.append('Tags', submitOverlay.querySelector('#sf-tags').value.trim());
+  formData.append('Famous', submitOverlay.querySelector('#sf-famous').checked ? 'Yes' : 'No');
+  formData.append('Dress Code', submitOverlay.querySelector('#sf-dressCode').value.trim());
+  formData.append('Photography', submitOverlay.querySelector('#sf-photography').value.trim());
+  formData.append('Nearest Bus', submitOverlay.querySelector('#sf-nearestBus').value.trim());
+  formData.append('Nearest Rail', submitOverlay.querySelector('#sf-nearestRail').value.trim());
+  formData.append('Submitted By', submitter);
+  formData.append('Submitter Email', email);
+
+  try {
+    submitBtn.disabled = true;
+    form.setAttribute('aria-busy', 'true');
+    showMsg(msg, 'success', 'Sending...');
+
+    const response = await fetch(FORM_SUBMIT_AJAX_ENDPOINT, {
+      method: 'POST',
+      headers: {
+  'Accept': 'application/json'
+},
+      body: formData
+    });
+
+    if (!response.ok) {
+      throw new Error(`FormSubmit returned HTTP ${response.status}`);
+    }
+
+    showMsg(msg, 'success', '✅ Thank you! Your submission has been sent.');
+
+    setTimeout(() => {
+      closeSubmitModal();
+    }, 1500);
+
+  } catch (err) {
+    showMsg(msg, 'error', 'FormSubmit is unavailable right now. Opening your email client...');
+    addSubmitFallback(msg, fallbackHref);
+    window.location.href = fallbackHref;
+  } finally {
+    submitBtn.disabled = false;
+    form.removeAttribute('aria-busy');
+  }
+}
+
+  function buildSubmissionEmailBody(temple, submitter, email) {
+    const fields = [
+      ['State', activeState],
+      ['Temple', temple],
+      ['Deity', submitOverlay.querySelector('#sf-deity').value.trim()],
+      ['District', submitOverlay.querySelector('#sf-district').value.trim()],
+      ['Location', submitOverlay.querySelector('#sf-location').value.trim()],
+      ['Latitude', submitOverlay.querySelector('#sf-lat').value.trim()],
+      ['Longitude', submitOverlay.querySelector('#sf-lng').value.trim()],
+      ['Phone', submitOverlay.querySelector('#sf-phone').value.trim()],
+      ['Timing', submitOverlay.querySelector('#sf-timing').value.trim()],
+      ['Description', submitOverlay.querySelector('#sf-description').value.trim()],
+      ['Tags', submitOverlay.querySelector('#sf-tags').value.trim()],
+      ['Famous', submitOverlay.querySelector('#sf-famous').checked ? 'Yes' : 'No'],
+      ['Dress Code', submitOverlay.querySelector('#sf-dressCode').value.trim()],
+      ['Photography', submitOverlay.querySelector('#sf-photography').value.trim()],
+      ['Nearest Bus', submitOverlay.querySelector('#sf-nearestBus').value.trim()],
+      ['Nearest Rail', submitOverlay.querySelector('#sf-nearestRail').value.trim()],
+      ['Submitted By', submitter],
+      ['Submitter Email', email],
+    ];
+
+    return fields
+      .filter(([, value]) => value)
+      .map(([label, value]) => `${label}: ${value}`)
+      .join('\n');
+  }
+
+  function addSubmitFallback(msg, fallbackHref) {
+    const link = document.createElement('a');
+    link.href = fallbackHref;
+    link.textContent = 'Send by email';
+    link.style.display = 'inline-block';
+    link.style.marginTop = '8px';
+    msg.appendChild(document.createElement('br'));
+    msg.appendChild(link);
   }
 
   function showMsg(el, type, text) {

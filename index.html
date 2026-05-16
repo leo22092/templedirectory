@@ -102,8 +102,14 @@
         <button class="state-tab" data-state= "karnataka" role="tab" aria-selected="false" aria-label="View Karnataka temples">
           <span class="state-flag">🏔️</span> Karnataka 
         </button>
+                <button class="state-tab" data-state= "andhra-pradesh" role="tab" aria-selected="false" aria-label="View Andhra Pradesh temples">
+          <span class="state-flag">🏔️</span> Andhra Pradesh 
+        </button>
+                <button class="state-tab" data-state= "goa" role="tab" aria-selected="false" aria-label="View goa temples">
+          <span class="state-flag">🏔️</span> Goa 
+        </button>
         <button class="state-tab coming-soon" disabled aria-disabled="true" title="Coming soon">
-          <span class="state-flag">🕌</span> Andhra Pradesh <span class="soon-badge">Soon</span>
+          <span class="state-flag">🕌</span> Maharashtra <span class="soon-badge">Soon</span>
         </button>
         <button class="state-tab coming-soon" disabled aria-disabled="true" title="Coming soon">
           <span class="state-flag">🙏</span> More states… <span class="soon-badge">Soon</span>
@@ -189,6 +195,20 @@
     </a>
   </div>
 </section>
+
+  <!-- ═══ CONTRIBUTE SECTION ═══ -->
+  <section class="contribute-section">
+    <div class="container">
+      <h2>Is your temple not listed?</h2>
+      <p>
+        Contribute what you know! We rely on devotees like you to keep our directory accurate and comprehensive. Help us preserve our rich heritage by adding missing temples or suggesting corrections to existing ones.
+      </p>
+      <button onclick="window.openSubmitModal(null)" class="map-btn">
+        ➕ Submit a Temple / Suggest Correction
+      </button>
+    </div>
+  </section>
+
 
   <!-- ═══ QUICK DISTRICT CHIPS ═══ -->
   <section class="quick-districts" id="quick-districts" aria-labelledby="districts-heading">
@@ -299,7 +319,9 @@
           <ul role="list">
             <li><a href="?state=kerala">Kerala Temples</a></li>
             <li><a href="?state=tamil-nadu">Tamil Nadu Temples</a></li>
-            <li><a href="?state=tamil-nadu">Karnataka Temples</a></li>
+            <li><a href="?state=karnataka">Karnataka Temples</a></li>
+            <li><a href="?state=andhra-pradesh">Andhra Pradesh Temples</a></li>
+            <li><a href="?state=goa">Goa Temples</a></li>
             <li><a href="festivals.html">Festivals</a></li>
             <li><a href="pilgrim-guide.html">Pilgrim Guide</a></li>
           </ul>
@@ -309,7 +331,7 @@
           <ul role="list">
             <li><a href="about.html">About</a></li>
             <li><a href="contact.html">Contact</a></li>
-            <li><a href="submit.html">Submit a temple</a></li>
+            <li><a href="javascript:void(0)" onclick="window.openSubmitModal(null)">Submit a temple</a></li>
             <li><a href="sitemap.xml">Sitemap</a></li>
           </ul>
         </div>
@@ -335,6 +357,8 @@
   <script src="kerala-data.js"></script>        <!-- Kerala -->
   <script src="tamil-nadu-data.js"></script>    <!-- Tamil Nadu -->
    <script src="karnataka-data.js"></script>    <!-- Tamil Nadu -->
+   <script src="andhra-pradesh-data.js"></script>    <!-- Tamil Nadu -->
+   <script src="goa-data.js"></script>    <!-- Tamil Nadu -->
   <!-- main.js reads the active state and picks the correct dataset -->
   <script src="main.js"></script>
 </body>

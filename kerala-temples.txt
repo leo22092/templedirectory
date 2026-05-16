@@ -1,0 +1,212 @@
+001. Sree Padmanabhaswamy Temple
+002. Guruvayur Sree Krishna Temple
+003. Sabarimala Sree Dharmasastha Temple
+004. Attukal Bhagavathy Temple
+005. Vadakkunnathan Temple
+006. Ernakulathappan Temple
+007. Ettumanoor Mahadeva Temple
+008. Ambalapuzha Sree Krishna Temple
+009. Mannarasala Sree Nagaraja Temple
+010. Aranmula Parthasarathy Temple
+011. Thirunelli Temple
+012. Kottiyoor Mahadeva Temple
+013. Chettikulangara Bhagavathy Temple
+014. Pazhavangadi Ganapathy Temple
+015. Thiruvarppu Krishna Temple
+016. Kaladi Sree Sharada Temple
+017. Jatayu Earth's Center
+018. Thali Siva Temple
+019. Mangaladevi Temple
+020. Thiruvambady Sri Krishna Temple
+021. Haripad Subramanya Temple
+022. Payyannur Subramanya Temple
+023. Madayipara Bhagavathy Temple
+024. Lokanarkavu Bhagavathy Temple
+025. Vadakkencherry Mahavishnu Temple
+026. Sasthamkotta Sree Sasta Temple
+027. Kottarakkara Sree Mahaganapathi Temple
+028. Kulathupuzha Sastha Temple
+029. Ochira Parabrahma Temple
+030. Ammachiveedu Muhurthi Temple
+031. Puttingal Devi Temple
+032. Poruvazhy Peruviruthy Malanada Temple
+033. Aryankavu Ayyappa Temple
+034. Kottukal Cave Temple
+035. Umayanalloor Sree Balasubramanya Swamy Temple
+036. Kadakkal Devi Temple
+037. Pavumba Mahadeva Temple
+038. Thirumullavaram Sree Mahavishnu Temple
+039. Mayyanad Subramanya Swamy Temple
+040. Polachira Devi Temple
+041. Thrikkadavoor Sree Mahadeva Temple
+042. Janardanaswamy Temple
+043. Aazhimala Shiva Temple
+044. Neyyattinkara Sree Krishna Swamy Temple
+045. Sarkara Devi Temple
+046. Ananthankadu Nagaraja Temple
+047. Vettucaud Madan Temple
+048. Kadinamkulam Mahadeva Temple
+049. Karikkakom Chamundi Devi Temple
+050. Pazhakutty Mahadeva Temple
+051. Mithranandapuram Venkateswara Temple
+052. Karamana Mahadeva Temple
+053. Sree Parasurama Temple
+054. Madavoorpara Shiva Temple
+055. Palkulangara Devi Temple
+056. Pandalam Valiya Koyikkal Dharma Sastha Temple
+057. Malayalappuzha Devi Temple
+058. Kaviyoor Mahadeva Temple
+059. Thiruvalla Sreevallabha Temple
+060. Kadammanitta Devi Temple
+061. Nilakkal Mahadeva Temple
+062. Thumpamon Vadakkumnatha Temple
+063. Kodumthara Subramanya Swamy Temple
+064. Omalloor Rakthakantaswami Temple
+065. Konni Mahadeva Temple
+066. Chengannur Mahadeva Temple
+067. Mullakkal Rajarajeswari Temple
+068. Thrichittatt Mahavishnu Temple
+069. Thripperunthura Mahadeva Temple
+070. Kandiyoor Mahadeva Temple
+071. Thuravoor Mahakshetram
+072. Chamakulam Kuttanadu Sree Dharma Sastha Temple
+073. Karumadi Kuttan Temple
+074. Padanilam Parabrahma Temple
+075. Evoor Sreekrishnaswamy Temple
+076. Vettiyar Sree Nagaraja Temple
+077. Sree Krishna Swamy Temple
+078. Annamala Matha Temple
+079. Kanjikuzhi Karikkode Bhagavathy Temple
+080. Ullupooni Sree Krishna Swamy Temple
+081. Mariamman Temple
+082. Kallil Bhagavathy Temple
+083. Ayyappancoil Sree Dharma Sastha Temple
+084. Karikode Bhagavathy Temple
+085. Myladumpara Sree Subramanya Temple
+086. Kanjiramattom Sri Mahadeva Temple
+087. Pazhathottam Devi Temple
+088. Sree Narasimha Swamy Temple
+089. Mankulam Bhagavathy Temple
+090. Kulamavu Devi Temple
+091. Chottanikkara Bhagavathy Temple
+092. Sree Poornathrayeesa Temple
+093. Thrikkakara Vamana Moorthy Temple
+094. Aluva Mahadeva Temple
+095. Cherai Gowreeshwara Temple
+096. Pazhoor Perumthrikkovil Temple
+097. Thirumoozhikulam Lakshmana Perumal Temple
+098. Kizhakkambalam Sree Dharma Sastha Temple
+099. Kedamangalam Sree Bhagavathy Temple
+100. Sree Venugopala Krishna Swamy Temple
+101. Elamkavu Devi Temple
+102. Puthiyakavu Bhagavathy Temple
+103. Maradu Devi Temple
+104. Vaikom Mahadeva Temple
+105. Kaduthuruthy Thali Temple
+106. Thirunakkara Mahadeva Temple
+107. Panachikkadu Saraswathi Temple
+108. Pallipurathukavu Devi Temple
+109. Kumaranalloor Devi Temple
+110. Adityapuram Surya Temple
+111. Poonjar Dharma Sastha Temple
+112. Elankavu Devi Temple
+113. Thaliyil Mahadeva Temple
+114. Kuzhimattom Mahadeva Temple
+115. Mannackanad Bhagavathy Temple
+116. Chirakkadavu Mahadeva Temple
+117. Paramekkavu Bhagavathy Temple
+118. Koodalmanikyam Temple
+119. Mammiyoor Mahadeva Temple
+120. Thiruvanchikulam Mahadeva Temple
+121. Kodungallur Bhagavathy Temple
+122. Uthralikavu Bhagavathy Temple
+123. Ammathiruvadi Temple
+124. Poonkunnam Siva Temple
+125. Peruvanam Mahadeva Temple
+126. Cherpu Bhagavathy Temple
+127. Thiruvullakkavu Sree Dharma Sastha Temple
+128. Kuttumuck Shiva Temple
+129. Sree Visalakshi Sametha Viswanathaswamy Temple
+130. Jainimedu Jain Temple
+131. Manappullikavu Bhagavathy Temple
+132. Chinakkathoor Bhagavathy Temple
+133. Thiruvalathur Randu Moorthy Temple
+134. Pookottukavu Bhagavathy Temple
+135. Koduvayur Sree Perumal Temple
+136. Puthur Thirupuraikkal Bhagavathy Temple
+137. Kollengode Visalakshi Sametha Viswanatha Swamy Temple
+138. Mangottu Kavu Bhagavathy Temple
+139. Thiruvegappura Sankaranarayana Temple
+140. Sree Emoor Bhagavathy Temple
+141. Parakkat Bhagavathy Temple
+142. Kallekulangara Bhagavathy Temple
+143. Thirunavaya Nava Mukunda Temple
+144. Thirumandhamkunnu Bhagavathy Temple
+145. Trikkavu Temple
+146. Vettakkorumakan Temple
+147. Sree Pazhayannur Bhagavathy Temple
+148. Alathiyoor Hanuman Temple
+149. Keraladeshpuram Temple
+150. Chamravattam Ayyappa Temple
+151. Sree Kadampuzha Bhagavathy Temple
+152. Triprangode Siva Temple
+153. Tirurangadi Sree Krishna Temple
+154. Mannur Shiva Temple
+155. Kottakkal Vishnu Temple
+156. Thali Temple
+157. Sree Kurumba Bhagavathy Temple
+158. Valayanad Devi Temple
+159. Sree Kanteswara Temple
+160. Thiruvachira Sree Krishna Temple
+161. Azhakodi Devi Temple
+162. Pisharikavu Temple
+163. Sree Varakkal Bhagavathy Temple
+164. Thali Shiva Temple
+165. Payamkuttimala Temple
+166. Vettakkorumakan Temple
+167. Mannur Sree Mahavishnu Temple
+168. Thrikkovil Sree Krishna Temple
+169. Narasimha Moorthy Temple
+170. Kizhakke Muthappan Temple
+171. Parassinikadavu Muthappan Temple
+172. Rajarajeshwara Temple
+173. Madayikavu Temple
+174. Peralassery Subramanya Temple
+175. Trichambaram Sree Krishna Temple
+176. Sree Sundareswara Temple
+177. Kalarivathukkal Bhagavathy Temple
+178. Annapoorneshwari Temple
+179. Jagannatha Temple
+180. Oorpazhachi Kavu Temple
+181. Muzhappilangad Sree Kurumba Bhagavathy Temple
+182. Thodeekalam Shiva Temple
+183. Chovva Shiva Temple
+184. Ananthapura Lake Temple
+185. Madhur Temple
+186. Mallikarjuna Temple
+187. Kanipura Sri Gopalakrishna Temple
+188. Trikkannad Tryambakeshwara Temple
+189. Mayipady Palace Temple
+190. Bela Mahaganapathi Temple
+191. Kanhangad Puthiyakotta Sree Bhagavathy Temple
+192. Neeleshwaram Mannam Purathu Kavu
+193. Kottancheri Maha Vishnu Temple
+194. Perdal Sri Ananthapadmanabha Temple
+195. Adoor Mahalingeshwara Temple
+196. Madiyan Koolom Temple
+197. Kizhur Sree Mahavishnu Temple
+198. Puliyannur Kottam Temple
+199. Valliyoorkavu Bhagavathy Temple
+200. Seetha Lava Kusha Temple
+201. Thrissilery Shiva Temple
+202. Kannan Devan Hills Ayyappa Temple
+203. Pazhassi Raja Temple
+204. Ayyappa Temple
+205. Mariyamman Temple
+206. Bhagavathy Temple
+207. Mahaganapathy Temple
+208. Ananthanatha Swami Temple
+209. Sree Maha Vishnu Temple
+210. Chundale Bhagavathy Temple
+211. Puthoorvayal Temple
+212. Kurumbala Bhagavathy Temple
