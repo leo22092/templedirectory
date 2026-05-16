@@ -108,6 +108,9 @@
                 <button class="state-tab" data-state= "goa" role="tab" aria-selected="false" aria-label="View goa temples">
           <span class="state-flag">🏔️</span> Goa 
         </button>
+        <button class="state-tab" data-state="rajasthan" role="tab" aria-selected="false" aria-label="View Rajasthan temples">
+          <span class="state-flag">🏰</span> Rajasthan
+        </button>
         <button class="state-tab coming-soon" disabled aria-disabled="true" title="Coming soon">
           <span class="state-flag">🕌</span> Maharashtra <span class="soon-badge">Soon</span>
         </button>
@@ -133,7 +136,7 @@
       </form>
       <div class="hero-stats" aria-label="Directory statistics">
         <div class="stat"><strong id="stat-temples">1,200+</strong><span>Temples</span></div>
-        <div class="stat"><strong id="stat-states">2</strong><span>States Live</span></div>
+        <div class="stat"><strong id="stat-states">6</strong><span>States Live</span></div>
         <div class="stat"><strong id="stat-districts">14</strong><span>Districts</span></div>
         <div class="stat"><strong>Daily</strong><span>Updated</span></div>
       </div>
@@ -285,7 +288,7 @@
       <div class="info-text">
         <h2 id="info-heading">About TempleDiary</h2>
         <p>TempleDiary is a free, community-maintained directory of Hindu temples across India. We list temple names, presiding deities, locations, and contact numbers — all in one searchable place.</p>
-        <p>Our goal is to help devotees, pilgrims, and travellers find accurate, up-to-date information about temples across every state of Bharat — currently covering <strong>Kerala</strong> and <strong>Tamil Nadu</strong>, with Karnataka, Andhra Pradesh, and more states expanding through 2025–26.</p>
+        <p>Our goal is to help devotees, pilgrims, and travellers find accurate, up-to-date information about temples across every state of Bharat — currently covering <strong>Kerala</strong>, <strong>Tamil Nadu</strong>, <strong>Karnataka</strong>, <strong>Andhra Pradesh</strong>, <strong>Goa</strong>, and <strong>Rajasthan</strong>, with more states expanding through 2025–26.</p>
         <p>Know a temple we've missed? <a href="contact.html">Submit a listing</a> and we'll add it.</p>
       </div>
       <div class="info-cards">
@@ -295,7 +298,7 @@
         </div>
         <div class="info-card">
           <strong>Coverage</strong>
-          <p>Currently covering Kerala (1,200+ temples) and Tamil Nadu (400+ temples). Expanding to all states through 2025–26.</p>
+          <p>Currently covering Kerala, Tamil Nadu, Karnataka, Andhra Pradesh, Goa, and Rajasthan. Expanding to all states through 2025–26.</p>
         </div>
         <div class="info-card welfare-info-card">
           <strong>🪔 Pauranik Welfare Pledge</strong>
@@ -322,6 +325,7 @@
             <li><a href="?state=karnataka">Karnataka Temples</a></li>
             <li><a href="?state=andhra-pradesh">Andhra Pradesh Temples</a></li>
             <li><a href="?state=goa">Goa Temples</a></li>
+            <li><a href="?state=rajasthan">Rajasthan Temples</a></li>
             <li><a href="festivals.html">Festivals</a></li>
             <li><a href="pilgrim-guide.html">Pilgrim Guide</a></li>
           </ul>
@@ -353,13 +357,8 @@
   </footer>
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <!-- ─── State data files — add new states here ─── -->
-  <script src="kerala-data.js"></script>        <!-- Kerala -->
-  <script src="tamil-nadu-data.js"></script>    <!-- Tamil Nadu -->
-   <script src="karnataka-data.js"></script>    <!-- Tamil Nadu -->
-   <script src="andhra-pradesh-data.js"></script>    <!-- Tamil Nadu -->
-   <script src="goa-data.js"></script>    <!-- Tamil Nadu -->
-  <!-- main.js reads the active state and picks the correct dataset -->
+  <!-- State data files are loaded on-demand when a state tab is selected -->
+  <!-- To add a new state: add a scriptFile entry in main.js STATE_REGISTRY only -->
   <script src="main.js"></script>
 </body>
 </html>

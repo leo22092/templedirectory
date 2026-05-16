@@ -1,9 +1,12 @@
 /* ═══════════════════════════════════════════════════
-   BharatDevasthanam — main.js
+   TempleDiary — main.js
    Multi-state architecture: Kerala, Tamil Nadu (+ more)
-   Adding a new state: create a data file, add script tag
-   in index.html, register in STATE_REGISTRY below.
-   Each state is fully independent.
+   Data is loaded on-demand as JSON (data/<state>.json).
+   Adding a new state:
+     1. Run convert-to-json.sh to produce data/<state>.json
+     2. Add an entry in STATE_REGISTRY below
+     3. Add a tab button in the state switcher HTML
+   No <script> tags needed for data files.
 ═══════════════════════════════════════════════════ */
 
 (function () {
@@ -12,10 +15,10 @@
   /* ─────────────────────────────────────────────
      STATE REGISTRY
      To add a new state:
-       1. Create its data file (e.g. karnataka-data.js)
-       2. Add a <script> tag in index.html
-       3. Add an entry here
-       4. Add a tab button in the state switcher HTML
+       1. Run: bash convert-to-json.sh <state-data.js> data/<state>.json
+       2. Add an entry here (dataFile points to the JSON)
+       3. Add a tab button in the state switcher HTML
+     dataFile is relative to the site root (e.g. "data/kerala.json")
   ───────────────────────────────────────────────── */
   const STATE_REGISTRY = {
     'kerala': {
@@ -26,7 +29,7 @@
       statDistricts:'14',
       mapLabel:     'Explore Kerala',
       heroImage:    'sources/kerala_hero.jpeg',
-      getData:      () => (typeof TEMPLES_KERALA !== 'undefined' ? TEMPLES_KERALA : []),
+      dataFile:     'data/kerala.json',
       bodyClass:    'state-kerala',
     },
     'tamil-nadu': {
@@ -37,7 +40,7 @@
       statDistricts:'38',
       mapLabel:     'Explore Tamil Nadu',
       heroImage:    './sources/tamilnadu_hero.jpeg',
-      getData:      () => (typeof TEMPLES_TN !== 'undefined' ? TEMPLES_TN : []),
+      dataFile:     'data/tamil-nadu.json',
       bodyClass:    'state-tamil-nadu',
     },
     'karnataka': {
@@ -48,33 +51,88 @@
       statDistricts:'31',
       mapLabel:     'Explore Karnataka',
       heroImage:    'sources/karnataka_hero.jpeg',
-      getData:      () => (typeof TEMPLES_KA !== 'undefined' ? TEMPLES_KA : []),
+      dataFile:     'data/karnataka.json',
       bodyClass:    'state-karnataka',
     },
-   'andhra-pradesh': {
-  label:        'Andhra Pradesh',
-  eyebrow:      'Sacred Land of Telugu Heritage',
-  heroSub:      'Find temples in Andhra Pradesh — from Tirupati and Srisailam to ancient coastal and hill shrines.<br>Timings, contact numbers, travel info and more.',
-  statTemples:  '500+',
-  statDistricts:'26',
-  mapLabel:     'Explore Andhra Pradesh',
-  heroImage:    'sources/andhra_hero.jpeg',
-  getData:      () => (typeof TEMPLES_AP !== 'undefined' ? TEMPLES_AP : []),
-  bodyClass:    'state-andhra-pradesh',
-},
-
-'goa': {
-  label:        'Goa',
-  eyebrow:      'Land of Sacred Serenity',
-  heroSub:      'Discover temples of Goa — from ancient coastal shrines to serene hill temples rooted in Konkani tradition and heritage.<br>Timings, contact numbers, travel info and more.',
-  statTemples:  '150+',
-  statDistricts:'2',
-  mapLabel:     'Explore Goa',
-  heroImage:    'sources/goa_hero.jpeg',
-  getData:      () => (typeof TEMPLES_GOA !== 'undefined' ? TEMPLES_GOA : []),
-  bodyClass:    'state-goa',
-},
+    'andhra-pradesh': {
+      label:        'Andhra Pradesh',
+      eyebrow:      'Sacred Land of Telugu Heritage',
+      heroSub:      'Find temples in Andhra Pradesh — from Tirupati and Srisailam to ancient coastal and hill shrines.<br>Timings, contact numbers, travel info and more.',
+      statTemples:  '500+',
+      statDistricts:'26',
+      mapLabel:     'Explore Andhra Pradesh',
+      heroImage:    'sources/andhra_hero.jpeg',
+      dataFile:     'data/andhra-pradesh.json',
+      bodyClass:    'state-andhra-pradesh',
+    },
+    'goa': {
+      label:        'Goa',
+      eyebrow:      'Land of Sacred Serenity',
+      heroSub:      'Discover temples of Goa — from ancient coastal shrines to serene hill temples rooted in Konkani tradition and heritage.<br>Timings, contact numbers, travel info and more.',
+      statTemples:  '150+',
+      statDistricts:'2',
+      mapLabel:     'Explore Goa',
+      heroImage:    'sources/goa_hero.jpeg',
+      dataFile:     'data/goa.json',
+      bodyClass:    'state-goa',
+    },
+    'rajasthan': {
+      label:        'Rajasthan',
+      eyebrow:      'Land of Royal Temples',
+      heroSub:      'Explore Rajasthan temples and historic Devasthan shrines — from Jaipur and Bikaner to sacred sites beyond the state.<br>Locations, district filters, travel info and more.',
+      statTemples:  '433',
+      statDistricts:'31',
+      mapLabel:     'Explore Rajasthan',
+      heroImage:    'hero-bg.jpg',
+      dataFile:     'data/rajasthan.json',
+      bodyClass:    'state-rajasthan',
+    },
   };
+
+  /* ── JSON data cache: stateKey → merged temple array ── */
+  const _dataCache = {};
+
+  /**
+   * Fetches data/<state>.json if not already cached.
+   * Merges _defaults into every temple object at load time.
+   * Returns a Promise that resolves to the temple array.
+   *
+   * JSON format expected:
+   *   { "_defaults": { "dressCode": "...", ... }, "temples": [ {...}, ... ] }
+   */
+  async function loadStateData(stateKey) {
+    if (_dataCache[stateKey]) return _dataCache[stateKey];
+
+    const cfg = STATE_REGISTRY[stateKey];
+    if (!cfg || !cfg.dataFile) return [];
+
+    try {
+      const res = await fetch(cfg.dataFile);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const json = await res.json();
+
+      // Support both plain array (legacy) and { _defaults, temples } format
+      const defaults = json._defaults || {};
+      const raw      = Array.isArray(json) ? json : (json.temples || []);
+
+      _dataCache[stateKey] = raw.map(t => ({ ...defaults, ...t }));
+    } catch (err) {
+      console.warn('TempleDiary: failed to load', cfg.dataFile, err);
+      _dataCache[stateKey] = [];
+    }
+
+    return _dataCache[stateKey];
+  }
+
+  /** Convenience: get already-loaded data synchronously (empty array if not loaded yet) */
+  function getStateData(stateKey) {
+    return _dataCache[stateKey] || [];
+  }
+
+  /* ── Loading indicator helpers ── */
+  function showGridLoader() {
+    if (grid) grid.innerHTML = '<div class="td-loading" aria-live="polite" style="grid-column:1/-1;text-align:center;padding:48px 0;color:var(--muted,#888);font-size:1rem;">🕌 Loading temples…</div>';
+  }
 
   /* ── Config ── */
   const PER_PAGE = 12;
@@ -136,7 +194,8 @@
     initCookieBanner();
     initHamburger();
     initStateTabs();
-    applyState(activeState, false); // false = don't push history on first load
+    showGridLoader();
+    loadStateData(activeState).then(() => applyState(activeState, false)); // false = don't push history on first load
     initFilterListeners();
     initHeroSearch();
     initBackToTop();
@@ -152,7 +211,8 @@
       tab.addEventListener('click', () => {
         const s = tab.dataset.state;
         if (s === activeState) return;
-        applyState(s, true);
+        showGridLoader();
+        loadStateData(s).then(() => applyState(s, true));
       });
     });
   }
@@ -185,10 +245,10 @@
     if (statDistricts) statDistricts.textContent = cfg.statDistricts;
 
     // Rebuild filter dropdowns
-    populateFilters(cfg.getData());
+    populateFilters(getStateData(stateKey));
 
     // Rebuild district chips
-    populateChips(cfg.getData());
+    populateChips(getStateData(stateKey));
 
     // Update map section
     const mapLabel  = document.getElementById('map-section-label');
@@ -218,7 +278,8 @@
   // Handle browser back/forward
   window.addEventListener('popstate', e => {
     if (e.state && e.state.state) {
-      applyState(e.state.state, false);
+      showGridLoader();
+      loadStateData(e.state.state).then(() => applyState(e.state.state, false));
     }
   });
 
@@ -325,8 +386,7 @@
      FILTER & SORT
   ══════════════════════════ */
   function getFiltered() {
-    const cfg = STATE_REGISTRY[activeState];
-    const temples = cfg ? cfg.getData() : [];
+    const temples = getStateData(activeState);
     const q = state.query.toLowerCase().trim();
     return temples
       .filter(t => {

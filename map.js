@@ -9,30 +9,45 @@ const params           = new URLSearchParams(window.location.search);
 const selectedState    = params.get('state') || 'kerala';
 const selectedTempleId = Number(params.get('id')) || 0;
 
-/* ── 2. PICK CORRECT DATASET ──────────────────────────── */
-const STATE_DATA = {
-  'kerala':     (typeof TEMPLES_KERALA !== 'undefined') ? TEMPLES_KERALA : [],
-  'tamil-nadu': (typeof TEMPLES_TN     !== 'undefined') ? TEMPLES_TN     : [],
-  'karnataka':  (typeof TEMPLES_KA     !== 'undefined') ? TEMPLES_KA     : [],
+/* ── 2. STATE CONFIG ──────────────────────────────────── */
+const STATE_CONFIG = {
+  'kerala': {
+    label: 'Kerala',
+    dataFile: 'data/kerala.json',
+    view: { center: [10.8505, 76.2711], zoom: 7 },
+  },
+  'tamil-nadu': {
+    label: 'Tamil Nadu',
+    dataFile: 'data/tamil-nadu.json',
+    view: { center: [11.1271, 78.6569], zoom: 7 },
+  },
+  'karnataka': {
+    label: 'Karnataka',
+    dataFile: 'data/karnataka.json',
+    view: { center: [15.3173, 75.7139], zoom: 7 },
+  },
+  'andhra-pradesh': {
+    label: 'Andhra Pradesh',
+    dataFile: 'data/andhra-pradesh.json',
+    view: { center: [15.9129, 79.7400], zoom: 7 },
+  },
+  'goa': {
+    label: 'Goa',
+    dataFile: 'data/goa.json',
+    view: { center: [15.2993, 74.1240], zoom: 9 },
+  },
+  'rajasthan': {
+    label: 'Rajasthan',
+    dataFile: 'data/rajasthan.json',
+    view: { center: [27.0238, 74.2179], zoom: 6 },
+  },
 };
-const activeTemples = STATE_DATA[selectedState] || STATE_DATA['kerala'];
 
-/* ── 3. STATE LABELS ──────────────────────────────────── */
-const STATE_LABELS = {
-  'kerala':     'Kerala',
-  'tamil-nadu': 'Tamil Nadu',
-  'karnataka':  'Karnataka',
-};
-
-/* ── 4. MAP CENTRE PER STATE (lowercase slug keys) ───── */
-const STATE_VIEWS = {
-  'kerala':     { center: [10.8505, 76.2711], zoom: 7 },
-  'tamil-nadu': { center: [11.1271, 78.6569], zoom: 7 },
-  'karnataka':  { center: [15.3173, 75.7139], zoom: 7 },
-};
+const activeConfig = STATE_CONFIG[selectedState] || STATE_CONFIG.kerala;
+let activeTemples = [];
 
 /* ── 5. INIT MAP ──────────────────────────────────────── */
-const view = STATE_VIEWS[selectedState] || STATE_VIEWS['kerala'];
+const view = activeConfig.view;
 const map = L.map('map').setView(view.center, view.zoom);
 
 L.tileLayer(
@@ -86,12 +101,11 @@ function renderMarkers() {
     return mDist && mDeity && mFamous && mSearch;
   });
 
+  const mappable = filtered.filter(t => t.lat && t.lng);
   const countEl = document.getElementById('visible-count');
-  if (countEl) countEl.textContent = filtered.length;
+  if (countEl) countEl.textContent = mappable.length;
 
-  filtered.forEach(t => {
-    if (!t.lat || !t.lng) return;
-
+  mappable.forEach(t => {
     const marker = L.marker([t.lat, t.lng]).addTo(map);
     marker.bindPopup(`
       <div style="min-width:210px;font-family:sans-serif;line-height:1.5">
@@ -122,7 +136,22 @@ function renderMarkers() {
   }
 }
 
-/* ── 8. EVENT LISTENERS ───────────────────────────────── */
+/* ── 8. DATA LOADING ──────────────────────────────────── */
+async function loadActiveTemples() {
+  try {
+    const res = await fetch(activeConfig.dataFile);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
+    const defaults = json._defaults || {};
+    const raw = Array.isArray(json) ? json : (json.temples || []);
+    activeTemples = raw.map(t => ({ ...defaults, ...t }));
+  } catch (err) {
+    console.warn('BharatDevasthanam map: failed to load', activeConfig.dataFile, err);
+    activeTemples = [];
+  }
+}
+
+/* ── 9. EVENT LISTENERS ───────────────────────────────── */
 document.getElementById('district-filter')?.addEventListener('change', renderMarkers);
 document.getElementById('deity-filter')?.addEventListener('change',    renderMarkers);
 document.getElementById('famous-filter')?.addEventListener('change',   renderMarkers);
@@ -136,16 +165,17 @@ document.getElementById('clear-map-filters')?.addEventListener('click', () => {
   renderMarkers();
 });
 
-/* ── 9. PAGE TITLE & HEADING ──────────────────────────── */
-const stateLabel = STATE_LABELS[selectedState] || 'India';
+/* ── 10. PAGE TITLE & HEADING ─────────────────────────── */
+const stateLabel = activeConfig.label || 'India';
 document.title = `${stateLabel} Temple Map — BharatDevasthanam`;
 
 const pageHeading = document.getElementById('map-page-title');
 if (pageHeading) pageHeading.textContent = `${stateLabel} Temple Map`;
 
-const pageSub = document.getElementById('map-page-sub');
-if (pageSub) pageSub.textContent = `${activeTemples.length} temples mapped`;
-
-/* ── 10. KICK OFF ─────────────────────────────────────── */
-populateDropdowns();
-renderMarkers();
+/* ── 11. KICK OFF ─────────────────────────────────────── */
+loadActiveTemples().then(() => {
+  const pageSub = document.getElementById('map-page-sub');
+  if (pageSub) pageSub.textContent = `${activeTemples.length} temples loaded`;
+  populateDropdowns();
+  renderMarkers();
+});
