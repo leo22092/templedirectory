@@ -680,8 +680,13 @@
       loadBackstories().then(() => renderBackstory(t));
     }
 
+    const mapSearchUrl = getGoogleMapsSearchUrl(t);
+    const locationLink = t.location && mapSearchUrl
+      ? `<a href="${mapSearchUrl}" target="_blank" rel="noopener noreferrer">${escHtml(t.location)}</a>`
+      : t.location;
+
     const rows = [
-      ['Location',    t.location],
+      ['Location',    locationLink],
       ['District',    t.district],
       ['Famous For',  t.famousFor],
       ['Timings',     t.timing],
@@ -694,20 +699,15 @@
     const info = modalOverlay.querySelector('#modal-info');
     info.innerHTML = rows
       .filter(([, v]) => v)
-      .map(([l, v]) => `<div class="modal-info-row"><span class="modal-info-label">${l}</span><span class="modal-info-value">${l === 'Phone' ? v : escHtml(v)}</span></div>`)
+      .map(([l, v]) => `<div class="modal-info-row"><span class="modal-info-label">${l}</span><span class="modal-info-value">${l === 'Phone' || l === 'Location' ? v : escHtml(v)}</span></div>`)
       .join('');
 
     const actions = modalOverlay.querySelector('#modal-actions');
     actions.innerHTML = '';
-    const lat = Number(t.lat);
-    const lng = Number(t.lng);
-    const hasCoordinates = Number.isFinite(lat) && Number.isFinite(lng);
-    if (hasCoordinates || t.location) {
+    if (mapSearchUrl) {
       const mapBtn = document.createElement('a');
       mapBtn.className = 'modal-map-btn';
-      mapBtn.href = hasCoordinates
-        ? `https://www.google.com/maps?q=${lat},${lng}`
-        : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${t.name} ${t.location} ${t.district || ''}`)}`;
+      mapBtn.href = mapSearchUrl;
       mapBtn.target = '_blank'; mapBtn.rel = 'noopener noreferrer';
       mapBtn.innerHTML = `${iconLocation()} View on Map`;
       actions.appendChild(mapBtn);
@@ -729,6 +729,19 @@
 
     modalOverlay.classList.add('open');
     document.body.style.overflow = 'hidden';
+  }
+
+  function getGoogleMapsSearchUrl(t) {
+    const stateLabel = STATE_REGISTRY[activeState]?.label || '';
+    const query = [t.name, t.location, t.district, stateLabel, 'India']
+      .map(part => String(part || '').trim())
+      .filter(Boolean)
+      .filter((part, index, parts) => parts.indexOf(part) === index)
+      .join(' ');
+
+    return query
+      ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`
+      : '';
   }
 
   function renderBackstory(t) {
