@@ -529,41 +529,38 @@
     window.acceptCookies  = () => { localStorage.setItem('kd_cookie_choice','accepted'); if(banner) banner.style.display='none'; };
     window.declineCookies = () => { localStorage.setItem('kd_cookie_choice','essential'); if(banner) banner.style.display='none'; };
 
+    const CONTACT_TO_EMAIL = 'contact@templediary.in';
+    const FORM_SUBMIT_EMAIL = 'mymail2837@gmail.com';
+    const WORKER_SUBMISSION_ENDPOINT = '/api/submit-temple';
+    const FORM_SUBMIT_AJAX_ENDPOINT = `https://formsubmit.co/ajax/${FORM_SUBMIT_EMAIL}`;
+
     /* ── Contact form submit ── */
-    function submitContactForm() {
+    async function submitContactForm() {
       const name    = document.getElementById('cf-name').value.trim();
       const email   = document.getElementById('cf-email').value.trim();
       const subject = document.getElementById('cf-subject').value;
       const message = document.getElementById('cf-message').value.trim();
       const temple  = document.getElementById('cf-temple').value.trim();
       const phone   = document.getElementById('cf-phone').value.trim();
-      const msg     = document.getElementById('cf-msg');
+      const submitBtn = document.querySelector('.cf-submit');
 
       if (!name)    { showMsg('error', 'Please enter your name.'); return; }
       if (!email || !email.includes('@')) { showMsg('error', 'Please enter a valid email address.'); return; }
       if (!subject) { showMsg('error', 'Please select a subject.'); return; }
       if (!message) { showMsg('error', 'Please write a message.'); return; }
 
-      /* ── mailto fallback — replace with Formspree fetch() when ready ── */
-      /*
-        To use Formspree (free, recommended):
-        1. Sign up at formspree.io
-        2. Create a form → get endpoint e.g. https://formspree.io/f/xabcdefg
-        3. Replace the mailto block below with:
-
-        fetch('https://formspree.io/f/xabcdefg', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, email, subject, temple, message, phone })
-        })
-        .then(r => {
-          if (r.ok) showMsg('success', '✅ Message sent! We will reply within 2–3 days.');
-          else      showMsg('error',   'Something went wrong. Please email us directly.');
-        })
-        .catch(() => showMsg('error', 'Could not send. Please email contact@templediary.in directly.'));
-        return;
-      */
-
+      const payload = {
+        kind: subject === 'submit' ? 'temple-submission' : 'contact-message',
+        source: 'contact-page',
+        Subject: subject,
+        Temple: temple,
+        Message: message,
+        'Submitted By': name,
+        'Submitter Email': email,
+        Phone: phone,
+      };
+      const formData = new FormData();
+      const mailSubject = '[TempleDiary] ' + (subject || 'Message');
       const body = [
         `Name: ${name}`,
         `Email: ${email}`,
@@ -572,10 +569,95 @@
         phone   ? `Phone/WhatsApp: ${phone}` : '',
         `\nMessage:\n${message}`,
       ].filter(Boolean).join('\n');
+      const mailto = `mailto:${CONTACT_TO_EMAIL}?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(body)}`;
 
-      const mailto = `mailto:contact@templediary.in?subject=${encodeURIComponent('[TempleDiary] ' + (subject || 'Message'))}&body=${encodeURIComponent(body)}`;
-      showMsg('success', '✅ Opening your email app to send the message…');
-      setTimeout(() => { window.location.href = mailto; }, 1000);
+      formData.append('_subject', mailSubject);
+      formData.append('_captcha', 'false');
+      formData.append('_template', 'table');
+      Object.entries(payload).forEach(([key, value]) => {
+        if (key === 'kind' || key === 'source') return;
+        formData.append(key, value || '');
+      });
+
+      try {
+        submitBtn.disabled = true;
+        submitBtn.setAttribute('aria-busy', 'true');
+        showMsg('success', 'Sending...');
+
+        const workerResult = await tryPostWorkerSubmission(payload);
+        const formSubmitResult = await tryPostFormSubmitSubmission(formData);
+
+        if (!workerResult.ok && !formSubmitResult.ok) {
+          throw formSubmitResult.error || workerResult.error || new Error('Submission failed.');
+        }
+
+        showMsg('success', 'Message sent. We will reply within 2-3 days.');
+      } catch (err) {
+        showMsg('error', 'Online submission is unavailable. Opening your email app...');
+        addEmailFallback(mailto);
+        setTimeout(() => { window.location.href = mailto; }, 600);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.removeAttribute('aria-busy');
+      }
+    }
+
+    async function tryPostWorkerSubmission(payload) {
+      try {
+        await postWorkerSubmission(payload);
+        return { ok: true };
+      } catch (err) {
+        console.warn('TempleDiary: worker submit failed', err);
+        return { ok: false, error: err };
+      }
+    }
+
+    async function tryPostFormSubmitSubmission(formData) {
+      try {
+        await postFormSubmitSubmission(formData);
+        return { ok: true };
+      } catch (err) {
+        console.warn('TempleDiary: FormSubmit failed', err);
+        return { ok: false, error: err };
+      }
+    }
+
+    async function postWorkerSubmission(payload) {
+      const response = await fetch(WORKER_SUBMISSION_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Worker returned HTTP ${response.status}`);
+      }
+    }
+
+    async function postFormSubmitSubmission(formData) {
+      const response = await fetch(FORM_SUBMIT_AJAX_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`FormSubmit returned HTTP ${response.status}`);
+      }
+    }
+
+    function addEmailFallback(mailto) {
+      const el = document.getElementById('cf-msg');
+      const link = document.createElement('a');
+      link.href = mailto;
+      link.textContent = 'Send by email';
+      link.style.display = 'inline-block';
+      link.style.marginTop = '8px';
+      el.appendChild(document.createElement('br'));
+      el.appendChild(link);
     }
 
     function showMsg(type, text) {

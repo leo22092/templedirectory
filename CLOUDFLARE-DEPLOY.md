@@ -129,6 +129,46 @@ Compress at: [squoosh.app](https://squoosh.app)
 
 ---
 
+## Temple submission Worker
+
+The contact form and temple submission modal post to `/api/submit-temple` first. Cloudflare Pages serves this from:
+
+```
+functions/api/submit-temple.js
+```
+
+For now, submissions are saved in Cloudflare KV. Create a KV namespace in Cloudflare:
+
+1. Cloudflare Dashboard → Workers & Pages → KV
+2. Create namespace: `temple_submissions`
+3. Go to Pages → your project → Settings → Bindings
+4. Add a binding:
+   - Variable name: `TEMPLE_SUBMISSIONS`
+   - KV namespace: `temple_submissions`
+
+The Pages Function also accepts Cloudflare's common example binding name `KV`, but `TEMPLE_SUBMISSIONS` is clearer for this project.
+
+After this, every successful form submission is saved under a key like:
+
+```
+temple-submission/2026-05-21/1779360000000-uuid
+```
+
+Later, you can add email delivery with these environment variables:
+
+| Variable | Purpose |
+|----------|---------|
+| `RESEND_API_KEY` | Preferred Worker mail provider. Sends through Resend. |
+| `SUBMISSION_TO_EMAIL` | Destination inbox for Worker submissions. Defaults to `mymail2837@gmail.com`. |
+| `SUBMISSION_FROM_EMAIL` | Verified sender for Resend. Defaults to `TempleDiary <submissions@templediary.in>`. |
+| `FORM_SUBMIT_EMAIL` | Optional Worker-side FormSubmit fallback if Resend is not configured. |
+
+Browser fallback order is:
+
+1. `/api/submit-temple` Worker, saved to KV
+2. FormSubmit AJAX
+3. User email client via `mailto:`
+
 ## Environment variables (if needed later)
 
 For AdSense ID, Analytics ID etc., you can set these in:
