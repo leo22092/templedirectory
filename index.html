@@ -9,6 +9,8 @@
   <meta name="author" content="TempleDiary.in" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://www.templediary.in/" />
+
+  <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="TempleDiary — India Temple Directory" />
   <meta property="og:description" content="Find any temple across India. Search by name, district, deity or location. Timings, contact numbers and travel info." />
@@ -16,14 +18,22 @@
   <meta property="og:image" content="https://www.templediary.in/og-image.jpg" />
   <meta property="og:locale" content="en_IN" />
   <meta property="og:site_name" content="TempleDiary" />
+
+  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="TempleDiary — India Temple Directory" />
   <meta name="twitter:description" content="Find any temple across India — search by state, district, deity, or name." />
+
+  <!-- Geo -->
   <meta name="geo.region" content="IN" />
   <meta name="geo.placename" content="India" />
+
+  <!-- Icons & Manifest -->
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
   <link rel="manifest" href="site.webmanifest" />
+
+  <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -39,22 +49,119 @@
     "publisher": { "@type": "Organization", "name": "TempleDiary", "url": "https://www.templediary.in/" }
   }
   </script>
+
   <!-- GOOGLE ADSENSE — replace publisher ID when ready -->
   <!--
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
   -->
+
   <!-- GOOGLE ANALYTICS 4 — replace measurement ID when ready -->
   <!--
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-XXXXXXXXXX');</script>
   -->
+
   <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── Contribute section button layout ── */
+    .contribute-section .contribute-group {
+      margin-top: 20px;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 22px;
+      background: linear-gradient(135deg, #e8832a 0%, #c86f12 100%);
+      border: 1px solid rgba(123, 70, 0, 0.25);
+      border-radius: 16px;
+      box-shadow: 0 14px 30px rgba(123, 70, 0, 0.18);
+    }
+    .contribute-section .contribute-group-label {
+      color: #fff;
+      font-family: var(--font-display, Georgia, serif);
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      opacity: 1;
+      max-width: none;
+      margin: 0 0 16px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.18);
+    }
+    .contribute-actions {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .contribute-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 20px;
+      min-height: 96px;
+      border-radius: 12px;
+      border: 2px solid rgba(255,255,255,0.45);
+      cursor: pointer;
+      font-family: inherit;
+      text-align: left;
+      box-shadow: 0 8px 20px rgba(86, 42, 0, 0.16);
+      transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+    }
+    .contribute-btn:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,0.85);
+      box-shadow: 0 12px 24px rgba(86, 42, 0, 0.22);
+    }
+    .contribute-btn-icon {
+      font-size: 1.6rem;
+      line-height: 1;
+    }
+    .contribute-btn-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .contribute-btn-text strong {
+      font-size: 0.95rem;
+    }
+    .contribute-btn-text small {
+      font-size: 0.75rem;
+      opacity: 0.75;
+    }
+    /* Home — muted warm tone */
+    .contribute-btn--home {
+      background: #fdf6ec;
+      border-color: #e2c97e;
+      color: #6b3f0e;
+    }
+    /* At temple — highlighted, action color */
+    .contribute-btn--temple {
+      background: #fff8e7;
+      border-color: #c8860a;
+      color: #7a4500;
+      font-weight: 600;
+    }
+    /* Correction — subtle, secondary */
+    .contribute-btn--correction {
+      background: #fff;
+      border-color: #ffd08a;
+      color: #5a3410;
+    }
+    @media (max-width: 760px) {
+      .contribute-actions {
+        grid-template-columns: 1fr;
+      }
+      .contribute-btn {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
 
   <!-- ═══ COOKIE CONSENT BANNER ═══ -->
   <div id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite">
-    <p>We use cookies and Google AdSense to serve personalised ads and improve your experience.
+    <p>
+      We use cookies and Google AdSense to serve personalised ads and improve your experience.
       <a href="privacy.html">Privacy Policy</a> · <a href="privacy.html#cookies">Cookie Policy</a>
     </p>
     <div class="cookie-actions">
@@ -89,7 +196,10 @@
   <div class="state-switcher-bar" id="state-switcher-bar" role="navigation" aria-label="Select state">
     <div class="state-switcher-inner">
       <span class="state-switcher-label">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="display:inline;vertical-align:middle;margin-right:5px"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="display:inline;vertical-align:middle;margin-right:5px">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
         Browse by State:
       </span>
       <div class="state-tabs" role="tablist">
@@ -99,14 +209,14 @@
         <button class="state-tab" data-state="tamil-nadu" role="tab" aria-selected="false" aria-label="View Tamil Nadu temples">
           <span class="state-flag">🏛️</span> Tamil Nadu
         </button>
-        <button class="state-tab" data-state= "karnataka" role="tab" aria-selected="false" aria-label="View Karnataka temples">
-          <span class="state-flag">🏔️</span> Karnataka 
+        <button class="state-tab" data-state="karnataka" role="tab" aria-selected="false" aria-label="View Karnataka temples">
+          <span class="state-flag">🏔️</span> Karnataka
         </button>
-                <button class="state-tab" data-state= "andhra-pradesh" role="tab" aria-selected="false" aria-label="View Andhra Pradesh temples">
-          <span class="state-flag">🏔️</span> Andhra Pradesh 
+        <button class="state-tab" data-state="andhra-pradesh" role="tab" aria-selected="false" aria-label="View Andhra Pradesh temples">
+          <span class="state-flag">🏔️</span> Andhra Pradesh
         </button>
-                <button class="state-tab" data-state= "goa" role="tab" aria-selected="false" aria-label="View goa temples">
-          <span class="state-flag">🏔️</span> Goa 
+        <button class="state-tab" data-state="goa" role="tab" aria-selected="false" aria-label="View goa temples">
+          <span class="state-flag">🏔️</span> Goa
         </button>
         <button class="state-tab" data-state="rajasthan" role="tab" aria-selected="false" aria-label="View Rajasthan temples">
           <span class="state-flag">🏰</span> Rajasthan
@@ -128,7 +238,10 @@
       <h1 id="hero-heading">
         <span id="hero-state-name">India</span> Temple Directory
       </h1>
-      <p class="hero-sub" id="hero-sub">Find any temple across India — search by name, district, deity or location.<br>Timings, contact numbers, travel info and more.</p>
+      <p class="hero-sub" id="hero-sub">
+        Find any temple across India — search by name, district, deity or location.<br>
+        Timings, contact numbers, travel info and more.
+      </p>
       <form class="search-form" role="search" action="/" method="get" aria-label="Search temples">
         <label for="hero-search" class="sr-only">Search temples</label>
         <input type="search" id="hero-search" name="q" placeholder="Temple name, deity, location…" autocomplete="off" />
@@ -149,7 +262,8 @@
       <div class="welfare-icon" aria-hidden="true">🪔</div>
       <div class="welfare-text">
         <strong>Our Commitment to Pauranik Seva:</strong>
-        Should this site generate any revenue in future, <strong>25% of all revenue</strong> will be directed towards the welfare of deserving elderly Pauranik priests and temple workers of small temples across India.
+        Should this site generate any revenue in future, <strong>25% of all revenue</strong> will be directed
+        towards the welfare of deserving elderly Pauranik priests and temple workers of small temples across India.
         <em>We do not accept, solicit, or receive any donations or gifts of any kind.</em>
       </div>
     </div>
@@ -161,57 +275,107 @@
     <div class="ad-placeholder"><p>Ad slot — 728×90</p></div>
   </div>
 
+  <!-- ═══ TEMPLE MAP SECTION ═══ -->
+  <section class="map-section" aria-labelledby="map-section-heading" id="map-section">
 
-<!-- ═════════ TEMPLE MAP SECTION ═════════ -->
-<section class="map-section" aria-labelledby="map-section-heading" id="map-section">
+    <!-- Background image layer — swapped per state by JS -->
+    <div class="map-section-bg" id="map-section-bg" aria-hidden="true"></div>
 
-  <!-- background image layer — swapped per state by JS -->
-  <div class="map-section-bg" id="map-section-bg" aria-hidden="true"></div>
-
-  <div class="container map-section-inner">
-    <div class="map-section-text">
-      <p class="section-label" id="map-section-label">Explore Kerala</p>
-      <h2 id="map-section-heading">Temple Map Explorer</h2>
-      <p class="map-text">
-        Discover temples across every district on our interactive map.
-        Filter by deity, zoom into your district, and get directions — all in one place.
-      </p>
-      <ul class="map-features" aria-label="Map features">
-        <li>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          Pin locations for all temples
-        </li>
-        <li>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          Filter by district &amp; deity
-        </li>
-        <li>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
-          Click any pin for temple details
-        </li>
-      </ul>
+    <div class="container map-section-inner">
+      <div class="map-section-text">
+        <p class="section-label" id="map-section-label">Explore Kerala</p>
+        <h2 id="map-section-heading">Temple Map Explorer</h2>
+        <p class="map-text">
+          Discover temples across every district on our interactive map.
+          Filter by deity, zoom into your district, and get directions — all in one place.
+        </p>
+        <ul class="map-features" aria-label="Map features">
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+            Pin locations for all temples
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="11" cy="11" r="8"/>
+              <path d="m21 21-4.35-4.35"/>
+            </svg>
+            Filter by district &amp; deity
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            </svg>
+            Click any pin for temple details
+          </li>
+        </ul>
+      </div>
+      <!-- href is updated dynamically by JS with ?state= param -->
+      <a href="map.html" class="map-btn" id="map-section-btn" aria-label="Open interactive temple map">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
+          <line x1="8" y1="2" x2="8" y2="18"/>
+          <line x1="16" y1="6" x2="16" y2="22"/>
+        </svg>
+        Open Temple Map
+      </a>
     </div>
-    <!-- href is updated dynamically by JS with ?state= param -->
-    <a href="map.html" class="map-btn" id="map-section-btn" aria-label="Open interactive temple map">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
-      Open Temple Map
-    </a>
-  </div>
-</section>
+  </section>
 
   <!-- ═══ CONTRIBUTE SECTION ═══ -->
   <section class="contribute-section">
     <div class="container">
       <h2>Is your temple not listed?</h2>
       <p>
-        Contribute what you know! We rely on devotees like you to keep our directory accurate and comprehensive. Help us preserve our rich heritage by adding missing temples or suggesting corrections to existing ones.
+        Contribute what you know! We rely on devotees like you to keep our directory accurate and
+        comprehensive. Help us preserve our rich heritage by adding missing temples or suggesting
+        corrections to existing ones.
       </p>
-      <button onclick="window.openSubmitModal(null)" class="map-btn">
-        ➕ Submit a Temple / Suggest Correction
-      </button>
+
+      <!-- ── Submit a Temple ── -->
+      <div class="contribute-group">
+        <p class="contribute-group-label">➕ Submit a Temple</p>
+        <div class="contribute-actions">
+          <button
+            class="contribute-btn contribute-btn--home"
+            onclick="window.openSubmitModal(null)"
+            aria-label="Submit a temple from home manually"
+          >
+            <span class="contribute-btn-icon">🏠</span>
+            <span class="contribute-btn-text">
+              <strong>Submitting from Home</strong>
+              <small>Fill in details manually</small>
+            </span>
+          </button>
+          <button
+            class="contribute-btn contribute-btn--temple"
+            onclick="window.openSubmitModalAtTemple()"
+            aria-label="Submit a temple using GPS — I am at the temple now"
+          >
+            <span class="contribute-btn-icon">📍</span>
+            <span class="contribute-btn-text">
+              <strong>I'm at the Temple Now</strong>
+              <small>Auto-detect my location</small>
+            </span>
+          </button>
+          <button
+            class="contribute-btn contribute-btn--correction"
+            onclick="window.openSubmitModal(null)"
+            aria-label="Suggest a correction to an existing temple listing"
+          >
+            <span class="contribute-btn-icon">💡</span>
+            <span class="contribute-btn-text">
+              <strong>Suggest a Correction</strong>
+              <small>Fix wrong info in an existing listing</small>
+            </span>
+          </button>
+        </div>
+      </div>
+
     </div>
   </section>
-
 
   <!-- ═══ QUICK DISTRICT CHIPS ═══ -->
   <section class="quick-districts" id="quick-districts" aria-labelledby="districts-heading">
@@ -267,7 +431,8 @@
       <div id="temple-grid" class="temple-grid" role="list" aria-live="polite" aria-label="Temple listing"></div>
       <div id="no-results" class="no-results" hidden aria-live="assertive">
         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-          <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.35-4.35"/>
         </svg>
         <p>No temples found. Try adjusting your search or filters.</p>
       </div>
@@ -360,5 +525,7 @@
   <!-- State data files are loaded on-demand when a state tab is selected -->
   <!-- To add a new state: add a scriptFile entry in main.js STATE_REGISTRY only -->
   <script src="main.js?v=20260518-famous-for"></script>
+  <script src="submit-location.js"></script>
+
 </body>
 </html>

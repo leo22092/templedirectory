@@ -1015,6 +1015,34 @@ footer::before {
   .nav-toggle { display: flex; }
   header { position: sticky; }
 
+  .state-switcher-bar {
+    position: static;
+    padding: 0.55rem 0;
+  }
+  .state-switcher-inner {
+    display: block;
+    padding: 0 1rem;
+  }
+  .state-switcher-label {
+    margin-bottom: 0.45rem;
+    font-size: 0.72rem;
+  }
+  .state-tabs {
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 0.15rem;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .state-tabs::-webkit-scrollbar { display: none; }
+  .state-tab {
+    flex: 0 0 auto;
+    padding: 0.5rem 0.85rem;
+    font-size: 0.84rem;
+  }
+
   .hero { padding: 3.5rem 1.25rem 3rem; }
   .hero-stats { gap: 1.5rem; }
   .stat strong { font-size: 1.4rem; }

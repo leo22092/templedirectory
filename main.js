@@ -30,7 +30,6 @@
       mapLabel:     'Explore Kerala',
       heroImage:    'sources/kerala_hero.jpeg',
       dataFile:     'data/kerala.json',
-      dataFiles:    ['data/kerala.json', 'kerala.json'],
       bodyClass:    'state-kerala',
     },
     'tamil-nadu': {
@@ -53,7 +52,6 @@
       mapLabel:     'Explore Karnataka',
       heroImage:    'sources/karnataka_hero.jpeg',
       dataFile:     'data/karnataka.json',
-      dataFiles:    ['data/karnataka.json', 'karnataka.json'],
       bodyClass:    'state-karnataka',
     },
     'andhra-pradesh': {
@@ -65,7 +63,6 @@
       mapLabel:     'Explore Andhra Pradesh',
       heroImage:    'sources/andhra_hero.jpeg',
       dataFile:     'data/andhra-pradesh.json',
-      dataFiles:    ['data/andhra-pradesh.json', 'andhra-pradesh.json'],
       bodyClass:    'state-andhra-pradesh',
     },
     'goa': {
@@ -79,25 +76,13 @@
       dataFile:     'data/goa.json',
       bodyClass:    'state-goa',
     },
-    'rajasthan': {
-      label:        'Rajasthan',
-      eyebrow:      'Land of Royal Temples',
-      heroSub:      'Explore Rajasthan temples and historic Devasthan shrines — from Jaipur and Bikaner to sacred sites beyond the state.<br>Locations, district filters, travel info and more.',
-      statTemples:  '433',
-      statDistricts:'31',
-      mapLabel:     'Explore Rajasthan',
-      heroImage:    'hero-bg.jpg',
-      dataFile:     'data/rajasthan.json',
-      bodyClass:    'state-rajasthan',
-    },
   };
 
   /* ── JSON data cache: stateKey → merged temple array ── */
   const _dataCache = {};
-  let _backstoryCache = null;
 
   /**
-   * Fetches JSON source files for a state if not already cached.
+   * Fetches data/<state>.json if not already cached.
    * Merges _defaults into every temple object at load time.
    * Returns a Promise that resolves to the temple array.
    *
@@ -108,147 +93,24 @@
     if (_dataCache[stateKey]) return _dataCache[stateKey];
 
     const cfg = STATE_REGISTRY[stateKey];
-    if (!cfg || (!cfg.dataFile && !cfg.dataFiles)) return [];
+    if (!cfg || !cfg.dataFile) return [];
 
     try {
-      const sources = cfg.dataFiles || [cfg.dataFile];
-      const loaded = await Promise.all(sources.map(loadTempleJsonSource));
+      const res = await fetch(cfg.dataFile);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const json = await res.json();
 
-      _dataCache[stateKey] = mergeTempleSources(loaded);
+      // Support both plain array (legacy) and { _defaults, temples } format
+      const defaults = json._defaults || {};
+      const raw      = Array.isArray(json) ? json : (json.temples || []);
+
+      _dataCache[stateKey] = raw.map(t => ({ ...defaults, ...t }));
     } catch (err) {
-      console.warn('TempleDiary: failed to load state data', stateKey, err);
+      console.warn('TempleDiary: failed to load', cfg.dataFile, err);
       _dataCache[stateKey] = [];
     }
 
     return _dataCache[stateKey];
-  }
-
-  async function loadTempleJsonSource(dataFile) {
-    try {
-      const res = await fetch(dataFile, { cache: 'no-store' });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const json = await res.json();
-
-      // Support both plain array (legacy) and { _defaults, temples } format.
-      const defaults = json._defaults || {};
-      const raw = Array.isArray(json) ? json : (json.temples || []);
-
-      return raw.map(t => ({ ...defaults, ...t }));
-    } catch (err) {
-      console.warn('TempleDiary: failed to load', dataFile, err);
-      return [];
-    }
-  }
-
-  function mergeTempleSources(sources) {
-    const merged = [];
-    const byKey = new Map();
-
-    sources.flat().forEach(temple => {
-      const key = temple.id
-        ? `id:${temple.id}`
-        : `name:${normalizeTempleName(temple.name)}:${String(temple.district || '').toLowerCase()}`;
-
-      if (!byKey.has(key)) {
-        byKey.set(key, temple);
-        merged.push(temple);
-        return;
-      }
-
-      Object.assign(byKey.get(key), mergeTempleRecord(byKey.get(key), temple));
-    });
-
-    return merged;
-  }
-
-  function mergeTempleRecord(current, incoming) {
-    const merged = { ...current };
-
-    Object.entries(incoming).forEach(([key, value]) => {
-      if (value !== null && value !== undefined && value !== '') {
-        merged[key] = value;
-      }
-    });
-
-    return merged;
-  }
-
-  async function loadBackstories() {
-    if (_backstoryCache) return _backstoryCache;
-
-    try {
-      const res = await fetch('backstory.txt');
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const text = await res.text();
-      _backstoryCache = parseBackstories(text);
-    } catch (err) {
-      console.warn('TempleDiary: failed to load backstory.txt', err);
-      _backstoryCache = {};
-    }
-
-    return _backstoryCache;
-  }
-
-  function parseBackstories(text) {
-    const stories = {};
-    const sections = text.split(/\n(?=\s*(?:\d+\.|\.)\s+)/g);
-
-    sections.forEach(section => {
-      const lines = section.trim().split('\n').map(line => line.trim()).filter(Boolean);
-      if (!lines.length) return;
-
-      const heading = lines[0].replace(/^(?:\d+\.|\.)\s*/, '').trim();
-      let label = 'Temple Back Story';
-      let bodyLines = lines.slice(1);
-      const labelMatch = bodyLines[0]?.match(/^\[(.+)\]$/);
-      if (labelMatch) {
-        label = labelMatch[1].trim();
-        bodyLines = bodyLines.slice(1);
-      }
-
-      const story = {
-        label,
-        text: bodyLines.join('\n\n').trim(),
-      };
-      if (!heading || !story.text) return;
-
-      stories[normalizeTempleName(heading)] = story;
-
-      const aliases = {
-        'Lokanarkavu Temple': ['Lokanarkavu Bhagavathy Temple'],
-        'Kottiyoor Shiva Temple': ['Kottiyoor Mahadeva Temple'],
-        'Kotarakkara Mahaganapathy Temple': [
-          'Kottarakkara Sree Mahaganapathi Temple',
-          'Kottarakkara Sree Mahaganapathy Temple',
-        ],
-        'Thrikkakkara Vamana Temple': ['Thrikkakara Vamana Moorthy Temple'],
-      };
-
-      (aliases[heading] || []).forEach(alias => {
-        stories[normalizeTempleName(alias)] = story;
-      });
-    });
-
-    return stories;
-  }
-
-  function normalizeTempleName(name) {
-    return String(name || '')
-      .toLowerCase()
-      .replace(/\([^)]*\)/g, '')
-      .replace(/\[[^\]]*\]/g, '')
-      .replace(/\b(sree|sri|shri)\b/g, '')
-      .replace(/\btemple\b/g, '')
-      .replace(/\bnava mukunda\b/g, 'navamukunda')
-      .replace(/\bkottarakkara\b/g, 'kotarakkara')
-      .replace(/[^a-z0-9]+/g, '')
-      .trim();
-  }
-
-  function getTempleBackstory(temple) {
-    if (!_backstoryCache) return '';
-    const story = _backstoryCache[normalizeTempleName(temple.name)];
-    return typeof story === 'string' ? { label: 'Temple Back Story', text: story } : story;
   }
 
   /** Convenience: get already-loaded data synchronously (empty array if not loaded yet) */
@@ -264,8 +126,7 @@
   /* ── Config ── */
   const PER_PAGE = 12;
   const DEFAULT_STATE = 'kerala';
-  const FORM_SUBMIT_EMAIL = 'submit@templediary.com';
-  const WORKER_SUBMISSION_ENDPOINT = '/api/submit-temple';
+  const FORM_SUBMIT_EMAIL = 'mymail2837@gmail.com';
   const FORM_SUBMIT_ENDPOINT = `https://formsubmit.co/${FORM_SUBMIT_EMAIL}`;
   const FORM_SUBMIT_AJAX_ENDPOINT = `https://formsubmit.co/ajax/${FORM_SUBMIT_EMAIL}`;
 
@@ -329,7 +190,6 @@
     initBackToTop();
     initModal();
     initSubmitModal();
-    loadBackstories();
   }
 
   /* ══════════════════════════
@@ -524,8 +384,7 @@
           t.deity.toLowerCase().includes(q) ||
           t.district.toLowerCase().includes(q) ||
           t.location.toLowerCase().includes(q) ||
-          (t.description && t.description.toLowerCase().includes(q)) ||
-          (t.famousFor && t.famousFor.toLowerCase().includes(q));
+          (t.description && t.description.toLowerCase().includes(q));
         const matchD  = !state.district || t.district === state.district;
         const matchDe = !state.deity    || t.deity    === state.deity;
         return matchQ && matchD && matchDe;
@@ -580,7 +439,6 @@
         ${t.timing ? `<div class="card-meta-row">${iconClock()}<span>${escHtml(t.timing)}</span></div>` : ''}
         ${t.phone  ? `<div class="card-meta-row">${iconPhone()}<span><a href="tel:${escHtml(t.phone)}">${escHtml(t.phone)}</a></span></div>` : ''}
       </div>
-      <div class="card-open">View details</div>
     `;
     div.addEventListener('click', () => openModal(t));
     div.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') openModal(t); });
@@ -663,7 +521,7 @@
     modalOverlay.setAttribute('role', 'dialog');
     modalOverlay.setAttribute('aria-modal', 'true');
     modalOverlay.setAttribute('aria-label', 'Temple detail');
-    modalOverlay.innerHTML = `<div class="modal temple-detail-modal"><div class="modal-header"><div id="modal-deity" class="modal-deity"></div><div id="modal-name" class="modal-name"></div><button class="modal-close" aria-label="Close">✕</button></div><div class="modal-body"><p id="modal-badge" class="modal-badge"></p><p id="modal-desc" class="modal-desc"></p><section id="modal-story" class="modal-story" hidden><div class="modal-story-label">Temple Back Story</div><p id="modal-story-text"></p></section><div class="modal-info" id="modal-info"></div><div class="modal-actions" id="modal-actions"></div></div></div>`;
+    modalOverlay.innerHTML = `<div class="modal"><div class="modal-header"><div id="modal-deity" class="modal-deity"></div><div id="modal-name" class="modal-name"></div><button class="modal-close" aria-label="Close">✕</button></div><div class="modal-body"><p id="modal-badge" class="modal-badge"></p><p id="modal-desc" class="modal-desc"></p><div class="modal-info" id="modal-info"></div><div class="modal-actions" id="modal-actions"></div></div></div>`;
     document.body.appendChild(modalOverlay);
     modalOverlay.querySelector('.modal-close').addEventListener('click', closeModal);
     modalOverlay.addEventListener('click', e => { if (e.target === modalOverlay) closeModal(); });
@@ -676,20 +534,10 @@
     modalOverlay.querySelector('#modal-badge').textContent = t.famous ? '⭐ Famous Temple' : '';
     modalOverlay.querySelector('#modal-badge').style.display = t.famous ? '' : 'none';
     modalOverlay.querySelector('#modal-desc').textContent  = t.description || '';
-    renderBackstory(t);
-    if (!_backstoryCache) {
-      loadBackstories().then(() => renderBackstory(t));
-    }
-
-    const mapSearchUrl = getGoogleMapsSearchUrl(t);
-    const locationLink = t.location && mapSearchUrl
-      ? `<a href="${mapSearchUrl}" target="_blank" rel="noopener noreferrer">${escHtml(t.location)}</a>`
-      : t.location;
 
     const rows = [
-      ['Location',    locationLink],
+      ['Location',    t.location],
       ['District',    t.district],
-      ['Famous For',  t.famousFor],
       ['Timings',     t.timing],
       ['Phone',       t.phone ? `<a href="tel:${escHtml(t.phone)}">${escHtml(t.phone)}</a>` : null],
       ['Dress Code',  t.dressCode],
@@ -700,27 +548,18 @@
     const info = modalOverlay.querySelector('#modal-info');
     info.innerHTML = rows
       .filter(([, v]) => v)
-      .map(([l, v]) => `<div class="modal-info-row"><span class="modal-info-label">${l}</span><span class="modal-info-value">${l === 'Phone' || l === 'Location' ? v : escHtml(v)}</span></div>`)
+      .map(([l, v]) => `<div class="modal-info-row"><span class="modal-info-label">${l}</span><span class="modal-info-value">${l === 'Phone' ? v : escHtml(v)}</span></div>`)
       .join('');
 
     const actions = modalOverlay.querySelector('#modal-actions');
     actions.innerHTML = '';
-    if (mapSearchUrl) {
+    if (t.lat && t.lng) {
       const mapBtn = document.createElement('a');
       mapBtn.className = 'modal-map-btn';
-      mapBtn.href = mapSearchUrl;
+      mapBtn.href = `https://www.google.com/maps?q=${t.lat},${t.lng}`;
       mapBtn.target = '_blank'; mapBtn.rel = 'noopener noreferrer';
       mapBtn.innerHTML = `${iconLocation()} View on Map`;
       actions.appendChild(mapBtn);
-    }
-    if (t.sourceUrl) {
-      const sourceBtn = document.createElement('a');
-      sourceBtn.className = 'modal-map-btn modal-source-btn';
-      sourceBtn.href = t.sourceUrl;
-      sourceBtn.target = '_blank';
-      sourceBtn.rel = 'noopener noreferrer';
-      sourceBtn.textContent = 'Official source';
-      actions.appendChild(sourceBtn);
     }
     const submitBtn = document.createElement('button');
     submitBtn.className = 'modal-submit-btn';
@@ -730,37 +569,6 @@
 
     modalOverlay.classList.add('open');
     document.body.style.overflow = 'hidden';
-  }
-
-  function getGoogleMapsSearchUrl(t) {
-    const stateLabel = STATE_REGISTRY[activeState]?.label || '';
-    const query = [t.name, t.location, t.district, stateLabel, 'India']
-      .map(part => String(part || '').trim())
-      .filter(Boolean)
-      .filter((part, index, parts) => parts.indexOf(part) === index)
-      .join(' ');
-
-    return query
-      ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`
-      : '';
-  }
-
-  function renderBackstory(t) {
-    const storyWrap = modalOverlay.querySelector('#modal-story');
-    const storyLabel = modalOverlay.querySelector('.modal-story-label');
-    const storyText = modalOverlay.querySelector('#modal-story-text');
-    const story = getTempleBackstory(t);
-
-    if (!story || !story.text) {
-      storyWrap.hidden = true;
-      storyLabel.textContent = 'Temple Back Story';
-      storyText.textContent = '';
-      return;
-    }
-
-    storyLabel.textContent = story.label || 'Temple Back Story';
-    storyText.textContent = story.text;
-    storyWrap.hidden = false;
   }
 
   function closeModal() {
@@ -975,18 +783,19 @@ async function handleSubmit(e) {
     form.setAttribute('aria-busy', 'true');
     showMsg(msg, 'success', 'Sending...');
 
-    const payload = formDataToObject(formData);
-    payload.kind = 'temple-submission';
-    payload.source = 'index-submit-modal';
+    const response = await fetch(FORM_SUBMIT_AJAX_ENDPOINT, {
+      method: 'POST',
+      headers: {
+  'Accept': 'application/json'
+},
+      body: formData
+    });
 
-    const workerResult = await tryPostWorkerSubmission(payload);
-    const formSubmitResult = await tryPostFormSubmitSubmission(formData);
-
-    if (!workerResult.ok && !formSubmitResult.ok) {
-      throw formSubmitResult.error || workerResult.error || new Error('Submission failed.');
+    if (!response.ok) {
+      throw new Error(`FormSubmit returned HTTP ${response.status}`);
     }
 
-    showMsg(msg, 'success', 'Thank you! Your submission has been sent.');
+    showMsg(msg, 'success', '✅ Thank you! Your submission has been sent.');
 
     setTimeout(() => {
       closeSubmitModal();
@@ -1001,66 +810,6 @@ async function handleSubmit(e) {
     form.removeAttribute('aria-busy');
   }
 }
-
-  async function tryPostWorkerSubmission(payload) {
-    try {
-      await postWorkerSubmission(payload);
-      return { ok: true };
-    } catch (err) {
-      console.warn('TempleDiary: worker submit failed', err);
-      return { ok: false, error: err };
-    }
-  }
-
-  async function tryPostFormSubmitSubmission(formData) {
-    try {
-      await postFormSubmitSubmission(formData);
-      return { ok: true };
-    } catch (err) {
-      console.warn('TempleDiary: FormSubmit failed', err);
-      return { ok: false, error: err };
-    }
-  }
-
-  function formDataToObject(formData) {
-    const data = {};
-    formData.forEach((value, key) => {
-      if (key.startsWith('_')) return;
-      data[key] = value;
-    });
-    return data;
-  }
-
-  async function postWorkerSubmission(payload) {
-    const response = await fetch(WORKER_SUBMISSION_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Worker returned HTTP ${response.status}`);
-    }
-
-    return response.json().catch(() => ({}));
-  }
-
-  async function postFormSubmitSubmission(formData) {
-    const response = await fetch(FORM_SUBMIT_AJAX_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Accept': 'application/json' },
-      body: formData,
-    });
-
-    if (!response.ok) {
-      throw new Error(`FormSubmit returned HTTP ${response.status}`);
-    }
-
-    return response.json().catch(() => ({}));
-  }
 
   function buildSubmissionEmailBody(temple, submitter, email) {
     const fields = [
@@ -1167,6 +916,26 @@ async function handleSubmit(e) {
 
   /* ── Global Exports ── */
   window.openSubmitModal = openSubmitModal;
+
+  /**
+   * Opens the submit modal and immediately fires GPS detection.
+   * Called by the "I'm at the Temple Now" button.
+   * submit-location.js handles the actual GPS + Nominatim logic
+   * via the window.tdDetectLocation hook below.
+   */
+  window.openSubmitModalAtTemple = function () {
+    openSubmitModal(null);
+    // Give the modal a moment to render, then trigger GPS
+    setTimeout(() => {
+      if (typeof window.tdDetectLocation === 'function') {
+        window.tdDetectLocation();
+      } else {
+        // submit-location.js not loaded yet — click the button if present
+        const btn = document.getElementById('td-detect-location-btn');
+        if (btn) btn.click();
+      }
+    }, 150);
+  };
 
   /* ── Kick off ── */
   if (document.readyState === 'loading') {
