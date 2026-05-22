@@ -103,6 +103,7 @@
       cursor: pointer;
       font-family: inherit;
       text-align: left;
+      text-decoration: none;
       box-shadow: 0 8px 20px rgba(86, 42, 0, 0.16);
       transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
     }
@@ -349,9 +350,10 @@
               <small>Fill in details manually</small>
             </span>
           </button>
-          <button
+          <a
+            href="/add"
             class="contribute-btn contribute-btn--temple"
-            onclick="window.openSubmitModalAtTemple()"
+            onclick="event.preventDefault(); try { window.history.pushState(null, '', '/add'); } catch (e) {} window.openSubmitModalAtTemple();"
             aria-label="Submit a temple using GPS — I am at the temple now"
           >
             <span class="contribute-btn-icon">📍</span>
@@ -359,7 +361,7 @@
               <strong>I'm at the Temple Now</strong>
               <small>Auto-detect my location</small>
             </span>
-          </button>
+          </a>
           <button
             class="contribute-btn contribute-btn--correction"
             onclick="window.openSubmitModal(null)"
@@ -524,8 +526,8 @@
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <!-- State data files are loaded on-demand when a state tab is selected -->
   <!-- To add a new state: add a scriptFile entry in main.js STATE_REGISTRY only -->
-  <script src="main.js?v=20260518-famous-for"></script>
-  <script src="submit-location.js"></script>
+  <script src="main.js?v=20260521-at-temple"></script>
+  <script src="submit-location.js?v=20260521-at-temple"></script>
 
 </body>
 </html>

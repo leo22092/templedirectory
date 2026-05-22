@@ -121,6 +121,10 @@
       return;
     }
 
+    if (!btn) {
+      return;
+    }
+
     btn.disabled = true;
     setStatus(statusEl, '⏳ Getting your location…', 'info');
 
@@ -272,7 +276,10 @@
 
   // Expose so main.js can trigger GPS programmatically
   // (used by the "I'm at the Temple Now" button flow)
-  window.tdDetectLocation = handleDetectClick;
+  window.tdDetectLocation = function () {
+    injectButton();
+    handleDetectClick();
+  };
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', watchForModal);

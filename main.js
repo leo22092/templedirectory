@@ -190,6 +190,20 @@
     initBackToTop();
     initModal();
     initSubmitModal();
+    openSubmitDeepLink(params);
+  }
+
+  function openSubmitDeepLink(params) {
+    const path = window.location.pathname.replace(/\/+$/, '');
+    const addMode = (params.get('add') || '').toLowerCase();
+    const isAddPath = path === '/add';
+    const isAtTempleRequest = isAddPath || addMode === 'temple' || addMode === 'at-temple';
+
+    if (!isAtTempleRequest) return;
+
+    window.setTimeout(() => {
+      window.openSubmitModalAtTemple();
+    }, 0);
   }
 
   /* ══════════════════════════
@@ -925,16 +939,14 @@ async function handleSubmit(e) {
    */
   window.openSubmitModalAtTemple = function () {
     openSubmitModal(null);
-    // Give the modal a moment to render, then trigger GPS
-    setTimeout(() => {
-      if (typeof window.tdDetectLocation === 'function') {
-        window.tdDetectLocation();
-      } else {
-        // submit-location.js not loaded yet — click the button if present
-        const btn = document.getElementById('td-detect-location-btn');
-        if (btn) btn.click();
-      }
-    }, 150);
+    if (typeof window.tdDetectLocation === 'function') {
+      window.tdDetectLocation();
+      return;
+    }
+
+    // submit-location.js not loaded yet — click the injected button if present
+    const btn = document.getElementById('td-detect-location-btn');
+    if (btn) btn.click();
   };
 
   /* ── Kick off ── */
