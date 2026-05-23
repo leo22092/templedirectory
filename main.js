@@ -127,6 +127,7 @@
   const PER_PAGE = 12;
   const DEFAULT_STATE = 'kerala';
   const FORM_SUBMIT_EMAIL = 'mymail2837@gmail.com';
+  const WORKER_SUBMISSION_ENDPOINT = '/api/submit-temple';
   const FORM_SUBMIT_ENDPOINT = `https://formsubmit.co/${FORM_SUBMIT_EMAIL}`;
   const FORM_SUBMIT_AJAX_ENDPOINT = `https://formsubmit.co/ajax/${FORM_SUBMIT_EMAIL}`;
 
@@ -792,21 +793,23 @@ async function handleSubmit(e) {
   formData.append('Submitted By', submitter);
   formData.append('Submitter Email', email);
 
+  const workerPayload = {};
+  formData.forEach((value, key) => {
+    if (!key.startsWith('_')) workerPayload[key] = String(value || '');
+  });
+  workerPayload.kind = 'temple-submission';
+  workerPayload.source = 'submit-modal';
+
   try {
     submitBtn.disabled = true;
     form.setAttribute('aria-busy', 'true');
     showMsg(msg, 'success', 'Sending...');
 
-    const response = await fetch(FORM_SUBMIT_AJAX_ENDPOINT, {
-      method: 'POST',
-      headers: {
-  'Accept': 'application/json'
-},
-      body: formData
-    });
+    const workerResult = await tryPostWorkerSubmission(workerPayload);
+    const formSubmitResult = await tryPostFormSubmitSubmission(formData);
 
-    if (!response.ok) {
-      throw new Error(`FormSubmit returned HTTP ${response.status}`);
+    if (!workerResult.ok && !formSubmitResult.ok) {
+      throw formSubmitResult.error || workerResult.error || new Error('Submission failed.');
     }
 
     showMsg(msg, 'success', '✅ Thank you! Your submission has been sent.');
@@ -824,6 +827,47 @@ async function handleSubmit(e) {
     form.removeAttribute('aria-busy');
   }
 }
+
+  async function tryPostWorkerSubmission(payload) {
+    try {
+      const response = await fetch(WORKER_SUBMISSION_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Worker returned HTTP ${response.status}`);
+      }
+
+      return { ok: true };
+    } catch (err) {
+      console.warn('TempleDiary: worker submit failed', err);
+      return { ok: false, error: err };
+    }
+  }
+
+  async function tryPostFormSubmitSubmission(formData) {
+    try {
+      const response = await fetch(FORM_SUBMIT_AJAX_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`FormSubmit returned HTTP ${response.status}`);
+      }
+
+      return { ok: true };
+    } catch (err) {
+      console.warn('TempleDiary: FormSubmit failed', err);
+      return { ok: false, error: err };
+    }
+  }
 
   function buildSubmissionEmailBody(temple, submitter, email) {
     const fields = [

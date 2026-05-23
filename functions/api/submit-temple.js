@@ -10,8 +10,9 @@ export async function onRequestGet({ env }) {
   return jsonResponse({
     ok: true,
     route: '/api/submit-temple',
+    d1Binding: env.DB ? 'DB' : null,
     kvBinding: env.TEMPLE_SUBMISSIONS ? 'TEMPLE_SUBMISSIONS' : (env.KV ? 'KV' : null),
-    canStore: Boolean(env.TEMPLE_SUBMISSIONS || env.KV),
+    canStore: Boolean(env.DB || env.TEMPLE_SUBMISSIONS || env.KV),
   });
 }
 
@@ -28,15 +29,15 @@ export async function onRequestPost({ request, env }) {
 
     if (env.RESEND_API_KEY) {
       await sendWithResend(payload, env);
-      return jsonResponse({ ok: true, id: savedSubmission.id, stored: true, provider: 'resend' });
+      return jsonResponse({ ok: true, id: savedSubmission.id, stored: savedSubmission.stored, storage: savedSubmission.provider, provider: 'resend' });
     }
 
     if (env.FORM_SUBMIT_EMAIL) {
       await sendWithFormSubmit(payload, env.FORM_SUBMIT_EMAIL);
-      return jsonResponse({ ok: true, id: savedSubmission.id, stored: true, provider: 'formsubmit-worker' });
+      return jsonResponse({ ok: true, id: savedSubmission.id, stored: savedSubmission.stored, storage: savedSubmission.provider, provider: 'formsubmit-worker' });
     }
 
-    return jsonResponse({ ok: true, id: savedSubmission.id, stored: true, provider: 'kv' });
+    return jsonResponse({ ok: true, id: savedSubmission.id, stored: savedSubmission.stored, provider: savedSubmission.provider });
   } catch (err) {
     return jsonResponse({ ok: false, error: err.message || 'Submission failed.' }, 500);
   }
@@ -73,10 +74,14 @@ function validatePayload(payload) {
 }
 
 async function saveSubmission(payload, request, env) {
+  if (env.DB && isTempleSubmission(payload)) {
+    return saveTempleToD1(payload, request, env);
+  }
+
   const submissionsStore = env.TEMPLE_SUBMISSIONS || env.KV;
 
   if (!submissionsStore) {
-    throw new Error('KV binding is not configured. Add TEMPLE_SUBMISSIONS or KV.');
+    return { id: crypto.randomUUID(), stored: false, provider: 'none' };
   }
 
   const now = new Date();
@@ -100,7 +105,93 @@ async function saveSubmission(payload, request, env) {
     },
   });
 
-  return { id, key };
+  return { id, key, stored: true, provider: 'kv' };
+}
+
+function isTempleSubmission(payload) {
+  const kind = String(payload.kind || '').trim();
+  const temple = String(payload.Temple || payload.temple || '').trim();
+  return kind === 'temple-submission' && Boolean(temple);
+}
+
+async function saveTempleToD1(payload, request, env) {
+  const now = new Date().toISOString();
+  const state = cleanText(payload.State || payload.state || 'unknown').toLowerCase() || 'unknown';
+  const name = cleanText(payload.Temple || payload.temple);
+  const tags = parseTags(payload.Tags || payload.tags);
+
+  const result = await env.DB.prepare(`
+    INSERT INTO temples (
+      state,
+      name,
+      deity,
+      district,
+      location,
+      lat,
+      lng,
+      timing,
+      phone,
+      description,
+      famous,
+      tags,
+      status,
+      verification_count,
+      submitted_by,
+      submitted_at,
+      raw_json
+    )
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'unverified', 0, ?, ?, ?)
+  `).bind(
+    state,
+    name,
+    cleanText(payload.Deity || payload.deity),
+    cleanText(payload.District || payload.district),
+    cleanText(payload.Location || payload.location),
+    parseCoordinate(payload.Latitude || payload.lat),
+    parseCoordinate(payload.Longitude || payload.lng),
+    cleanText(payload.Timing || payload.timing),
+    cleanText(payload.Phone || payload.phone),
+    cleanText(payload.Description || payload.description || payload.Message || payload.message),
+    isTruthy(payload.Famous || payload.famous) ? 1 : 0,
+    JSON.stringify(tags),
+    cleanText(payload['Submitted By'] || payload.name),
+    now,
+    JSON.stringify({
+      ...payload,
+      userAgent: request.headers.get('user-agent') || '',
+      receivedAt: now,
+    })
+  ).run();
+
+  return {
+    id: result.meta?.last_row_id || result.meta?.lastRowId || null,
+    stored: true,
+    provider: 'd1',
+  };
+}
+
+function cleanText(value) {
+  return String(value || '').trim();
+}
+
+function parseCoordinate(value) {
+  const text = cleanText(value);
+  if (!text) return null;
+  const number = Number(text);
+  return Number.isFinite(number) ? number : null;
+}
+
+function parseTags(value) {
+  if (Array.isArray(value)) return value.map(cleanText).filter(Boolean);
+  return cleanText(value)
+    .split(',')
+    .map(tag => tag.trim().toLowerCase())
+    .filter(Boolean);
+}
+
+function isTruthy(value) {
+  const text = cleanText(value).toLowerCase();
+  return ['1', 'true', 'yes', 'y', 'on'].includes(text);
 }
 
 async function sendWithResend(payload, env) {
