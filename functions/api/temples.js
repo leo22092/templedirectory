@@ -1,4 +1,4 @@
-const PUBLIC_STATUSES = new Set(['verified']);
+const PUBLIC_STATUSES = new Set(['verified', 'unverified']);
 
 export async function onRequestOptions() {
   return jsonResponse({ ok: true });
