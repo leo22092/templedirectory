@@ -1,0 +1,538 @@
+# TempleDiary Architecture
+
+This document explains what data lives where, which files own each workflow, and how public temple listings, submissions, corrections, and admin review fit together.
+
+## High-Level Model
+
+TempleDiary uses a cheap public frontend with a separate D1-backed admin workflow.
+
+```mermaid
+flowchart LR
+  Visitor[Public visitor] --> StaticJSON[data/*.json]
+  StaticJSON --> PublicUI[index.html / main.js / map.html / map.js]
+
+  Visitor --> SubmitUI[Submit / Correction modal]
+  SubmitUI --> SubmitAPI[/api/submit-temple]
+  SubmitAPI --> RequestTable[(D1 temple_requests)]
+
+  Admin[Admin dashboard] --> TemplesAPI[/api/temples]
+  Admin --> RequestsAPI[/api/temple-requests]
+  TemplesAPI --> TemplesTable[(D1 temples)]
+  RequestsAPI --> RequestTable
+
+  Admin --> FutureActions[future approve / merge / reject APIs]
+  FutureActions --> TemplesTable
+  FutureActions --> RequestTable
+```
+
+## Data Stores
+
+### Static JSON
+
+Location:
+
+```text
+data/*.json
+```
+
+Purpose:
+
+- Fast public listing data.
+- Used by the current public homepage and map.
+- Cheap because Cloudflare can cache static files.
+
+Used by:
+
+```text
+main.js
+map.js
+dashboard.html JSON editor section
+```
+
+Current behavior:
+
+- Public users still see temples from JSON.
+- JSON is not automatically rewritten when D1 changes.
+- A future publish/export workflow can sync approved D1 data back to JSON.
+
+### D1: `temple_diary_db`
+
+Cloudflare Pages binding name expected by code:
+
+```text
+DB
+```
+
+Main tables:
+
+```text
+temples
+temple_requests
+```
+
+Old community voting has been dropped. There is no active need for `temple_verifications`.
+
+## D1 Table Responsibilities
+
+### `temples`
+
+Canonical temple records.
+
+Used for:
+
+- Admin D1 view.
+- Current full database of imported temples.
+- Future public D1 reads if the site moves away from static JSON.
+- Approved community submissions after admin action.
+- Merged corrections after admin action.
+
+Important fields:
+
+```text
+id                 D1 primary id
+source_json_id     original JSON id from data/*.json
+state              kerala, tamil-nadu, karnataka, etc.
+name               temple name
+deity              main deity
+district           district
+location           address / locality
+lat, lng           coordinates
+admin_label        display/trust label, typed by admin
+status             verified, unverified, removed, needs_review
+raw_json           original imported or submitted source blob
+```
+
+Current status meaning:
+
+```text
+unverified   visible/listed, but not personally admin verified
+verified     visible/listed and admin verified
+removed      hidden from future public use
+needs_review admin needs to inspect before trusting
+```
+
+Current label meaning:
+
+```text
+COMMUNITY           imported/community source, visible but not admin verified
+ADMIN VERIFIED      admin personally verified
+COMMUNITY SUBMITTED approved community submission
+COMMUNITY CORRECTED record updated from accepted correction
+```
+
+The label is flexible. Admin can type other labels later.
+
+### `temple_requests`
+
+Queue of community requests.
+
+Used for:
+
+- New temple submissions.
+- Corrections to existing temples.
+- Deletion requests.
+- Approved/rejected archive.
+
+Important fields:
+
+```text
+id                   UUID
+request_type         submission, correction, deletion
+status               pending, approved, rejected, needs_review
+state                state key
+temple_id            matched D1 temple id if known
+source_json_id       matched static JSON id if known
+admin_label          default label proposed for the request
+submitted_by         community submitter name
+submitter_email      optional
+payload_json         raw community request
+current_db_json      snapshot of current D1 record at request time
+current_public_json  snapshot of public JSON record at request time
+decided_by           future admin action field
+decided_at           future admin action field
+archived_at          future archive field
+```
+
+Request statuses:
+
+```text
+pending       waiting for admin decision
+needs_review  admin has flagged for later review
+approved      accepted and archived
+rejected      rejected and archived
+```
+
+## Public Frontend
+
+Main public files:
+
+```text
+index.html
+main.js
+map.html
+map.js
+style.css
+submit-location.js
+```
+
+### Homepage Listing
+
+```mermaid
+flowchart TD
+  index[index.html] --> main[main.js]
+  main --> StateRegistry[STATE_REGISTRY]
+  StateRegistry --> JSON[data/state.json]
+  JSON --> Cards[Temple cards]
+  Cards --> DetailModal[Temple detail modal]
+  DetailModal --> CorrectionButton[Suggest a correction]
+```
+
+Owned by:
+
+```text
+main.js
+```
+
+Current data source:
+
+```text
+data/*.json
+```
+
+### Map
+
+```mermaid
+flowchart TD
+  maphtml[map.html] --> mapjs[map.js]
+  mapjs --> StateConfig[STATE_CONFIG]
+  StateConfig --> JSON[data/state.json]
+  JSON --> Leaflet[Leaflet markers]
+```
+
+Owned by:
+
+```text
+map.js
+```
+
+Current data source:
+
+```text
+data/*.json
+```
+
+## Submission And Correction Intake
+
+Primary endpoint:
+
+```text
+POST /api/submit-temple
+```
+
+File:
+
+```text
+functions/api/submit-temple.js
+```
+
+Accepted request kinds:
+
+```text
+temple-submission -> request_type=submission
+temple-correction -> request_type=correction
+temple-deletion   -> request_type=deletion
+```
+
+### New Temple Submission
+
+```mermaid
+sequenceDiagram
+  participant User
+  participant UI as main.js submit modal
+  participant API as /api/submit-temple
+  participant D1 as D1 temple_requests
+
+  User->>UI: Submit missing temple
+  UI->>API: kind=temple-submission
+  API->>D1: insert request_type=submission, status=pending
+  API-->>UI: ok
+```
+
+Current behavior:
+
+- New submissions are stored as pending requests.
+- They are not inserted into `temples` automatically.
+- Admin approval action is still a future step.
+
+### Correction Request
+
+```mermaid
+sequenceDiagram
+  participant User
+  participant Card as Temple detail card
+  participant API as /api/submit-temple
+  participant D1 as D1
+
+  User->>Card: Click Suggest a correction
+  Card->>API: kind=temple-correction + sourceJsonId + currentPublicJson
+  API->>D1: find current temple by state/source_json_id/name
+  API->>D1: insert correction into temple_requests
+  API-->>Card: ok
+```
+
+Stored snapshots:
+
+```text
+payload_json         user's submitted correction
+current_db_json      matching D1 record if found
+current_public_json  JSON record shown to user
+```
+
+This supports the admin comparison view:
+
+```text
+Current DB | Current Public JSON | Submitted Correction
+```
+
+### Deletion Request
+
+Deletion requests are planned in the same table:
+
+```text
+request_type=deletion
+status=pending
+```
+
+Future admin accept behavior:
+
+```text
+UPDATE temples SET status='removed' WHERE id = ?
+```
+
+Avoid hard deletion unless there is a strong reason.
+
+## Admin Dashboard
+
+File:
+
+```text
+dashboard.html
+```
+
+Current sections:
+
+```text
+Overview       static JSON summary
+Temples        static JSON editor
+D1 Records     canonical DB records from /api/temples
+Requests       pending/archive request queue from /api/temple-requests
+Add / Edit     local JSON editor
+States         local state config editor
+Import         JSON import
+Export         JSON export
+Health         JSON health checks
+```
+
+### D1 Records Tab
+
+Endpoint:
+
+```text
+GET /api/temples?state=kerala&include=all
+```
+
+File:
+
+```text
+functions/api/temples.js
+```
+
+Purpose:
+
+- Show canonical D1 records.
+- Filter by status.
+- Confirm `admin_label`.
+
+### Requests Tab
+
+Endpoint:
+
+```text
+GET /api/temple-requests?state=kerala&type=correction&status=pending
+```
+
+File:
+
+```text
+functions/api/temple-requests.js
+```
+
+Purpose:
+
+- View pending submissions.
+- View pending corrections.
+- View pending deletion requests.
+- View approved/rejected archive later.
+
+Admin action buttons are not implemented yet. Current tab is read-only.
+
+## API Reference
+
+### `GET /api/temples`
+
+Returns D1 temple records.
+
+Query params:
+
+```text
+state=kerala
+include=public | all
+```
+
+Default `include=public` returns:
+
+```text
+verified + unverified
+```
+
+`include=all` returns:
+
+```text
+verified + unverified + needs_review + removed
+```
+
+### `POST /api/submit-temple`
+
+Receives submission/correction/deletion requests.
+
+Important payload fields:
+
+```text
+kind                temple-submission | temple-correction | temple-deletion
+State               state key
+Temple              temple name
+Submitted By        required
+Submitter Email     optional
+Admin Label         optional proposed label
+Source JSON ID      correction source id
+Current Public JSON correction snapshot
+```
+
+### `GET /api/temple-requests`
+
+Returns request queue rows.
+
+Query params:
+
+```text
+state=kerala
+type=submission | correction | deletion
+status=pending | needs_review | approved | rejected
+limit=100
+```
+
+Optional security:
+
+If `ADMIN_API_TOKEN` is set in Cloudflare Pages environment variables, this endpoint requires either:
+
+```text
+x-admin-token: <token>
+```
+
+or:
+
+```text
+?token=<token>
+```
+
+## Deployment Flow
+
+```mermaid
+flowchart TD
+  Local[Local repo] --> Commit[git commit]
+  Commit --> Push[git push origin main]
+  Push --> GitHub[GitHub repo]
+  GitHub --> Pages[Cloudflare Pages auto deploy]
+  Pages --> Site[templediary site]
+
+  D1SQL[D1 SQL migration] --> D1[(temple_diary_db)]
+  Site --> D1
+```
+
+Normal deploy:
+
+```bash
+git add .
+git commit -m "Describe change"
+git push origin main
+```
+
+Cloudflare Pages deploys automatically if the Pages project is connected to GitHub and `main` is the production branch.
+
+## Existing D1 Migration
+
+For an existing DB created from the old schema, this migration was required:
+
+```text
+scripts/d1/add-request-workflow.sql
+```
+
+It adds:
+
+```text
+temples.admin_label
+temple_requests
+request indexes
+```
+
+All existing records were also labeled:
+
+```sql
+UPDATE temples
+SET admin_label = 'COMMUNITY'
+WHERE admin_label IS NULL OR admin_label = '';
+```
+
+## Future Work
+
+### Admin Merge Correction
+
+Planned behavior:
+
+```mermaid
+flowchart LR
+  Request[correction request] --> Compare[Admin compares DB / JSON / correction]
+  Compare --> Merge[Merge]
+  Merge --> UpdateTemple[UPDATE temples]
+  Merge --> Archive[status=approved, archived_at set]
+  Compare --> Reject[Reject]
+  Reject --> Rejected[status=rejected, archived_at set]
+```
+
+### Approve Submission
+
+Planned behavior:
+
+```text
+pending submission -> INSERT INTO temples -> request status approved
+```
+
+Default label:
+
+```text
+COMMUNITY SUBMITTED
+```
+
+### Publish To Static JSON
+
+Current public frontend uses JSON.
+
+Later options:
+
+```text
+Option A: keep public JSON and export approved D1 records into data/*.json
+Option B: switch public frontend to /api/temples with caching
+```
+
+For lowest cost, Option A remains preferred.
+

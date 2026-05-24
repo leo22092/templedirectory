@@ -263,7 +263,7 @@
           <div class="table-wrap">
             <table>
               <thead>
-                <tr><th>Received</th><th>Type</th><th>Temple</th><th>Submitter</th><th>Admin Label</th><th>Current DB</th><th>Request Data</th></tr>
+                <tr><th>Received</th><th>Type</th><th>Temple</th><th>Submitter</th><th>Admin Label</th><th>Current DB</th><th>Request Data</th><th>Actions</th></tr>
               </thead>
               <tbody id="request-body"></tbody>
             </table>
@@ -632,7 +632,7 @@
 
     async function loadTempleRequests() {
       const body = document.getElementById('request-body');
-      if (body) body.innerHTML = `<tr><td colspan="7" class="muted">Loading requests...</td></tr>`;
+        if (body) body.innerHTML = `<tr><td colspan="8" class="muted">Loading requests...</td></tr>`;
       const type = document.getElementById('request-type-filter')?.value || 'submission';
       const status = document.getElementById('request-status-filter')?.value || 'pending';
       try {
@@ -652,7 +652,7 @@
         renderTempleRequests();
       } catch (err) {
         app.templeRequests = [];
-        if (body) body.innerHTML = `<tr><td colspan="7" class="muted">Could not load requests: ${esc(err.message)}</td></tr>`;
+        if (body) body.innerHTML = `<tr><td colspan="8" class="muted">Could not load requests: ${esc(err.message)}</td></tr>`;
       }
     }
 
@@ -672,9 +672,56 @@
             <td>${esc(req.adminLabel || '')}</td>
             <td>${compactTempleSummary(current)}</td>
             <td>${compactRequestSummary(payload)}</td>
+            <td><div class="row-actions">${requestActionButtons(req)}</div></td>
           </tr>
         `;
-      }).join('') || `<tr><td colspan="7" class="muted">No matching requests.</td></tr>`;
+      }).join('') || `<tr><td colspan="8" class="muted">No matching requests.</td></tr>`;
+    }
+
+    function requestActionButtons(req) {
+      if (!['pending', 'needs_review'].includes(req.status)) return '<span class="muted">Archived</span>';
+      const approveText = req.requestType === 'correction' ? 'Merge' : (req.requestType === 'deletion' ? 'Remove' : 'Approve');
+      const encodedLabel = encodeURIComponent(req.adminLabel || '');
+      return [
+        `<button class="btn btn-green btn-sm" type="button" onclick="decideTempleRequest('${escAttr(req.id)}','approve','${encodedLabel}')">${approveText}</button>`,
+        `<button class="btn btn-soft btn-sm" type="button" onclick="decideTempleRequest('${escAttr(req.id)}','needs_review','${encodedLabel}')">Needs review</button>`,
+        `<button class="btn btn-red btn-sm" type="button" onclick="decideTempleRequest('${escAttr(req.id)}','reject','${encodedLabel}')">Reject</button>`
+      ].join('');
+    }
+
+    async function decideTempleRequest(id, action, encodedCurrentLabel) {
+      const actionText = action === 'approve' ? 'approve/merge' : action.replace('_', ' ');
+      if (!confirm(`Are you sure you want to ${actionText} this request?`)) return;
+
+      let adminLabel = decodeURIComponent(encodedCurrentLabel || '');
+      if (action === 'approve' || action === 'needs_review') {
+        const nextLabel = prompt('Admin label for this request:', adminLabel);
+        if (nextLabel === null) return;
+        adminLabel = nextLabel.trim();
+      }
+
+      try {
+        const res = await fetch('/api/temple-requests', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...adminHeaders()
+          },
+          body: JSON.stringify({
+            id,
+            action,
+            adminLabel,
+            decidedBy: 'admin'
+          })
+        });
+        const json = await res.json();
+        if (!res.ok || !json.ok) throw new Error(json.error || 'Request update failed');
+        notify('Request updated.', 'ok');
+        await loadTempleRequests();
+        if (action === 'approve') await loadDbTemples();
+      } catch (err) {
+        notify('Request update failed: ' + err.message, 'bad');
+      }
     }
 
     function newTemple() {
@@ -1062,11 +1109,11 @@
       ].filter(Boolean).join('<br>');
     }
     function compactRequestSummary(payload) {
-      const fields = ['Deity','District','Location','Latitude','Longitude','Phone','Timing','Description','Dress Code','Photography','Nearest Bus','Nearest Rail'];
+      const fields = ['Temple Exists','Location Correct','Deity','District','Location','Latitude','Longitude','Google Maps Link','Phone','Timing','Description','Dress Code','Photography','Nearest Bus','Nearest Rail','Source URL','Message'];
       const items = fields
         .map(key => [key, payload[key] || payload[key.replace(/\s+/g, '')]])
         .filter(([, value]) => value)
-        .slice(0, 5)
+        .slice(0, 8)
         .map(([key, value]) => `<strong>${esc(key)}:</strong> ${esc(value)}`);
       return items.join('<br>') || '<span class="muted">No extra fields</span>';
     }

@@ -191,6 +191,7 @@
     initBackToTop();
     initModal();
     initSubmitModal();
+    initCorrectionModal();
     openSubmitDeepLink(params);
   }
 
@@ -579,7 +580,7 @@
     const submitBtn = document.createElement('button');
     submitBtn.className = 'modal-submit-btn';
     submitBtn.textContent = '✏️ Suggest a correction';
-    submitBtn.addEventListener('click', () => openSubmitModal(t));
+    submitBtn.addEventListener('click', () => openCorrectionModal(t));
     actions.appendChild(submitBtn);
 
     modalOverlay.classList.add('open');
@@ -759,6 +760,301 @@
   function closeSubmitModal() {
     if (submitOverlay) submitOverlay.classList.remove('open');
     document.body.style.overflow = '';
+  }
+
+  /* ══════════════════════════
+     CORRECTION WIZARD
+  ══════════════════════════ */
+  let correctionOverlay = null;
+  let correctionSourceTemple = null;
+
+  function initCorrectionModal() {
+    correctionOverlay = document.createElement('div');
+    correctionOverlay.className = 'modal-overlay submit-overlay';
+    correctionOverlay.setAttribute('role', 'dialog');
+    correctionOverlay.setAttribute('aria-modal', 'true');
+    correctionOverlay.setAttribute('aria-label', 'Suggest temple correction');
+    correctionOverlay.innerHTML = `
+      <div class="modal">
+        <div class="modal-header">
+          <div class="modal-name">Suggest Correction</div>
+          <button class="modal-close" aria-label="Close">✕</button>
+        </div>
+        <div class="modal-body" style="max-height:70vh;overflow-y:auto;padding-right:15px;">
+          <form class="submit-form" id="correction-form">
+            <div class="sf-group">
+              <label>Temple</label>
+              <input type="text" id="cr-temple" readonly />
+            </div>
+
+            <div class="sf-group">
+              <label>Does this temple exist?</label>
+              <div class="sf-row" style="gap:14px;">
+                <label style="display:flex;align-items:center;gap:7px;text-transform:none;letter-spacing:0;"><input type="radio" name="cr-exists" value="yes" checked style="width:auto;"> Yes</label>
+                <label style="display:flex;align-items:center;gap:7px;text-transform:none;letter-spacing:0;"><input type="radio" name="cr-exists" value="no" style="width:auto;"> No</label>
+              </div>
+            </div>
+
+            <div id="cr-delete-section" class="sf-group" hidden>
+              <label style="display:flex;align-items:center;gap:7px;text-transform:none;letter-spacing:0;">
+                <input type="checkbox" id="cr-confirm-delete" style="width:auto;" />
+                I am sure this temple does not exist or should be removed
+              </label>
+              <textarea id="cr-delete-reason" rows="2" placeholder="Reason or evidence for removal"></textarea>
+            </div>
+
+            <div id="cr-correction-section">
+              <div class="sf-group">
+                <label>Is the map location correct?</label>
+                <div class="sf-row" style="gap:14px;">
+                  <label style="display:flex;align-items:center;gap:7px;text-transform:none;letter-spacing:0;"><input type="radio" name="cr-location-correct" value="yes" checked style="width:auto;"> Yes</label>
+                  <label style="display:flex;align-items:center;gap:7px;text-transform:none;letter-spacing:0;"><input type="radio" name="cr-location-correct" value="no" style="width:auto;"> No</label>
+                </div>
+              </div>
+
+              <div id="cr-location-section" class="sf-group" hidden>
+                <label>Correct location</label>
+                <div class="sf-row">
+                  <div class="sf-group">
+                    <label for="cr-lat">Latitude</label>
+                    <input type="number" step="any" id="cr-lat" placeholder="Latitude" />
+                  </div>
+                  <div class="sf-group">
+                    <label for="cr-lng">Longitude</label>
+                    <input type="number" step="any" id="cr-lng" placeholder="Longitude" />
+                  </div>
+                </div>
+                <div class="sf-row">
+                  <button type="button" class="modal-submit-btn" id="cr-detect-location" style="width:auto;">Use my GPS</button>
+                  <input type="url" id="cr-map-link" placeholder="Google Maps link" />
+                </div>
+                <textarea id="cr-location-note" rows="2" placeholder="Location note"></textarea>
+              </div>
+
+              <div class="sf-group">
+                <label>Only fill details that need to be added or corrected</label>
+                <div class="sf-row">
+                  <input type="text" id="cr-name" placeholder="Correct temple name" />
+                  <input type="text" id="cr-deity" placeholder="Correct deity" />
+                </div>
+                <div class="sf-row">
+                  <input type="text" id="cr-district" placeholder="Correct district" />
+                  <input type="text" id="cr-location" placeholder="Correct address/location" />
+                </div>
+                <div class="sf-row">
+                  <input type="text" id="cr-timing" placeholder="Correct timings" />
+                  <input type="tel" id="cr-phone" placeholder="Correct phone" />
+                </div>
+                <textarea id="cr-description" rows="3" placeholder="Story, history, or description correction"></textarea>
+                <div class="sf-row">
+                  <input type="text" id="cr-dressCode" placeholder="Dress code correction" />
+                  <input type="text" id="cr-photography" placeholder="Photography rule correction" />
+                </div>
+                <div class="sf-row">
+                  <input type="text" id="cr-nearestBus" placeholder="Nearest bus correction" />
+                  <input type="text" id="cr-nearestRail" placeholder="Nearest rail correction" />
+                </div>
+                <input type="url" id="cr-sourceUrl" placeholder="Source URL, if any" />
+                <textarea id="cr-notes" rows="2" placeholder="Other notes for admin"></textarea>
+              </div>
+            </div>
+
+            <hr style="margin:15px 0;border:0;border-top:1px solid #E8D5A8;" />
+            <div class="sf-row">
+              <div class="sf-group">
+                <label for="cr-submitted-by">Your name <span class="sf-req">*</span></label>
+                <input type="text" id="cr-submitted-by" required placeholder="Your name" />
+              </div>
+              <div class="sf-group">
+                <label for="cr-email">Your email (optional)</label>
+                <input type="email" id="cr-email" placeholder="you@example.com" />
+              </div>
+            </div>
+            <div id="cr-msg" class="sf-msg" aria-live="polite" hidden></div>
+            <div class="sf-actions">
+              <button type="button" class="sf-cancel">Cancel</button>
+              <button type="submit" class="sf-submit">Submit correction</button>
+            </div>
+          </form>
+        </div>
+      </div>`;
+
+    document.body.appendChild(correctionOverlay);
+    correctionOverlay.querySelector('.modal-close').addEventListener('click', closeCorrectionModal);
+    correctionOverlay.querySelector('.sf-cancel').addEventListener('click', closeCorrectionModal);
+    correctionOverlay.addEventListener('click', e => { if (e.target === correctionOverlay) closeCorrectionModal(); });
+    correctionOverlay.querySelector('#correction-form').addEventListener('submit', handleCorrectionSubmit);
+    correctionOverlay.querySelectorAll('input[name="cr-exists"]').forEach(input => input.addEventListener('change', updateCorrectionWizard));
+    correctionOverlay.querySelectorAll('input[name="cr-location-correct"]').forEach(input => input.addEventListener('change', updateCorrectionWizard));
+    correctionOverlay.querySelector('#cr-detect-location').addEventListener('click', detectCorrectionLocation);
+  }
+
+  function openCorrectionModal(t) {
+    correctionSourceTemple = t || null;
+    clearCorrectionForm();
+    correctionOverlay.querySelector('#cr-temple').value = t?.name || '';
+    correctionOverlay.querySelector('#cr-msg').hidden = true;
+    correctionOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    if (modalOverlay) modalOverlay.classList.remove('open');
+    updateCorrectionWizard();
+  }
+
+  function closeCorrectionModal() {
+    if (correctionOverlay) correctionOverlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function clearCorrectionForm() {
+    correctionOverlay.querySelector('#correction-form').reset();
+    correctionOverlay.querySelector('input[name="cr-exists"][value="yes"]').checked = true;
+    correctionOverlay.querySelector('input[name="cr-location-correct"][value="yes"]').checked = true;
+    ['cr-temple','cr-delete-reason','cr-lat','cr-lng','cr-map-link','cr-location-note','cr-name','cr-deity','cr-district','cr-location','cr-timing','cr-phone','cr-description','cr-dressCode','cr-photography','cr-nearestBus','cr-nearestRail','cr-sourceUrl','cr-notes','cr-submitted-by','cr-email'].forEach(id => {
+      const el = correctionOverlay.querySelector('#' + id);
+      if (el) el.value = '';
+    });
+  }
+
+  function updateCorrectionWizard() {
+    const exists = correctionOverlay.querySelector('input[name="cr-exists"]:checked')?.value || 'yes';
+    const locationCorrect = correctionOverlay.querySelector('input[name="cr-location-correct"]:checked')?.value || 'yes';
+    correctionOverlay.querySelector('#cr-delete-section').hidden = exists !== 'no';
+    correctionOverlay.querySelector('#cr-correction-section').hidden = exists === 'no';
+    correctionOverlay.querySelector('#cr-location-section').hidden = exists === 'no' || locationCorrect !== 'no';
+  }
+
+  async function detectCorrectionLocation() {
+    const msg = correctionOverlay.querySelector('#cr-msg');
+    if (!navigator.geolocation) {
+      showMsg(msg, 'error', 'GPS is not supported in this browser.');
+      return;
+    }
+
+    showMsg(msg, 'success', 'Getting your location...');
+    try {
+      const position = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0,
+        });
+      });
+      correctionOverlay.querySelector('#cr-lat').value = position.coords.latitude.toFixed(6);
+      correctionOverlay.querySelector('#cr-lng').value = position.coords.longitude.toFixed(6);
+      showMsg(msg, 'success', 'Location captured. Please verify before submitting.');
+    } catch (err) {
+      showMsg(msg, 'error', 'Could not get GPS location.');
+    }
+  }
+
+  async function handleCorrectionSubmit(e) {
+    e.preventDefault();
+
+    const msg = correctionOverlay.querySelector('#cr-msg');
+    const submitBtn = correctionOverlay.querySelector('.sf-submit');
+    const submitter = correctionValue('cr-submitted-by');
+    const email = correctionValue('cr-email');
+    const temple = correctionSourceTemple?.name || correctionValue('cr-temple');
+    const exists = correctionOverlay.querySelector('input[name="cr-exists"]:checked')?.value || 'yes';
+
+    if (!submitter) {
+      showMsg(msg, 'error', 'Please enter your name.');
+      return;
+    }
+
+    const payload = {
+      State: activeState,
+      Temple: temple,
+      'Submitted By': submitter,
+      'Submitter Email': email,
+      'Source JSON ID': correctionSourceTemple?.id || '',
+      sourceJsonId: String(correctionSourceTemple?.id || ''),
+      currentPublicJson: JSON.stringify(correctionSourceTemple || {}),
+      source: 'correction-wizard',
+    };
+
+    if (exists === 'no') {
+      if (!correctionOverlay.querySelector('#cr-confirm-delete').checked) {
+        showMsg(msg, 'error', 'Please confirm before sending a deletion request.');
+        return;
+      }
+      payload.kind = 'temple-deletion';
+      payload['Request Type'] = 'deletion';
+      payload['Admin Label'] = 'DELETION REQUEST';
+      payload.Message = correctionValue('cr-delete-reason') || 'Community user reported that this temple does not exist.';
+    } else {
+      const changed = collectCorrectionFields();
+      const locationCorrect = correctionOverlay.querySelector('input[name="cr-location-correct"]:checked')?.value || 'yes';
+      payload.kind = 'temple-correction';
+      payload['Request Type'] = 'correction';
+      payload['Admin Label'] = 'COMMUNITY CORRECTED';
+      payload['Temple Exists'] = 'Yes';
+      payload['Location Correct'] = locationCorrect === 'yes' ? 'Yes' : 'No';
+      Object.assign(payload, changed.fields);
+      payload['Correction Fields'] = JSON.stringify(changed.fields);
+      payload.Message = changed.notes.join('\n');
+
+      if (!Object.keys(changed.fields).length && !changed.notes.length && locationCorrect === 'yes') {
+        showMsg(msg, 'error', 'Please fill at least one correction field.');
+        return;
+      }
+    }
+
+    try {
+      submitBtn.disabled = true;
+      showMsg(msg, 'success', 'Sending...');
+      const result = await tryPostWorkerSubmission(payload);
+      if (!result.ok) throw result.error || new Error('Correction failed.');
+      showMsg(msg, 'success', 'Thank you. Your request has been sent for review.');
+      setTimeout(closeCorrectionModal, 1400);
+    } catch (err) {
+      const subject = `${payload['Request Type'] === 'deletion' ? 'Deletion Request' : 'Temple Correction'}: ${temple}`;
+      const fallbackHref = `mailto:${FORM_SUBMIT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(JSON.stringify(payload, null, 2))}`;
+      showMsg(msg, 'error', 'Could not submit automatically. Opening your email client...');
+      addSubmitFallback(msg, fallbackHref);
+      window.location.href = fallbackHref;
+    } finally {
+      submitBtn.disabled = false;
+    }
+  }
+
+  function collectCorrectionFields() {
+    const fields = {};
+    const notes = [];
+    const mappings = [
+      ['cr-name', 'Temple'],
+      ['cr-deity', 'Deity'],
+      ['cr-district', 'District'],
+      ['cr-location', 'Location'],
+      ['cr-lat', 'Latitude'],
+      ['cr-lng', 'Longitude'],
+      ['cr-timing', 'Timing'],
+      ['cr-phone', 'Phone'],
+      ['cr-description', 'Description'],
+      ['cr-dressCode', 'Dress Code'],
+      ['cr-photography', 'Photography'],
+      ['cr-nearestBus', 'Nearest Bus'],
+      ['cr-nearestRail', 'Nearest Rail'],
+      ['cr-sourceUrl', 'Source URL'],
+    ];
+
+    mappings.forEach(([id, key]) => {
+      const value = correctionValue(id);
+      if (value) fields[key] = value;
+    });
+
+    const mapLink = correctionValue('cr-map-link');
+    const locationNote = correctionValue('cr-location-note');
+    const notesText = correctionValue('cr-notes');
+    if (mapLink) fields['Google Maps Link'] = mapLink;
+    if (locationNote) notes.push('Location note: ' + locationNote);
+    if (notesText) notes.push('Admin note: ' + notesText);
+
+    return { fields, notes };
+  }
+
+  function correctionValue(id) {
+    return correctionOverlay.querySelector('#' + id)?.value.trim() || '';
   }
 
 async function handleSubmit(e) {
