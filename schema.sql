@@ -13,8 +13,8 @@
     description TEXT,
     famous INTEGER NOT NULL DEFAULT 0,
     tags TEXT,
+    admin_label TEXT,
     status TEXT NOT NULL DEFAULT 'unverified',
-    verification_count INTEGER NOT NULL DEFAULT 0,
     submitted_by TEXT,
     submitted_at TEXT,
     approved_at TEXT,
@@ -31,12 +31,28 @@
   CREATE INDEX IF NOT EXISTS idx_temples_district
   ON temples (state, district);
 
-  CREATE TABLE IF NOT EXISTS temple_verifications (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    temple_id INTEGER NOT NULL,
-    verifier_key TEXT NOT NULL,
+  CREATE TABLE IF NOT EXISTS temple_requests (
+    id TEXT PRIMARY KEY,
+    request_type TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'pending',
+    state TEXT,
+    temple_id INTEGER,
+    source_json_id INTEGER,
+    admin_label TEXT,
+    submitted_by TEXT,
+    submitter_email TEXT,
+    payload_json TEXT NOT NULL,
+    current_db_json TEXT,
+    current_public_json TEXT,
+    decided_by TEXT,
+    decided_at TEXT,
+    archived_at TEXT,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE (temple_id, verifier_key),
-    FOREIGN KEY (temple_id) REFERENCES temples(id)
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
   );
 
+  CREATE INDEX IF NOT EXISTS idx_temple_requests_type_status
+  ON temple_requests (request_type, status, created_at);
+
+  CREATE INDEX IF NOT EXISTS idx_temple_requests_state
+  ON temple_requests (state, request_type, status);

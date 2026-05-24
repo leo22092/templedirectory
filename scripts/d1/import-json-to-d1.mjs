@@ -55,8 +55,8 @@ function insertStatement(state, temple) {
     'description',
     'famous',
     'tags',
+    'admin_label',
     'status',
-    'verification_count',
     'source_url',
     'raw_json',
   ];
@@ -75,8 +75,8 @@ function insertStatement(state, temple) {
     temple.description || '',
     temple.famous ? 1 : 0,
     JSON.stringify(tags),
+    temple.adminLabel || temple.admin_label || null,
     status,
-    0,
     sourceUrl,
     rawJson,
   ];

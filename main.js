@@ -595,6 +595,8 @@
      SUBMIT MODAL
   ══════════════════════════ */
   let submitOverlay = null;
+  let submitSourceTemple = null;
+  let submitKind = 'temple-submission';
 
   function initSubmitModal() {
     submitOverlay = document.createElement('div');
@@ -715,6 +717,12 @@
   }
 
   function openSubmitModal(t) {
+    submitSourceTemple = t || null;
+    submitKind = t ? 'temple-correction' : 'temple-submission';
+    clearSubmitForm();
+    submitOverlay.querySelector('.modal-name').textContent = t ? 'Suggest Correction' : 'Suggest/Add Temple';
+    submitOverlay.setAttribute('aria-label', t ? 'Submit temple correction' : 'Submit missing temple');
+
     if (t) {
       submitOverlay.querySelector('#sf-temple').value      = t.name     || '';
       submitOverlay.querySelector('#sf-district').value    = t.district || '';
@@ -737,6 +745,15 @@
     submitOverlay.classList.add('open');
     document.body.style.overflow = 'hidden';
     if (modalOverlay) modalOverlay.classList.remove('open');
+  }
+
+  function clearSubmitForm() {
+    ['sf-temple','sf-deity','sf-district','sf-location','sf-lat','sf-lng','sf-phone','sf-timing','sf-description','sf-tags','sf-dressCode','sf-photography','sf-nearestBus','sf-nearestRail','sf-name','sf-email'].forEach(id => {
+      const el = submitOverlay.querySelector('#' + id);
+      if (el) el.value = '';
+    });
+    const famous = submitOverlay.querySelector('#sf-famous');
+    if (famous) famous.checked = false;
   }
 
   function closeSubmitModal() {
@@ -765,7 +782,8 @@ async function handleSubmit(e) {
   }
 
   const formData = new FormData();
-  const subject = 'New Temple Submission: ' + temple;
+  const isCorrection = submitKind === 'temple-correction';
+  const subject = (isCorrection ? 'Temple Correction: ' : 'New Temple Submission: ') + temple;
   const fallbackBody = buildSubmissionEmailBody(temple, submitter, email);
   const fallbackHref = `mailto:${FORM_SUBMIT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(fallbackBody)}`;
 
@@ -775,6 +793,8 @@ async function handleSubmit(e) {
   formData.append('_template', 'table');
 
   formData.append('State', activeState);
+  formData.append('Request Type', isCorrection ? 'correction' : 'submission');
+  formData.append('Admin Label', isCorrection ? 'COMMUNITY CORRECTED' : 'COMMUNITY SUBMITTED');
   formData.append('Temple', temple);
   formData.append('Deity', submitOverlay.querySelector('#sf-deity').value.trim());
   formData.append('District', submitOverlay.querySelector('#sf-district').value.trim());
@@ -792,13 +812,21 @@ async function handleSubmit(e) {
   formData.append('Nearest Rail', submitOverlay.querySelector('#sf-nearestRail').value.trim());
   formData.append('Submitted By', submitter);
   formData.append('Submitter Email', email);
+  if (submitSourceTemple) {
+    formData.append('Source JSON ID', submitSourceTemple.id || '');
+    formData.append('Current Public JSON', JSON.stringify(submitSourceTemple));
+  }
 
   const workerPayload = {};
   formData.forEach((value, key) => {
     if (!key.startsWith('_')) workerPayload[key] = String(value || '');
   });
-  workerPayload.kind = 'temple-submission';
-  workerPayload.source = 'submit-modal';
+  workerPayload.kind = submitKind;
+  workerPayload.source = isCorrection ? 'correction-modal' : 'submit-modal';
+  if (submitSourceTemple) {
+    workerPayload.sourceJsonId = String(submitSourceTemple.id || '');
+    workerPayload.currentPublicJson = JSON.stringify(submitSourceTemple);
+  }
 
   try {
     submitBtn.disabled = true;

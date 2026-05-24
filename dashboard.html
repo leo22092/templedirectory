@@ -135,6 +135,8 @@
       <span class="side-label">Manage</span>
       <button class="nav-btn active" type="button" data-section="overview">Overview</button>
       <button class="nav-btn" type="button" data-section="temples">Temples</button>
+      <button class="nav-btn" type="button" data-section="db">D1 Records</button>
+      <button class="nav-btn" type="button" data-section="requests">Requests</button>
       <button class="nav-btn" type="button" data-section="editor">Add / Edit</button>
       <button class="nav-btn" type="button" data-section="states">States</button>
       <button class="nav-btn" type="button" data-section="import">Import</button>
@@ -203,6 +205,67 @@
                 <tr><th><input type="checkbox" id="select-all" onchange="toggleAllRows(this.checked)" /></th><th>ID</th><th>Name</th><th>Deity</th><th>District</th><th>GPS</th><th>Famous</th><th>Actions</th></tr>
               </thead>
               <tbody id="temple-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="section-db">
+        <div class="panel">
+          <div class="panel-head">
+            <h3>D1 Temple Records <span class="muted" id="db-count"></span></h3>
+            <div class="row-actions">
+              <button class="btn btn-soft btn-sm" type="button" onclick="loadDbTemples()">Refresh D1</button>
+            </div>
+          </div>
+          <div class="filter-row">
+            <input id="db-search" type="search" placeholder="Search D1 records..." oninput="renderDbTempleTable()" />
+            <select id="db-status-filter" onchange="renderDbTempleTable()">
+              <option value="">All statuses</option>
+              <option value="verified">Verified</option>
+              <option value="unverified">Unverified</option>
+              <option value="needs_review">Needs review</option>
+              <option value="removed">Removed</option>
+            </select>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>D1 ID</th><th>JSON ID</th><th>Name</th><th>District</th><th>Status</th><th>Admin Label</th><th>GPS</th></tr>
+              </thead>
+              <tbody id="db-temple-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="section-requests">
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Approval Requests <span class="muted" id="request-count"></span></h3>
+            <div class="row-actions">
+              <button class="btn btn-soft btn-sm" type="button" onclick="loadTempleRequests()">Refresh requests</button>
+            </div>
+          </div>
+          <div class="filter-row">
+            <select id="request-type-filter" onchange="loadTempleRequests()">
+              <option value="submission">Submission requests</option>
+              <option value="correction">Correction requests</option>
+              <option value="deletion">Deletion requests</option>
+            </select>
+            <select id="request-status-filter" onchange="loadTempleRequests()">
+              <option value="pending">Pending</option>
+              <option value="needs_review">Needs review</option>
+              <option value="approved">Approved archive</option>
+              <option value="rejected">Rejected archive</option>
+            </select>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Received</th><th>Type</th><th>Temple</th><th>Submitter</th><th>Admin Label</th><th>Current DB</th><th>Request Data</th></tr>
+              </thead>
+              <tbody id="request-body"></tbody>
             </table>
           </div>
         </div>
@@ -362,6 +425,8 @@
       configs: loadJson('td_admin_state_configs', STATE_CONFIGS),
       data: {},
       defaults: {},
+      dbTemples: [],
+      templeRequests: [],
       selected: new Set(),
       dirty: new Set()
     };
@@ -424,6 +489,8 @@
       const titles = {
         overview: ['Overview', 'Quick status for the selected state.'],
         temples: ['Temples', 'Search, edit, duplicate, and delete temple records.'],
+        db: ['D1 Records', 'Read canonical temple records from the current D1 database.'],
+        requests: ['Requests', 'Review community submissions, corrections, and deletion requests.'],
         editor: ['Add / Edit', 'Create or update a temple record.'],
         states: ['States', 'Manage state metadata used by this dashboard.'],
         import: ['Import', 'Replace the selected state data from JSON.'],
@@ -434,6 +501,8 @@
       document.getElementById('page-subtitle').textContent = titles[name][1];
       if (name === 'overview') renderOverview();
       if (name === 'temples') renderTempleTable();
+      if (name === 'db') loadDbTemples();
+      if (name === 'requests') loadTempleRequests();
       if (name === 'states') renderStates();
       if (name === 'export') generateExport('active');
       if (name === 'health') runHealthChecks();
@@ -517,6 +586,95 @@
           <td><div class="row-actions"><button class="btn btn-soft btn-sm" onclick="editTemple(${t.id})">Edit</button><button class="btn btn-soft btn-sm" onclick="openMap(${t.id})">Map</button></div></td>
         </tr>
       `).join('') || `<tr><td colspan="8" class="muted">No matching records.</td></tr>`;
+    }
+
+    async function loadDbTemples() {
+      const body = document.getElementById('db-temple-body');
+      if (body) body.innerHTML = `<tr><td colspan="7" class="muted">Loading D1 records...</td></tr>`;
+      try {
+        const res = await fetch(`/api/temples?state=${encodeURIComponent(app.activeState)}&include=all`, {
+          cache: 'no-store',
+          headers: adminHeaders()
+        });
+        const json = await res.json();
+        if (!res.ok || !json.ok) throw new Error(json.error || 'D1 request failed');
+        app.dbTemples = json.temples || [];
+        renderDbTempleTable();
+      } catch (err) {
+        app.dbTemples = [];
+        if (body) body.innerHTML = `<tr><td colspan="7" class="muted">Could not load D1 records: ${esc(err.message)}</td></tr>`;
+      }
+    }
+
+    function renderDbTempleTable() {
+      const q = (document.getElementById('db-search')?.value || '').trim().toLowerCase();
+      const status = document.getElementById('db-status-filter')?.value || '';
+      const rows = app.dbTemples.filter(t => {
+        const blob = [t.name, t.deity, t.district, t.location, t.adminLabel, t.status].join(' ').toLowerCase();
+        if (q && !blob.includes(q)) return false;
+        if (status && t.status !== status) return false;
+        return true;
+      });
+      const count = document.getElementById('db-count');
+      if (count) count.textContent = `(${rows.length})`;
+      document.getElementById('db-temple-body').innerHTML = rows.map(t => `
+        <tr>
+          <td>${esc(t.id)}</td>
+          <td>${esc(t.sourceJsonId || '')}</td>
+          <td class="name-cell">${esc(t.name)}<div class="muted">${esc(t.deity || '')}</div></td>
+          <td>${esc(t.district)}</td>
+          <td>${statusPill(t.status)}</td>
+          <td>${esc(t.adminLabel || '')}</td>
+          <td>${gpsPill(t)}</td>
+        </tr>
+      `).join('') || `<tr><td colspan="7" class="muted">No D1 records found.</td></tr>`;
+    }
+
+    async function loadTempleRequests() {
+      const body = document.getElementById('request-body');
+      if (body) body.innerHTML = `<tr><td colspan="7" class="muted">Loading requests...</td></tr>`;
+      const type = document.getElementById('request-type-filter')?.value || 'submission';
+      const status = document.getElementById('request-status-filter')?.value || 'pending';
+      try {
+        const params = new URLSearchParams({
+          state: app.activeState,
+          type,
+          status,
+          limit: '100'
+        });
+        const res = await fetch(`/api/temple-requests?${params.toString()}`, {
+          cache: 'no-store',
+          headers: adminHeaders()
+        });
+        const json = await res.json();
+        if (!res.ok || !json.ok) throw new Error(json.error || 'Request load failed');
+        app.templeRequests = json.requests || [];
+        renderTempleRequests();
+      } catch (err) {
+        app.templeRequests = [];
+        if (body) body.innerHTML = `<tr><td colspan="7" class="muted">Could not load requests: ${esc(err.message)}</td></tr>`;
+      }
+    }
+
+    function renderTempleRequests() {
+      const rows = app.templeRequests;
+      const count = document.getElementById('request-count');
+      if (count) count.textContent = `(${rows.length})`;
+      document.getElementById('request-body').innerHTML = rows.map(req => {
+        const payload = req.payload || {};
+        const current = req.currentDb || {};
+        return `
+          <tr>
+            <td>${esc(formatDate(req.createdAt))}</td>
+            <td>${statusPill(req.requestType)}</td>
+            <td class="name-cell">${esc(payload.Temple || payload.temple || current.name || '')}<div class="muted">D1 ${esc(req.templeId || '')} JSON ${esc(req.sourceJsonId || '')}</div></td>
+            <td>${esc(req.submittedBy || payload['Submitted By'] || '')}<div class="muted">${esc(req.submitterEmail || payload['Submitter Email'] || '')}</div></td>
+            <td>${esc(req.adminLabel || '')}</td>
+            <td>${compactTempleSummary(current)}</td>
+            <td>${compactRequestSummary(payload)}</td>
+          </tr>
+        `;
+      }).join('') || `<tr><td colspan="7" class="muted">No matching requests.</td></tr>`;
     }
 
     function newTemple() {
@@ -879,6 +1037,39 @@
     function nextId(rows) { return rows.length ? Math.max(...rows.map(t => Number(t.id) || 0)) + 1 : 1; }
     function hasCoords(t) { return t.lat !== null && t.lng !== null && t.lat !== undefined && t.lng !== undefined && t.lat !== '' && t.lng !== ''; }
     function gpsPill(t) { return hasCoords(t) ? '<span class="pill pill-green">GPS</span>' : '<span class="pill pill-red">No GPS</span>'; }
+    function statusPill(status) {
+      const text = String(status || '').replace(/_/g, ' ') || 'none';
+      const cls = status === 'verified' || status === 'approved' || status === 'submission'
+        ? 'pill-green'
+        : (status === 'rejected' || status === 'removed' || status === 'deletion' ? 'pill-red' : 'pill-blue');
+      return `<span class="pill ${cls}">${esc(text)}</span>`;
+    }
+    function adminHeaders() {
+      const token = localStorage.getItem('td_admin_api_token') || '';
+      return token ? { 'x-admin-token': token } : {};
+    }
+    function formatDate(value) {
+      if (!value) return '';
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? value : date.toLocaleString();
+    }
+    function compactTempleSummary(t) {
+      if (!t || !Object.keys(t).length) return '<span class="muted">No DB match</span>';
+      return [
+        `<strong>${esc(t.name || '')}</strong>`,
+        esc([t.district, t.location].filter(Boolean).join(', ')),
+        esc([t.lat, t.lng].filter(v => v !== null && v !== undefined && v !== '').join(', '))
+      ].filter(Boolean).join('<br>');
+    }
+    function compactRequestSummary(payload) {
+      const fields = ['Deity','District','Location','Latitude','Longitude','Phone','Timing','Description','Dress Code','Photography','Nearest Bus','Nearest Rail'];
+      const items = fields
+        .map(key => [key, payload[key] || payload[key.replace(/\s+/g, '')]])
+        .filter(([, value]) => value)
+        .slice(0, 5)
+        .map(([key, value]) => `<strong>${esc(key)}:</strong> ${esc(value)}`);
+      return items.join('<br>') || '<span class="muted">No extra fields</span>';
+    }
     function numericOrNull(value) { return value === '' ? null : Number(value); }
     function val(id) { return document.getElementById(id).value.trim(); }
     function setValue(id, value) { document.getElementById(id).value = value ?? ''; }

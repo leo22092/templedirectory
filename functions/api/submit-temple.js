@@ -1,6 +1,16 @@
 const DEFAULT_TO_EMAIL = 'mymail2837@gmail.com';
 const FROM_EMAIL = 'TempleDiary <submissions@templediary.in>';
 const FORM_SUBMIT_ENDPOINT = 'https://formsubmit.co/ajax/';
+const REQUEST_TYPES = {
+  'temple-submission': 'submission',
+  'temple-correction': 'correction',
+  'temple-deletion': 'deletion',
+};
+const DEFAULT_REQUEST_LABELS = {
+  submission: 'COMMUNITY SUBMITTED',
+  correction: 'COMMUNITY CORRECTED',
+  deletion: 'DELETION REQUEST',
+};
 
 export async function onRequestOptions() {
   return jsonResponse({ ok: true });
@@ -65,17 +75,18 @@ function validatePayload(payload) {
   const temple = String(payload.Temple || payload.temple || '').trim();
   const submittedBy = String(payload['Submitted By'] || payload.name || '').trim();
   const message = String(payload.Message || payload.message || '').trim();
+  const requestType = REQUEST_TYPES[kind];
 
-  if (kind === 'temple-submission' && !temple && !message) return 'Temple name or message is required.';
+  if (requestType && !temple && !message) return 'Temple name or message is required.';
   if (!submittedBy) return 'Submitter name is required.';
-  if (kind !== 'temple-submission' && !message) return 'Message is required.';
+  if (!requestType && !message) return 'Message is required.';
 
   return '';
 }
 
 async function saveSubmission(payload, request, env) {
-  if (env.DB && isTempleSubmission(payload)) {
-    return saveTempleToD1(payload, request, env);
+  if (env.DB && isTempleRequest(payload)) {
+    return saveTempleRequestToD1(payload, request, env);
   }
 
   const submissionsStore = env.TEMPLE_SUBMISSIONS || env.KV;
@@ -108,10 +119,113 @@ async function saveSubmission(payload, request, env) {
   return { id, key, stored: true, provider: 'kv' };
 }
 
-function isTempleSubmission(payload) {
+function isTempleRequest(payload) {
   const kind = String(payload.kind || '').trim();
   const temple = String(payload.Temple || payload.temple || '').trim();
-  return kind === 'temple-submission' && Boolean(temple);
+  return Boolean(REQUEST_TYPES[kind] && temple);
+}
+
+async function saveTempleRequestToD1(payload, request, env) {
+  const now = new Date().toISOString();
+  const id = crypto.randomUUID();
+  const requestType = REQUEST_TYPES[String(payload.kind || '').trim()] || 'submission';
+  const state = cleanState(payload.State || payload.state || 'unknown');
+  const templeId = parseInteger(payload.templeId || payload.temple_id || payload['D1 Temple ID']);
+  const sourceJsonId = parseInteger(payload.sourceJsonId || payload.source_json_id || payload['Source JSON ID']);
+  const currentDb = await findCurrentTemple(env, state, templeId, sourceJsonId, payload.Temple || payload.temple);
+  const recordPayload = {
+    ...payload,
+    userAgent: request.headers.get('user-agent') || '',
+    receivedAt: now,
+  };
+
+  await env.DB.prepare(`
+    INSERT INTO temple_requests (
+      id,
+      request_type,
+      status,
+      state,
+      temple_id,
+      source_json_id,
+      admin_label,
+      submitted_by,
+      submitter_email,
+      payload_json,
+      current_db_json,
+      current_public_json,
+      created_at,
+      updated_at
+    )
+    VALUES (?, ?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).bind(
+    id,
+    requestType,
+    state,
+    templeId,
+    sourceJsonId,
+    cleanText(payload['Admin Label'] || payload.adminLabel || DEFAULT_REQUEST_LABELS[requestType]),
+    cleanText(payload['Submitted By'] || payload.name),
+    cleanText(payload['Submitter Email'] || payload.email),
+    JSON.stringify(recordPayload),
+    currentDb ? JSON.stringify(currentDb) : null,
+    cleanText(payload.currentPublicJson || payload['Current Public JSON']) || null,
+    now,
+    now
+  ).run();
+
+  return {
+    id,
+    stored: true,
+    provider: 'd1-request',
+    requestType,
+  };
+}
+
+async function findCurrentTemple(env, state, templeId, sourceJsonId, templeName) {
+  let query = '';
+  let bindValues = [];
+
+  if (templeId !== null) {
+    query = 'SELECT * FROM temples WHERE id = ? LIMIT 1';
+    bindValues = [templeId];
+  } else if (sourceJsonId !== null) {
+    query = 'SELECT * FROM temples WHERE state = ? AND source_json_id = ? LIMIT 1';
+    bindValues = [state, sourceJsonId];
+  } else {
+    const name = cleanText(templeName);
+    if (!name) return null;
+    query = 'SELECT * FROM temples WHERE state = ? AND name = ? COLLATE NOCASE LIMIT 1';
+    bindValues = [state, name];
+  }
+
+  const row = await env.DB.prepare(query).bind(...bindValues).first();
+  return row ? rowToTempleSnapshot(row) : null;
+}
+
+function rowToTempleSnapshot(row) {
+  return {
+    id: row.id,
+    sourceJsonId: row.source_json_id,
+    state: row.state,
+    name: row.name || '',
+    deity: row.deity || '',
+    district: row.district || '',
+    location: row.location || '',
+    lat: row.lat,
+    lng: row.lng,
+    timing: row.timing || '',
+    phone: row.phone || '',
+    description: row.description || '',
+    famous: Boolean(row.famous),
+    tags: parseJson(row.tags, []),
+    adminLabel: row.admin_label || '',
+    status: row.status || '',
+    submittedBy: row.submitted_by || '',
+    submittedAt: row.submitted_at || '',
+    approvedAt: row.approved_at || '',
+    approvedBy: row.approved_by || '',
+    sourceUrl: row.source_url || '',
+  };
 }
 
 async function saveTempleToD1(payload, request, env) {
@@ -134,13 +248,13 @@ async function saveTempleToD1(payload, request, env) {
       description,
       famous,
       tags,
+      admin_label,
       status,
-      verification_count,
       submitted_by,
       submitted_at,
       raw_json
     )
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'unverified', 0, ?, ?, ?)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'unverified', ?, ?, ?)
   `).bind(
     state,
     name,
@@ -154,6 +268,7 @@ async function saveTempleToD1(payload, request, env) {
     cleanText(payload.Description || payload.description || payload.Message || payload.message),
     isTruthy(payload.Famous || payload.famous) ? 1 : 0,
     JSON.stringify(tags),
+    cleanText(payload['Admin Label'] || payload.adminLabel || DEFAULT_REQUEST_LABELS.submission),
     cleanText(payload['Submitted By'] || payload.name),
     now,
     JSON.stringify({
@@ -174,6 +289,17 @@ function cleanText(value) {
   return String(value || '').trim();
 }
 
+function cleanState(value) {
+  return cleanText(value).toLowerCase().replace(/[^a-z0-9-]/g, '') || 'unknown';
+}
+
+function parseInteger(value) {
+  const text = cleanText(value);
+  if (!text) return null;
+  const number = Number.parseInt(text, 10);
+  return Number.isInteger(number) ? number : null;
+}
+
 function parseCoordinate(value) {
   const text = cleanText(value);
   if (!text) return null;
@@ -187,6 +313,15 @@ function parseTags(value) {
     .split(',')
     .map(tag => tag.trim().toLowerCase())
     .filter(Boolean);
+}
+
+function parseJson(value, fallback) {
+  if (!value) return fallback;
+  try {
+    return JSON.parse(value);
+  } catch {
+    return fallback;
+  }
 }
 
 function isTruthy(value) {
