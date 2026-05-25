@@ -82,12 +82,20 @@
     th { position: sticky; top: 0; z-index: 1; background: #f7efe2; color: #7b6e5d; text-align: left; font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; padding: 9px 10px; border-bottom: 1px solid var(--line); }
     td { padding: 9px 10px; border-bottom: 1px solid #f0e6d5; vertical-align: top; font-size: .84rem; }
     tr:hover td { background: #fffaf1; }
+    tr.selected-row td { background: #fff4d8; }
     .name-cell { font-weight: 800; max-width: 280px; }
     .muted { color: var(--muted); }
     .pill { display: inline-flex; align-items: center; gap: 4px; padding: 2px 7px; border-radius: 999px; font-size: .72rem; font-weight: 800; }
     .pill-green { color: var(--green); background: #ecfdf5; }
     .pill-red { color: var(--red); background: #fff1f2; }
     .pill-blue { color: var(--blue); background: #eff6ff; }
+    .diff-list { display: grid; gap: 8px; min-width: 280px; }
+    .diff-item { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: #fffdf8; }
+    .diff-field { padding: 6px 8px; background: #f7efe2; font-weight: 900; color: var(--maroon); }
+    .diff-row { display: grid; grid-template-columns: 70px minmax(0, 1fr); gap: 8px; padding: 5px 8px; border-top: 1px solid #f0e6d5; }
+    .diff-row b { color: #776855; font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; }
+    .diff-new { background: #ecfdf5; }
+    .diff-empty { color: #9b8c7a; font-style: italic; }
     .row-actions { display: flex; gap: 5px; flex-wrap: wrap; }
     .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
     .field.full { grid-column: 1 / -1; }
@@ -234,10 +242,36 @@
           <div class="table-wrap">
             <table>
               <thead>
-                <tr><th>D1 ID</th><th>JSON ID</th><th>Name</th><th>District</th><th>Status</th><th>Admin Label</th><th>GPS</th></tr>
+                <tr><th>D1 ID</th><th>JSON ID</th><th>Name</th><th>District</th><th>Status</th><th>Admin Label</th><th>GPS</th><th>Actions</th></tr>
               </thead>
               <tbody id="db-temple-body"></tbody>
             </table>
+          </div>
+        </div>
+        <div class="panel" id="db-detail-panel" hidden>
+          <div class="panel-head">
+            <h3 id="db-detail-title">D1 Record</h3>
+            <div class="row-actions">
+              <button class="btn btn-soft btn-sm" type="button" onclick="openSelectedDbMap()">Map</button>
+              <button class="btn btn-soft btn-sm" type="button" onclick="closeDbDetail()">Close</button>
+            </div>
+          </div>
+          <div class="form-grid">
+            <input type="hidden" id="db-detail-id" />
+            <div class="field"><label for="db-detail-status">Status</label>
+              <select id="db-detail-status">
+                <option value="verified">Verified</option>
+                <option value="unverified">Unverified</option>
+                <option value="needs_review">Needs review</option>
+                <option value="removed">Removed</option>
+              </select>
+            </div>
+            <div class="field"><label for="db-detail-label">Admin Label</label><input id="db-detail-label" placeholder="e.g. VERIFIED FROM SOURCE" /></div>
+          </div>
+          <div id="db-detail-summary" class="note" style="margin-top:12px"></div>
+          <div class="toolbar" style="margin-top:14px;margin-bottom:0">
+            <span id="db-detail-msg" class="muted"></span>
+            <button class="btn btn-primary" type="button" onclick="saveDbTempleReview()">Save status and label</button>
           </div>
         </div>
       </section>
@@ -266,7 +300,7 @@
           <div class="table-wrap">
             <table>
               <thead>
-                <tr><th>Received</th><th>Type</th><th>Temple</th><th>Submitter</th><th>Admin Label</th><th>Current DB</th><th>Request Data</th><th>Actions</th></tr>
+                <tr><th>Received</th><th>Type</th><th>Temple</th><th>Submitter</th><th>Admin Label</th><th>Current DB</th><th>Public JSON</th><th>Request Changes</th><th>Actions</th></tr>
               </thead>
               <tbody id="request-body"></tbody>
             </table>
@@ -429,6 +463,7 @@
       data: {},
       defaults: {},
       dbTemples: [],
+      selectedDbTempleId: null,
       templeRequests: [],
       selected: new Set(),
       dirty: new Set()
@@ -593,7 +628,7 @@
 
     async function loadDbTemples() {
       const body = document.getElementById('db-temple-body');
-      if (body) body.innerHTML = `<tr><td colspan="7" class="muted">Loading D1 records...</td></tr>`;
+      if (body) body.innerHTML = `<tr><td colspan="8" class="muted">Loading D1 records...</td></tr>`;
       try {
         const res = await fetch(`/api/temples?state=${encodeURIComponent(app.activeState)}&include=all`, {
           cache: 'no-store',
@@ -605,7 +640,7 @@
         renderDbTempleTable();
       } catch (err) {
         app.dbTemples = [];
-        if (body) body.innerHTML = `<tr><td colspan="7" class="muted">Could not load D1 records: ${esc(err.message)}</td></tr>`;
+        if (body) body.innerHTML = `<tr><td colspan="8" class="muted">Could not load D1 records: ${esc(err.message)}</td></tr>`;
       }
     }
 
@@ -621,7 +656,7 @@
       const count = document.getElementById('db-count');
       if (count) count.textContent = `(${rows.length})`;
       document.getElementById('db-temple-body').innerHTML = rows.map(t => `
-        <tr>
+        <tr class="${t.id === app.selectedDbTempleId ? 'selected-row' : ''}">
           <td>${esc(t.id)}</td>
           <td>${esc(t.sourceJsonId || '')}</td>
           <td class="name-cell">${esc(t.name)}<div class="muted">${esc(t.deity || '')}</div></td>
@@ -629,13 +664,96 @@
           <td>${statusPill(t.status)}</td>
           <td>${esc(t.adminLabel || '')}</td>
           <td>${gpsPill(t)}</td>
+          <td><button class="btn btn-soft btn-sm" type="button" onclick="openDbTempleDetail(${t.id})">Review</button></td>
         </tr>
-      `).join('') || `<tr><td colspan="7" class="muted">No D1 records found.</td></tr>`;
+      `).join('') || `<tr><td colspan="8" class="muted">No D1 records found.</td></tr>`;
+    }
+
+    function openDbTempleDetail(id) {
+      const temple = app.dbTemples.find(t => Number(t.id) === Number(id));
+      if (!temple) return notify('D1 record not found in the loaded list.', 'bad');
+      app.selectedDbTempleId = temple.id;
+      setValue('db-detail-id', temple.id);
+      setValue('db-detail-status', temple.status || 'unverified');
+      setValue('db-detail-label', temple.adminLabel || '');
+      document.getElementById('db-detail-title').textContent = `D1 #${temple.id}: ${temple.name || 'Unnamed temple'}`;
+      document.getElementById('db-detail-summary').innerHTML = dbTempleDetailSummary(temple);
+      document.getElementById('db-detail-msg').textContent = '';
+      document.getElementById('db-detail-panel').hidden = false;
+      renderDbTempleTable();
+    }
+
+    function closeDbDetail() {
+      app.selectedDbTempleId = null;
+      document.getElementById('db-detail-panel').hidden = true;
+      renderDbTempleTable();
+    }
+
+    function dbTempleDetailSummary(t) {
+      const rows = [
+        ['Name', t.name],
+        ['Deity', t.deity],
+        ['District', t.district],
+        ['Location', t.location],
+        ['Coordinates', [t.lat, t.lng].filter(v => v !== null && v !== undefined && v !== '').join(', ')],
+        ['Timing', t.timing],
+        ['Phone', t.phone],
+        ['Source', t.sourceUrl],
+        ['Submitted By', t.submittedBy],
+        ['Submitted At', formatDate(t.submittedAt)],
+        ['Approved At', formatDate(t.approvedAt)]
+      ];
+      return rows
+        .filter(([, value]) => value !== undefined && value !== null && String(value).trim() !== '')
+        .map(([label, value]) => `<strong>${esc(label)}:</strong> ${label === 'Source' ? linkIfUrl(value) : esc(value)}`)
+        .join('<br>') || '<span class="muted">No detail fields available.</span>';
+    }
+
+    function linkIfUrl(value) {
+      const text = String(value || '').trim();
+      if (!/^https?:\/\//i.test(text)) return esc(text);
+      return `<a href="${escAttr(text)}" target="_blank" rel="noopener">${esc(text)}</a>`;
+    }
+
+    async function saveDbTempleReview() {
+      const id = Number(document.getElementById('db-detail-id')?.value || 0);
+      const status = document.getElementById('db-detail-status')?.value || '';
+      const adminLabel = document.getElementById('db-detail-label')?.value.trim() || '';
+      const msg = document.getElementById('db-detail-msg');
+      if (!id) return notify('Open a D1 record first.', 'bad');
+      try {
+        if (msg) msg.textContent = 'Saving...';
+        const res = await fetch('/api/temples', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...adminHeaders()
+          },
+          body: JSON.stringify({ id, status, adminLabel, decidedBy: 'admin' })
+        });
+        const json = await res.json();
+        if (!res.ok || !json.ok) throw new Error(json.error || 'D1 update failed');
+        const next = json.temple;
+        const idx = app.dbTemples.findIndex(t => Number(t.id) === id);
+        if (idx !== -1 && next) app.dbTemples[idx] = next;
+        if (next) openDbTempleDetail(next.id);
+        if (msg) msg.textContent = 'Saved.';
+        notify('D1 record updated.', 'ok');
+      } catch (err) {
+        if (msg) msg.textContent = '';
+        notify('D1 update failed: ' + err.message, 'bad');
+      }
+    }
+
+    function openSelectedDbMap() {
+      const temple = app.dbTemples.find(t => Number(t.id) === Number(app.selectedDbTempleId));
+      if (temple && hasCoords(temple)) window.open(`https://www.google.com/maps?q=${temple.lat},${temple.lng}`, '_blank', 'noopener');
+      else notify('This D1 record has no coordinates.', 'bad');
     }
 
     async function loadTempleRequests() {
       const body = document.getElementById('request-body');
-        if (body) body.innerHTML = `<tr><td colspan="8" class="muted">Loading requests...</td></tr>`;
+        if (body) body.innerHTML = `<tr><td colspan="9" class="muted">Loading requests...</td></tr>`;
       const type = document.getElementById('request-type-filter')?.value || 'submission';
       const status = document.getElementById('request-status-filter')?.value || 'pending';
       try {
@@ -655,7 +773,7 @@
         renderTempleRequests();
       } catch (err) {
         app.templeRequests = [];
-        if (body) body.innerHTML = `<tr><td colspan="8" class="muted">Could not load requests: ${esc(err.message)}</td></tr>`;
+        if (body) body.innerHTML = `<tr><td colspan="9" class="muted">Could not load requests: ${esc(err.message)}</td></tr>`;
       }
     }
 
@@ -666,6 +784,7 @@
       document.getElementById('request-body').innerHTML = rows.map(req => {
         const payload = req.payload || {};
         const current = req.currentDb || {};
+        const currentPublic = req.currentPublic || {};
         return `
           <tr>
             <td>${esc(formatDate(req.createdAt))}</td>
@@ -673,12 +792,13 @@
             <td class="name-cell">${esc(payload.Temple || payload.temple || current.name || '')}<div class="muted">D1 ${esc(req.templeId || '')} JSON ${esc(req.sourceJsonId || '')}</div></td>
             <td>${esc(req.submittedBy || payload['Submitted By'] || '')}<div class="muted">${esc(req.submitterEmail || payload['Submitter Email'] || '')}</div></td>
             <td>${esc(req.adminLabel || '')}</td>
-            <td>${compactTempleSummary(current)}</td>
-            <td>${compactRequestSummary(payload)}</td>
+            <td>${compactTempleSummary(current, 'No DB match')}</td>
+            <td>${compactTempleSummary(currentPublic, 'No public JSON snapshot')}</td>
+            <td>${req.requestType === 'correction' ? correctionDiffSummary(req) : compactRequestSummary(payload)}</td>
             <td><div class="row-actions">${requestActionButtons(req)}</div></td>
           </tr>
         `;
-      }).join('') || `<tr><td colspan="8" class="muted">No matching requests.</td></tr>`;
+      }).join('') || `<tr><td colspan="9" class="muted">No matching requests.</td></tr>`;
     }
 
     function requestActionButtons(req) {
@@ -1103,8 +1223,8 @@
       const date = new Date(value);
       return Number.isNaN(date.getTime()) ? value : date.toLocaleString();
     }
-    function compactTempleSummary(t) {
-      if (!t || !Object.keys(t).length) return '<span class="muted">No DB match</span>';
+    function compactTempleSummary(t, emptyLabel = 'No record') {
+      if (!t || !Object.keys(t).length) return `<span class="muted">${esc(emptyLabel)}</span>`;
       return [
         `<strong>${esc(t.name || '')}</strong>`,
         esc([t.district, t.location].filter(Boolean).join(', ')),
@@ -1119,6 +1239,65 @@
         .slice(0, 8)
         .map(([key, value]) => `<strong>${esc(key)}:</strong> ${esc(value)}`);
       return items.join('<br>') || '<span class="muted">No extra fields</span>';
+    }
+    function correctionDiffSummary(req) {
+      const payload = req.payload || {};
+      const currentDb = req.currentDb || {};
+      const currentPublic = req.currentPublic || {};
+      const fields = changedCorrectionFields(payload);
+      if (!fields.length) return '<span class="muted">No changed fields submitted.</span>';
+      return `<div class="diff-list">${fields.map(field => {
+        const next = field.value;
+        return `
+          <div class="diff-item">
+            <div class="diff-field">${esc(field.label)}</div>
+            <div class="diff-row"><b>D1</b><span>${formatDiffValue(readComparableValue(currentDb, field.key))}</span></div>
+            <div class="diff-row"><b>JSON</b><span>${formatDiffValue(readComparableValue(currentPublic, field.key))}</span></div>
+            <div class="diff-row diff-new"><b>Request</b><span>${formatDiffValue(next)}</span></div>
+          </div>
+        `;
+      }).join('')}</div>`;
+    }
+    function changedCorrectionFields(payload) {
+      const fieldMap = [
+        ['Temple', 'name'],
+        ['Deity', 'deity'],
+        ['District', 'district'],
+        ['Location', 'location'],
+        ['Latitude', 'lat'],
+        ['Longitude', 'lng'],
+        ['Google Maps Link', 'googleMapsCorrection'],
+        ['Phone', 'phone'],
+        ['Timing', 'timing'],
+        ['Description', 'description'],
+        ['Dress Code', 'dressCode'],
+        ['Photography', 'photography'],
+        ['Nearest Bus', 'nearestBus'],
+        ['Nearest Rail', 'nearestRail'],
+        ['Source URL', 'sourceUrl'],
+        ['Message', 'lastCorrectionNote']
+      ];
+      return fieldMap
+        .map(([label, key]) => ({ label, key, value: payload[label] || payload[key] || payload[label.replace(/\s+/g, '')] }))
+        .filter(field => field.value !== undefined && field.value !== null && String(field.value).trim() !== '');
+    }
+    function readComparableValue(record, key) {
+      if (!record || !Object.keys(record).length) return '';
+      if (record[key] !== undefined && record[key] !== null) return record[key];
+      if (key === 'sourceUrl') return record.source_url || '';
+      if (key === 'googleMapsCorrection') return parseRawJson(record).googleMapsCorrection || '';
+      if (key === 'lastCorrectionNote') return parseRawJson(record).lastCorrectionNote || '';
+      return '';
+    }
+    function parseRawJson(record) {
+      if (!record || !record.raw_json) return {};
+      if (typeof record.raw_json === 'object') return record.raw_json;
+      try { return JSON.parse(record.raw_json); } catch { return {}; }
+    }
+    function formatDiffValue(value) {
+      if (Array.isArray(value)) value = value.join(', ');
+      if (value === undefined || value === null || String(value).trim() === '') return '<span class="diff-empty">blank</span>';
+      return esc(value);
     }
     function numericOrNull(value) { return value === '' ? null : Number(value); }
     function val(id) { return document.getElementById(id).value.trim(); }

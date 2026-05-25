@@ -1,0 +1,113 @@
+{
+  "_defaults": {
+    "dressCode": "Modest traditional dress recommended. Follow temple-specific rules at the entrance.",
+    "photography": "Usually restricted inside sanctum areas. Check local signage before taking photos."
+  },
+  "temples": [
+    {
+      "id": 1,
+      "name": "Raghunath Temple Jammu",
+      "deity": "Lord Rama",
+      "district": "Jammu",
+      "location": "Raghunath Bazar, Jammu, Jammu and Kashmir",
+      "lat": 32.733,
+      "lng": 74.863,
+      "timing": "",
+      "phone": "",
+      "description": "One of the largest temple complexes of north India, with seven shrines and shikharas. The central shrine is dedicated to Lord Rama.",
+      "famous": true,
+      "tags": ["rama", "jammu", "north-india", "major"],
+      "sourceUrl": "https://jammu.nic.in/tourist-place/raghunath-temple-jammu/"
+    },
+    {
+      "id": 2,
+      "name": "Martand Sun Temple",
+      "deity": "Surya",
+      "district": "Anantnag",
+      "location": "Mattan, Anantnag District, Jammu and Kashmir",
+      "lat": 33.745,
+      "lng": 75.22,
+      "timing": "",
+      "phone": "",
+      "description": "Historic Kashmiri Hindu temple ruins dedicated to Surya, described by the district administration as one of the most elegant structures ever built in India.",
+      "famous": true,
+      "tags": ["surya", "heritage", "anantnag", "major"],
+      "sourceUrl": "https://anantnag.nic.in/tourist-place/martand-sun-temple/"
+    },
+    {
+      "id": 3,
+      "name": "Shankaracharya Temple",
+      "deity": "Lord Shiva",
+      "district": "Srinagar",
+      "location": "Shankaracharya Hill, Srinagar, Jammu and Kashmir",
+      "lat": 34.074,
+      "lng": 74.843,
+      "timing": "",
+      "phone": "",
+      "description": "An important Hindu temple on a hilltop in Srinagar, noted by the district administration among the city's places of interest.",
+      "famous": true,
+      "tags": ["shiva", "srinagar", "kashmir", "major"],
+      "sourceUrl": "https://srinagar.nic.in/places-of-interest/"
+    },
+    {
+      "id": 4,
+      "name": "Shri Mata Vaishno Devi Shrine",
+      "deity": "Mata Vaishno Devi",
+      "district": "Reasi",
+      "location": "Trikuta Hills, Katra, Jammu and Kashmir",
+      "lat": 33.031,
+      "lng": 74.949,
+      "timing": "",
+      "phone": "",
+      "description": "A major pilgrimage shrine near Katra, administered by Shri Mata Vaishno Devi Shrine Board.",
+      "famous": true,
+      "tags": ["devi", "vaishno-devi", "katra", "major"],
+      "sourceUrl": "https://www.maavaishnodevi.org/"
+    },
+    {
+      "id": 5,
+      "name": "Kheer Bhawani Temple",
+      "deity": "Goddess Kheer Bhawani",
+      "district": "Ganderbal",
+      "location": "Tulmulla, Ganderbal District, Jammu and Kashmir",
+      "lat": 34.226,
+      "lng": 74.766,
+      "timing": "",
+      "phone": "",
+      "description": "A revered temple set within a natural spring at Tulmulla, especially important to Kashmiri Pandit devotees.",
+      "famous": true,
+      "tags": ["devi", "kheer-bhawani", "ganderbal", "major"],
+      "sourceUrl": "https://ganderbal.nic.in/tourist-place/kheer-bhawani-temple/"
+    },
+    {
+      "id": 6,
+      "name": "Bawey Wali Mata Temple",
+      "deity": "Goddess Kali",
+      "district": "Jammu",
+      "location": "Bahu Fort, Jammu, Jammu and Kashmir",
+      "lat": 32.727,
+      "lng": 74.879,
+      "timing": "",
+      "phone": "",
+      "description": "A Kali temple inside Bahu Fort, described by Jammu district administration as one of the region's important Shakti shrines.",
+      "famous": true,
+      "tags": ["devi", "kali", "jammu", "major"],
+      "sourceUrl": "https://jammu.nic.in/tourist-place/bahu-fort-jammu/"
+    },
+    {
+      "id": 7,
+      "name": "Shiv Khori Cave Shrine",
+      "deity": "Lord Shiva",
+      "district": "Reasi",
+      "location": "Ransoo, Reasi District, Jammu and Kashmir",
+      "lat": 33.079,
+      "lng": 74.593,
+      "timing": "",
+      "phone": "",
+      "description": "A holy cave shrine of Lord Shiva at Ransoo, listed by Reasi district administration among the district's religious destinations.",
+      "famous": true,
+      "tags": ["shiva", "cave", "reasi", "major"],
+      "sourceUrl": "https://reasi.nic.in/tourist-place/shiv-khori-ransoo/"
+    }
+  ]
+}

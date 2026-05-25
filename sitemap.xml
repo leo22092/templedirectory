@@ -41,6 +41,41 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://www.templediary.in/?state=gujarat</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.templediary.in/?state=assam</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.templediary.in/?state=west-bengal</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.templediary.in/?state=madhya-pradesh</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.templediary.in/?state=maharashtra</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.templediary.in/?state=jammu-kashmir</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.templediary.in/?state=odisha</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.templediary.in/map.html</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -72,6 +107,41 @@
   </url>
   <url>
     <loc>https://www.templediary.in/map.html?state=rajasthan</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.templediary.in/map.html?state=gujarat</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.templediary.in/map.html?state=assam</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.templediary.in/map.html?state=west-bengal</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.templediary.in/map.html?state=madhya-pradesh</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.templediary.in/map.html?state=maharashtra</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.templediary.in/map.html?state=jammu-kashmir</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.templediary.in/map.html?state=odisha</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>

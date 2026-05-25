@@ -44,6 +44,41 @@ const STATE_CONFIG = {
     dataFile: 'data/rajasthan.json',
     view: { center: [27.0238, 74.2179], zoom: 6 },
   },
+  'gujarat': {
+    label: 'Gujarat',
+    dataFile: 'data/gujarat.json',
+    view: { center: [22.2587, 71.1924], zoom: 6 },
+  },
+  'assam': {
+    label: 'Assam',
+    dataFile: 'data/assam.json',
+    view: { center: [26.2006, 92.9376], zoom: 7 },
+  },
+  'west-bengal': {
+    label: 'West Bengal',
+    dataFile: 'data/west-bengal.json',
+    view: { center: [22.9868, 87.8550], zoom: 7 },
+  },
+  'madhya-pradesh': {
+    label: 'Madhya Pradesh',
+    dataFile: 'data/madhya-pradesh.json',
+    view: { center: [22.9734, 78.6569], zoom: 6 },
+  },
+  'maharashtra': {
+    label: 'Maharashtra',
+    dataFile: 'data/maharashtra.json',
+    view: { center: [19.7515, 75.7139], zoom: 6 },
+  },
+  'jammu-kashmir': {
+    label: 'Jammu & Kashmir',
+    dataFile: 'data/jammu-kashmir.json',
+    view: { center: [33.7782, 76.5762], zoom: 7 },
+  },
+  'odisha': {
+    label: 'Odisha',
+    dataFile: 'data/odisha.json',
+    view: { center: [20.9517, 85.0985], zoom: 7 },
+  },
 };
 
 const activeConfig = STATE_CONFIG[selectedState] || STATE_CONFIG.kerala;

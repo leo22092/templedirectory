@@ -1,4 +1,5 @@
 const PUBLIC_STATUSES = new Set(['verified', 'unverified']);
+const ADMIN_STATUSES = new Set(['verified', 'unverified', 'needs_review', 'removed']);
 
 export async function onRequestOptions() {
   return jsonResponse({ ok: true });
@@ -62,6 +63,68 @@ export async function onRequestGet({ request, env }) {
   }
 }
 
+export async function onRequestPost({ request, env }) {
+  try {
+    if (!env.DB) {
+      return jsonResponse({ ok: false, error: 'D1 binding DB is not configured.' }, 500);
+    }
+
+    const authError = requireAdmin(request, env);
+    if (authError) return authError;
+
+    const payload = await request.json();
+    const id = parseInteger(payload.id);
+    const status = cleanText(payload.status).toLowerCase();
+    const adminLabel = cleanText(payload.adminLabel || payload.admin_label);
+    const decidedBy = cleanText(payload.decidedBy || 'admin');
+
+    if (!id) return jsonResponse({ ok: false, error: 'Temple id is required.' }, 400);
+    if (!ADMIN_STATUSES.has(status)) return jsonResponse({ ok: false, error: 'Unsupported temple status.' }, 400);
+
+    await env.DB.prepare(`
+      UPDATE temples
+      SET status = ?,
+          admin_label = ?,
+          approved_at = CASE WHEN ? = 'verified' THEN CURRENT_TIMESTAMP ELSE approved_at END,
+          approved_by = CASE WHEN ? = 'verified' THEN ? ELSE approved_by END,
+          updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+    `).bind(status, adminLabel, status, status, decidedBy, id).run();
+
+    const row = await env.DB.prepare(`
+      SELECT
+        id,
+        source_json_id,
+        state,
+        name,
+        deity,
+        district,
+        location,
+        lat,
+        lng,
+        timing,
+        phone,
+        description,
+        famous,
+        tags,
+        admin_label,
+        status,
+        submitted_by,
+        submitted_at,
+        approved_at,
+        source_url,
+        raw_json
+      FROM temples
+      WHERE id = ?
+      LIMIT 1
+    `).bind(id).first();
+
+    return jsonResponse({ ok: true, temple: row ? rowToTemple(row) : null });
+  } catch (err) {
+    return jsonResponse({ ok: false, error: err.message || 'Failed to update temple.' }, 500);
+  }
+}
+
 function rowToTemple(row) {
   const raw = parseJson(row.raw_json, {});
   const tags = parseJson(row.tags, []);
@@ -107,14 +170,32 @@ function cleanState(value) {
     .replace(/[^a-z0-9-]/g, '');
 }
 
+function cleanText(value) {
+  return String(value || '').trim();
+}
+
+function parseInteger(value) {
+  const text = cleanText(value);
+  if (!text) return null;
+  const number = Number.parseInt(text, 10);
+  return Number.isInteger(number) ? number : null;
+}
+
+function requireAdmin(request, env) {
+  if (!env.ADMIN_API_TOKEN) return null;
+  const token = request.headers.get('x-admin-token') || request.headers.get('authorization')?.replace(/^Bearer\s+/i, '');
+  if (token === env.ADMIN_API_TOKEN) return null;
+  return jsonResponse({ ok: false, error: 'Unauthorized.' }, 401);
+}
+
 function jsonResponse(body, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
     headers: {
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, x-admin-token, Authorization',
       'Cache-Control': 'no-store',
     },
   });

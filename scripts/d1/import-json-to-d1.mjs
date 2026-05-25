@@ -14,6 +14,13 @@ const STATE_FILES = [
   ['tamil-nadu', 'data/tamil-nadu.json'],
   ['goa', 'data/goa.json'],
   ['rajasthan', 'data/rajasthan.json'],
+  ['gujarat', 'data/gujarat.json'],
+  ['assam', 'data/assam.json'],
+  ['west-bengal', 'data/west-bengal.json'],
+  ['madhya-pradesh', 'data/madhya-pradesh.json'],
+  ['maharashtra', 'data/maharashtra.json'],
+  ['jammu-kashmir', 'data/jammu-kashmir.json'],
+  ['odisha', 'data/odisha.json'],
 ];
 
 const outDir = process.argv[2] || 'tmp/d1-import-batches';

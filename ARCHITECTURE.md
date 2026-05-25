@@ -70,7 +70,7 @@ temples
 temple_requests
 ```
 
-Old community voting has been dropped. There is no active need for `temple_verifications`.
+Old community voting has been dropped; `temple_verifications` is obsolete and should not be recreated.
 
 ## D1 Table Responsibilities
 
@@ -535,4 +535,3 @@ Option B: switch public frontend to /api/temples with caching
 ```
 
 For lowest cost, Option A remains preferred.
-

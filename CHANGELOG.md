@@ -11,6 +11,9 @@ All notable project changes are summarized here from the Git history.
 - Fixed About page "Submit a temple" links to open the existing form flow via `index.html?add=temple`.
 - Standardized favicon and web manifest links across secondary pages.
 - Updated the map page title branding.
+- Added and expanded confirmed seed temple data and site/map navigation for Gujarat, Assam, West Bengal, Madhya Pradesh, Maharashtra, Jammu & Kashmir, and Odisha.
+- Added those new state JSON files to the D1 import batch generator.
+- Added compressed JPEG hero assets for Gujarat, Assam, West Bengal, and Odisha from existing source images.
 
 ## v14 / Admin + D1 Completion - 2026-05-24
 
