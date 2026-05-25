@@ -154,6 +154,7 @@
   const sortSelect   = document.getElementById('sort-select');
   const clearBtn     = document.getElementById('clear-filters');
   const heroSearch   = document.getElementById('hero-search');
+  const heroSuggest  = document.getElementById('hero-search-suggestions');
   const yearEl       = document.getElementById('year');
   const navToggle    = document.getElementById('nav-toggle');
   const navMenu      = document.getElementById('nav-menu');
@@ -368,10 +369,134 @@
         state.query = heroSearch.value;
         state.page = 1;
         if (filterSearch) filterSearch.value = state.query;
+        hideHeroSuggestions();
         render();
         document.getElementById('directory').scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     }
+    if (heroSearch) {
+      heroSearch.addEventListener('input', handleHeroSearchInput);
+      heroSearch.addEventListener('focus', updateHeroSuggestions);
+      heroSearch.addEventListener('keydown', handleHeroSuggestionKeys);
+      heroSearch.addEventListener('blur', () => window.setTimeout(hideHeroSuggestions, 140));
+    }
+  }
+
+  function handleHeroSearchInput() {
+    if (!heroSearch) return;
+
+    if (!heroSearch.value.trim()) {
+      state.query = '';
+      state.page = 1;
+      if (filterSearch) filterSearch.value = '';
+      hideHeroSuggestions();
+      render();
+      return;
+    }
+
+    debounceHeroSuggestions();
+  }
+
+  const debounceHeroSuggestions = debounce(updateHeroSuggestions, 120);
+
+  function updateHeroSuggestions() {
+    if (!heroSearch || !heroSuggest) return;
+
+    const q = heroSearch.value.trim().toLowerCase();
+    if (q.length < 2) {
+      hideHeroSuggestions();
+      return;
+    }
+
+    const matches = getStateData(activeState)
+      .filter(t => {
+        const haystack = [t.name, t.deity, t.district, t.location].filter(Boolean).join(' ').toLowerCase();
+        return haystack.includes(q);
+      })
+      .sort((a, b) => {
+        const aName = (a.name || '').toLowerCase();
+        const bName = (b.name || '').toLowerCase();
+        const aStarts = aName.startsWith(q) ? 0 : 1;
+        const bStarts = bName.startsWith(q) ? 0 : 1;
+        return aStarts - bStarts || aName.localeCompare(bName);
+      })
+      .slice(0, 8);
+
+    if (!matches.length) {
+      hideHeroSuggestions();
+      return;
+    }
+
+    heroSuggest.innerHTML = '';
+    matches.forEach((t, index) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'search-suggestion';
+      btn.setAttribute('role', 'option');
+      btn.id = `hero-search-suggestion-${index}`;
+      btn.setAttribute('aria-selected', 'false');
+      btn.dataset.index = String(index);
+      btn.innerHTML = `
+        <strong>${escHtml(t.name || '')}</strong>
+        <span>${escHtml([t.deity, t.district, t.location].filter(Boolean).join(' · '))}</span>
+      `;
+      btn.addEventListener('mousedown', e => e.preventDefault());
+      btn.addEventListener('click', () => selectHeroSuggestion(t));
+      heroSuggest.appendChild(btn);
+    });
+
+    heroSuggest.hidden = false;
+    heroSearch.setAttribute('aria-expanded', 'true');
+    heroSearch.removeAttribute('aria-activedescendant');
+  }
+
+  function selectHeroSuggestion(t) {
+    if (!heroSearch) return;
+    heroSearch.value = t.name || '';
+    state.query = heroSearch.value;
+    state.page = 1;
+    if (filterSearch) filterSearch.value = state.query;
+    hideHeroSuggestions();
+    render();
+    openModal(t);
+  }
+
+  function hideHeroSuggestions() {
+    if (!heroSuggest || !heroSearch) return;
+    heroSuggest.hidden = true;
+    heroSuggest.innerHTML = '';
+    heroSearch.setAttribute('aria-expanded', 'false');
+    heroSearch.removeAttribute('aria-activedescendant');
+  }
+
+  function handleHeroSuggestionKeys(e) {
+    if (!heroSuggest || heroSuggest.hidden) return;
+
+    const items = [...heroSuggest.querySelectorAll('.search-suggestion')];
+    if (!items.length) return;
+
+    const current = items.findIndex(item => item.getAttribute('aria-selected') === 'true');
+    let next = current;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      next = current < items.length - 1 ? current + 1 : 0;
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      next = current > 0 ? current - 1 : items.length - 1;
+    } else if (e.key === 'Enter' && current >= 0) {
+      e.preventDefault();
+      items[current].click();
+      return;
+    } else if (e.key === 'Escape') {
+      hideHeroSuggestions();
+      return;
+    } else {
+      return;
+    }
+
+    items.forEach((item, index) => item.setAttribute('aria-selected', String(index === next)));
+    heroSearch.setAttribute('aria-activedescendant', items[next].id);
   }
 
   /* ══════════════════════════

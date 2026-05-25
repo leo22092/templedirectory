@@ -18,7 +18,7 @@
   <meta property="og:image" content="https://www.templediary.in/og-image.jpg" />
   <meta property="og:locale" content="en_IN" />
   <meta property="og:site_name" content="TempleDiary" />
-
+  <meta name="twitter:title" content="Temple Diary - India Temple Directory" />
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="TempleDiary — India Temple Directory" />
@@ -89,7 +89,7 @@
     }
     .contribute-actions {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 12px;
     }
     .contribute-btn {
@@ -140,12 +140,6 @@
       border-color: #c8860a;
       color: #7a4500;
       font-weight: 600;
-    }
-    /* Correction — subtle, secondary */
-    .contribute-btn--correction {
-      background: #fff;
-      border-color: #ffd08a;
-      color: #5a3410;
     }
     @media (max-width: 760px) {
       .contribute-actions {
@@ -245,14 +239,15 @@
       </p>
       <form class="search-form" role="search" action="/" method="get" aria-label="Search temples">
         <label for="hero-search" class="sr-only">Search temples</label>
-        <input type="search" id="hero-search" name="q" placeholder="Temple name, deity, location…" autocomplete="off" />
+        <input type="search" id="hero-search" name="q" placeholder="Temple name, deity, location…" autocomplete="off" aria-autocomplete="list" aria-controls="hero-search-suggestions" aria-expanded="false" />
         <button type="submit">Search</button>
+        <div id="hero-search-suggestions" class="search-suggestions" role="listbox" hidden></div>
       </form>
       <div class="hero-stats" aria-label="Directory statistics">
         <div class="stat"><strong id="stat-temples">1,200+</strong><span>Temples</span></div>
         <div class="stat"><strong id="stat-states">6</strong><span>States Live</span></div>
         <div class="stat"><strong id="stat-districts">14</strong><span>Districts</span></div>
-        <div class="stat"><strong>Daily</strong><span>Updated</span></div>
+        <div class="stat"><strong>Every 2 weeks</strong><span>Updated</span></div>
       </div>
     </div>
   </section>
@@ -275,109 +270,6 @@
     <span class="ad-label">Advertisement</span>
     <div class="ad-placeholder"><p>Ad slot — 728×90</p></div>
   </div>
-
-  <!-- ═══ TEMPLE MAP SECTION ═══ -->
-  <section class="map-section" aria-labelledby="map-section-heading" id="map-section">
-
-    <!-- Background image layer — swapped per state by JS -->
-    <div class="map-section-bg" id="map-section-bg" aria-hidden="true"></div>
-
-    <div class="container map-section-inner">
-      <div class="map-section-text">
-        <p class="section-label" id="map-section-label">Explore Kerala</p>
-        <h2 id="map-section-heading">Temple Map Explorer</h2>
-        <p class="map-text">
-          Discover temples across every district on our interactive map.
-          Filter by deity, zoom into your district, and get directions — all in one place.
-        </p>
-        <ul class="map-features" aria-label="Map features">
-          <li>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-              <circle cx="12" cy="10" r="3"/>
-            </svg>
-            Pin locations for all temples
-          </li>
-          <li>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <circle cx="11" cy="11" r="8"/>
-              <path d="m21 21-4.35-4.35"/>
-            </svg>
-            Filter by district &amp; deity
-          </li>
-          <li>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-            </svg>
-            Click any pin for temple details
-          </li>
-        </ul>
-      </div>
-      <!-- href is updated dynamically by JS with ?state= param -->
-      <a href="map.html" class="map-btn" id="map-section-btn" aria-label="Open interactive temple map">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-          <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
-          <line x1="8" y1="2" x2="8" y2="18"/>
-          <line x1="16" y1="6" x2="16" y2="22"/>
-        </svg>
-        Open Temple Map
-      </a>
-    </div>
-  </section>
-
-  <!-- ═══ CONTRIBUTE SECTION ═══ -->
-  <section class="contribute-section">
-    <div class="container">
-      <h2>Is your temple not listed?</h2>
-      <p>
-        Contribute what you know! We rely on devotees like you to keep our directory accurate and
-        comprehensive. Help us preserve our rich heritage by adding missing temples or suggesting
-        corrections to existing ones.
-      </p>
-
-      <!-- ── Submit a Temple ── -->
-      <div class="contribute-group">
-        <p class="contribute-group-label">➕ Submit a Temple</p>
-        <div class="contribute-actions">
-          <button
-            class="contribute-btn contribute-btn--home"
-            onclick="window.openSubmitModal(null)"
-            aria-label="Submit a temple from home manually"
-          >
-            <span class="contribute-btn-icon">🏠</span>
-            <span class="contribute-btn-text">
-              <strong>Submitting from Home</strong>
-              <small>Fill in details manually</small>
-            </span>
-          </button>
-          <a
-            href="/add"
-            class="contribute-btn contribute-btn--temple"
-            onclick="event.preventDefault(); try { window.history.pushState(null, '', '/add'); } catch (e) {} window.openSubmitModalAtTemple();"
-            aria-label="Submit a temple using GPS — I am at the temple now"
-          >
-            <span class="contribute-btn-icon">📍</span>
-            <span class="contribute-btn-text">
-              <strong>I'm at the Temple Now</strong>
-              <small>Auto-detect my location</small>
-            </span>
-          </a>
-          <button
-            class="contribute-btn contribute-btn--correction"
-            onclick="window.openSubmitModal(null)"
-            aria-label="Suggest a correction to an existing temple listing"
-          >
-            <span class="contribute-btn-icon">💡</span>
-            <span class="contribute-btn-text">
-              <strong>Suggest a Correction</strong>
-              <small>Fix wrong info in an existing listing</small>
-            </span>
-          </button>
-        </div>
-      </div>
-
-    </div>
-  </section>
 
   <!-- ═══ QUICK DISTRICT CHIPS ═══ -->
   <section class="quick-districts" id="quick-districts" aria-labelledby="districts-heading">
@@ -442,6 +334,97 @@
     </section>
 
   </main>
+
+  <!-- ═══ TEMPLE MAP SECTION ═══ -->
+  <section class="map-section" aria-labelledby="map-section-heading" id="map-section">
+
+    <!-- Background image layer — swapped per state by JS -->
+    <div class="map-section-bg" id="map-section-bg" aria-hidden="true"></div>
+
+    <div class="container map-section-inner">
+      <div class="map-section-text">
+        <p class="section-label" id="map-section-label">Explore Kerala</p>
+        <h2 id="map-section-heading">Temple Map Explorer</h2>
+        <p class="map-text">
+          Discover temples across every district on our interactive map.
+          Filter by deity, zoom into your district, and get directions — all in one place.
+        </p>
+        <ul class="map-features" aria-label="Map features">
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+            Pin locations for all temples
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="11" cy="11" r="8"/>
+              <path d="m21 21-4.35-4.35"/>
+            </svg>
+            Filter by district &amp; deity
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            </svg>
+            Click any pin for temple details
+          </li>
+        </ul>
+      </div>
+      <!-- href is updated dynamically by JS with ?state= param -->
+      <a href="map.html" class="map-btn" id="map-section-btn" aria-label="Open interactive temple map">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
+          <line x1="8" y1="2" x2="8" y2="18"/>
+          <line x1="16" y1="6" x2="16" y2="22"/>
+        </svg>
+        Open Temple Map
+      </a>
+    </div>
+  </section>
+
+  <!-- ═══ CONTRIBUTE SECTION ═══ -->
+  <section class="contribute-section">
+    <div class="container">
+      <h2>Is your temple not listed?</h2>
+      <p>
+        Contribute what you know! We rely on devotees like you to keep our directory accurate and
+        comprehensive. Help us preserve our rich heritage by adding missing temples.
+      </p>
+
+      <!-- ── Submit a Temple ── -->
+      <div class="contribute-group">
+        <p class="contribute-group-label">➕ Submit a Temple</p>
+        <div class="contribute-actions">
+          <button
+            class="contribute-btn contribute-btn--home"
+            onclick="window.openSubmitModal(null)"
+            aria-label="Submit a temple from home manually"
+          >
+            <span class="contribute-btn-icon">🏠</span>
+            <span class="contribute-btn-text">
+              <strong>Submitting from Home</strong>
+              <small>Fill in details manually</small>
+            </span>
+          </button>
+          <a
+            href="/add"
+            class="contribute-btn contribute-btn--temple"
+            onclick="event.preventDefault(); try { window.history.pushState(null, '', '/add'); } catch (e) {} window.openSubmitModalAtTemple();"
+            aria-label="Submit a temple using GPS — I am at the temple now"
+          >
+            <span class="contribute-btn-icon">📍</span>
+            <span class="contribute-btn-text">
+              <strong>I'm at the Temple Now</strong>
+              <small>Auto-detect my location</small>
+            </span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
 
   <!-- ═══ AD SLOT — Mid-page ═══ -->
   <div class="ad-container ad-mid" aria-label="Advertisement">
