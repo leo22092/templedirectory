@@ -80,7 +80,7 @@
       label:        'Rajasthan',
       eyebrow:      'Land of Forts and Sacred Traditions',
       heroSub:      'Find temples in Rajasthan — from desert shrines and ancient pilgrimage towns to living royal-era temples.<br>Timings, contact numbers, travel info and more.',
-      statTemples:  '100+',
+      statTemples:  '400+',
       statDistricts:'33',
       mapLabel:     'Explore Rajasthan',
       heroImage:    'hero-bg.jpg',
@@ -335,14 +335,15 @@
     if (heroEyebrow)   heroEyebrow.textContent  = cfg.eyebrow;
     if (heroStateName) heroStateName.textContent = cfg.label;
     if (heroSubEl)     heroSubEl.innerHTML       = cfg.heroSub;
-    if (statTemples)   statTemples.textContent   = cfg.statTemples;
-    if (statDistricts) statDistricts.textContent = cfg.statDistricts;
+    const stateTemples = getStateData(stateKey);
+    if (statTemples)   statTemples.textContent   = formatTempleStat(stateTemples.length, cfg.statTemples);
+    if (statDistricts) statDistricts.textContent = formatDistrictStat(stateTemples, cfg.statDistricts);
 
     // Rebuild filter dropdowns
-    populateFilters(getStateData(stateKey));
+    populateFilters(stateTemples);
 
     // Rebuild district chips
-    populateChips(getStateData(stateKey));
+    populateChips(stateTemples);
 
     // Update map section
     const mapLabel  = document.getElementById('map-section-label');
@@ -367,6 +368,17 @@
       url.searchParams.set('state', stateKey);
       window.history.pushState({ state: stateKey }, '', url.toString());
     }
+  }
+
+  function formatTempleStat(count, fallback) {
+    if (!count) return fallback;
+    if (count < 100) return String(count);
+    return `${Math.floor(count / 100) * 100}+`;
+  }
+
+  function formatDistrictStat(temples, fallback) {
+    const count = new Set(temples.map(t => t.district).filter(Boolean)).size;
+    return count ? String(count) : fallback;
   }
 
   // Handle browser back/forward
@@ -660,6 +672,7 @@
     div.setAttribute('aria-label', `${t.name}, ${t.district}`);
     div.innerHTML = `
       ${t.famous ? `<span class="badge-famous">⭐ Famous</span>` : ''}
+      ${buildStatusLabel(t)}
       <div class="card-deity">${escHtml(t.deity)}</div>
       <h3 class="card-name">${escHtml(t.name)}</h3>
       <p class="card-desc">${escHtml(t.description || '')}</p>
@@ -760,8 +773,9 @@
   function openModal(t) {
     modalOverlay.querySelector('#modal-deity').textContent = t.deity;
     modalOverlay.querySelector('#modal-name').textContent  = t.name;
-    modalOverlay.querySelector('#modal-badge').textContent = t.famous ? '⭐ Famous Temple' : '';
-    modalOverlay.querySelector('#modal-badge').style.display = t.famous ? '' : 'none';
+    const modalBadge = modalOverlay.querySelector('#modal-badge');
+    modalBadge.innerHTML = [t.famous ? '<span class="status-label status-famous">Famous Temple</span>' : '', buildStatusLabel(t)].filter(Boolean).join(' ');
+    modalBadge.style.display = modalBadge.innerHTML ? '' : 'none';
     modalOverlay.querySelector('#modal-desc').textContent  = t.description || '';
 
     const rows = [
@@ -803,6 +817,17 @@
   function closeModal() {
     if (modalOverlay) modalOverlay.classList.remove('open');
     document.body.style.overflow = '';
+  }
+
+  function buildStatusLabel(t) {
+    const status = String(t.status || '').trim().toLowerCase();
+    const adminLabel = String(t.adminLabel || t.admin_label || '').trim();
+    if (!status && !adminLabel) return '';
+    const label = adminLabel || status.replace(/_/g, ' ');
+    const cls = status === 'verified'
+      ? 'status-verified'
+      : (status === 'needs_review' ? 'status-needs-review' : 'status-unverified');
+    return `<span class="status-label ${cls}">${escHtml(label)}</span>`;
   }
 
   /* ══════════════════════════
@@ -1027,6 +1052,7 @@
 
               <div id="cr-location-section" class="sf-group" hidden>
                 <label>Correct location</label>
+                <input type="text" id="cr-location" placeholder="Correct address/location" />
                 <div class="sf-row">
                   <div class="sf-group">
                     <label for="cr-lat">Latitude</label>
@@ -1052,7 +1078,6 @@
                 </div>
                 <div class="sf-row">
                   <input type="text" id="cr-district" placeholder="Correct district" />
-                  <input type="text" id="cr-location" placeholder="Correct address/location" />
                 </div>
                 <div class="sf-row">
                   <input type="text" id="cr-timing" placeholder="Correct timings" />
@@ -1100,6 +1125,8 @@
     correctionOverlay.querySelectorAll('input[name="cr-exists"]').forEach(input => input.addEventListener('change', updateCorrectionWizard));
     correctionOverlay.querySelectorAll('input[name="cr-location-correct"]').forEach(input => input.addEventListener('change', updateCorrectionWizard));
     correctionOverlay.querySelector('#cr-detect-location').addEventListener('click', detectCorrectionLocation);
+    correctionOverlay.querySelector('#cr-map-link').addEventListener('input', handleCorrectionMapLink);
+    correctionOverlay.querySelector('#cr-map-link').addEventListener('change', handleCorrectionMapLink);
   }
 
   function openCorrectionModal(t) {
@@ -1133,7 +1160,13 @@
     const locationCorrect = correctionOverlay.querySelector('input[name="cr-location-correct"]:checked')?.value || 'yes';
     correctionOverlay.querySelector('#cr-delete-section').hidden = exists !== 'no';
     correctionOverlay.querySelector('#cr-correction-section').hidden = exists === 'no';
-    correctionOverlay.querySelector('#cr-location-section').hidden = exists === 'no' || locationCorrect !== 'no';
+    const locationSection = correctionOverlay.querySelector('#cr-location-section');
+    const shouldShowLocation = exists !== 'no' && locationCorrect === 'no';
+    locationSection.hidden = !shouldShowLocation;
+    locationSection.querySelectorAll('input, textarea, button').forEach(el => {
+      el.disabled = !shouldShowLocation;
+      if (!shouldShowLocation && el.tagName !== 'BUTTON') el.value = '';
+    });
   }
 
   async function detectCorrectionLocation() {
@@ -1158,6 +1191,47 @@
     } catch (err) {
       showMsg(msg, 'error', 'Could not get GPS location.');
     }
+  }
+
+  function handleCorrectionMapLink() {
+    const link = correctionValue('cr-map-link');
+    const coords = parseMapLinkCoordinates(link);
+    if (!coords) return;
+    correctionOverlay.querySelector('#cr-lat').value = coords.lat.toFixed(6);
+    correctionOverlay.querySelector('#cr-lng').value = coords.lng.toFixed(6);
+  }
+
+  function parseMapLinkCoordinates(link) {
+    const text = String(link || '').trim();
+    if (!text) return null;
+
+    const decoded = safeDecode(text);
+    const patterns = [
+      /@(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/,
+      /[?&](?:q|query|ll)=(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/,
+      /!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)/,
+    ];
+
+    for (const pattern of patterns) {
+      const match = decoded.match(pattern);
+      if (!match) continue;
+      const lat = Number(match[1]);
+      const lng = Number(match[2]);
+      if (isValidCoordinatePair(lat, lng)) return { lat, lng };
+    }
+    return null;
+  }
+
+  function safeDecode(value) {
+    try {
+      return decodeURIComponent(value);
+    } catch {
+      return value;
+    }
+  }
+
+  function isValidCoordinatePair(lat, lng) {
+    return Number.isFinite(lat) && Number.isFinite(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
   }
 
   async function handleCorrectionSubmit(e) {
@@ -1234,13 +1308,11 @@
   function collectCorrectionFields() {
     const fields = {};
     const notes = [];
+    const locationCorrect = correctionOverlay.querySelector('input[name="cr-location-correct"]:checked')?.value || 'yes';
     const mappings = [
       ['cr-name', 'Temple'],
       ['cr-deity', 'Deity'],
       ['cr-district', 'District'],
-      ['cr-location', 'Location'],
-      ['cr-lat', 'Latitude'],
-      ['cr-lng', 'Longitude'],
       ['cr-timing', 'Timing'],
       ['cr-phone', 'Phone'],
       ['cr-description', 'Description'],
@@ -1256,8 +1328,19 @@
       if (value) fields[key] = value;
     });
 
-    const mapLink = correctionValue('cr-map-link');
-    const locationNote = correctionValue('cr-location-note');
+    if (locationCorrect === 'no') {
+      [
+        ['cr-location', 'Location'],
+        ['cr-lat', 'Latitude'],
+        ['cr-lng', 'Longitude'],
+      ].forEach(([id, key]) => {
+        const value = correctionValue(id);
+        if (value) fields[key] = value;
+      });
+    }
+
+    const mapLink = locationCorrect === 'no' ? correctionValue('cr-map-link') : '';
+    const locationNote = locationCorrect === 'no' ? correctionValue('cr-location-note') : '';
     const notesText = correctionValue('cr-notes');
     if (mapLink) fields['Google Maps Link'] = mapLink;
     if (locationNote) notes.push('Location note: ' + locationNote);

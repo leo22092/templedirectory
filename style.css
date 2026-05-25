@@ -782,6 +782,26 @@ header {
   text-transform: uppercase;
 }
 
+.status-label {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 0 0.55rem;
+  padding: 0.22rem 0.56rem;
+  border-radius: 100px;
+  font-size: 0.62rem;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.temple-card .status-label { margin-right: 4.5rem; }
+.status-verified { color: #065f46; background: #dcfce7; border: 1px solid #86efac; }
+.status-unverified { color: #1d4ed8; background: #eff6ff; border: 1px solid #bfdbfe; }
+.status-needs-review { color: #92400e; background: #fef3c7; border: 1px solid #facc15; }
+.status-famous { color: #7b1c1c; background: #fff4d6; border: 1px solid #f3c969; }
+
 .card-deity {
   font-size: 0.72rem; font-weight: 700; color: var(--saffron);
   text-transform: uppercase; letter-spacing: 0.12em;
@@ -1151,10 +1171,13 @@ footer::before {
    MODAL — extra fields & actions
 ══════════════════════════ */
 .modal-badge {
-  display: inline-block;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
   font-size: 0.72rem;
   margin-bottom: 0.5rem;
 }
+.modal-badge .status-label { margin: 0; }
 .modal-desc {
   font-size: 0.93rem;
   color: var(--stone, #888);

@@ -131,7 +131,7 @@
       <div class="brand-mark">TD</div>
       <div>
         <h1>TempleDiary Admin</h1>
-        <p>Static JSON content manager</p>
+        <p>D1 maintenance with JSON publishing</p>
       </div>
     </div>
     <div class="top-actions">
@@ -145,13 +145,13 @@
     <aside class="sidebar">
       <span class="side-label">Manage</span>
       <button class="nav-btn active" type="button" data-section="overview">Overview</button>
-      <button class="nav-btn" type="button" data-section="temples">Temples</button>
-      <button class="nav-btn" type="button" data-section="db">D1 Records</button>
+      <button class="nav-btn" type="button" data-section="db">Temple Maintenance</button>
       <button class="nav-btn" type="button" data-section="requests">Requests</button>
-      <button class="nav-btn" type="button" data-section="editor">Add / Edit</button>
+      <button class="nav-btn" type="button" data-section="temples">Published JSON Preview</button>
+      <button class="nav-btn" type="button" data-section="editor">JSON Draft Editor</button>
       <button class="nav-btn" type="button" data-section="states">States</button>
-      <button class="nav-btn" type="button" data-section="import">Import</button>
-      <button class="nav-btn" type="button" data-section="export">Export</button>
+      <button class="nav-btn" type="button" data-section="import">JSON Import</button>
+      <button class="nav-btn" type="button" data-section="export">JSON Export</button>
       <button class="nav-btn" type="button" data-section="health">Health</button>
       <span class="side-label">Files</span>
       <a class="side-link" href="sitemap.xml" target="_blank">Sitemap</a>
@@ -163,11 +163,11 @@
       <div class="toolbar">
         <div>
           <h2 id="page-title">Overview</h2>
-          <p id="page-subtitle">Load, validate, edit, and export the live JSON files.</p>
+          <p id="page-subtitle">Maintain temples in D1, then publish JSON for the public site.</p>
         </div>
         <div class="state-row">
           <select id="active-state" onchange="switchState(this.value)"></select>
-          <button class="btn btn-primary" type="button" onclick="newTemple()">Add temple</button>
+          <button class="btn btn-primary" type="button" onclick="showSection('db'); newDbTemple()">Add D1 temple</button>
           <button class="btn btn-green" type="button" onclick="downloadActiveJson()">Download JSON</button>
         </div>
       </div>
@@ -175,11 +175,18 @@
       <div id="alert" class="alert"></div>
 
       <section class="section active" id="section-overview">
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Publishing Workflow</h3>
+            <button class="btn btn-primary btn-sm" type="button" onclick="showSection('db')">Open maintenance</button>
+          </div>
+          <p class="note">D1 is used for admin editing, verification, labels, and request approvals. The public site renders from JSON to avoid unnecessary D1 calls. Every 48 hours, export the updated D1 data to JSON and commit/upload it to GitHub.</p>
+        </div>
         <div class="grid-stats" id="stats"></div>
         <div class="panel">
           <div class="panel-head">
-            <h3>Recent Records</h3>
-            <button class="btn btn-soft btn-sm" type="button" onclick="showSection('temples')">Open temple list</button>
+            <h3>Published JSON Snapshot</h3>
+            <button class="btn btn-soft btn-sm" type="button" onclick="showSection('temples')">Open JSON preview</button>
           </div>
           <div class="table-wrap">
             <table>
@@ -193,12 +200,13 @@
       <section class="section" id="section-temples">
         <div class="panel">
           <div class="panel-head">
-            <h3>Temple List <span class="muted" id="list-count"></span></h3>
+            <h3>Published JSON Preview <span class="muted" id="list-count"></span></h3>
             <div class="row-actions">
               <button class="btn btn-soft btn-sm" type="button" onclick="duplicateSelected()">Duplicate selected</button>
               <button class="btn btn-red btn-sm" type="button" onclick="deleteSelected()">Delete selected</button>
             </div>
           </div>
+          <p class="note">This is the JSON data currently used to render the public site. D1 edits are not reflected here until the 48-hour export/publish step updates the JSON files.</p>
           <div class="filter-row">
             <input id="search" type="search" placeholder="Search name, deity, location, tags..." oninput="renderTempleTable()" />
             <select id="district-filter" onchange="renderTempleTable()"></select>
@@ -224,11 +232,13 @@
       <section class="section" id="section-db">
         <div class="panel">
           <div class="panel-head">
-            <h3>D1 Temple Records <span class="muted" id="db-count"></span></h3>
+            <h3>Temple Maintenance <span class="muted" id="db-count"></span></h3>
             <div class="row-actions">
+              <button class="btn btn-primary btn-sm" type="button" onclick="newDbTemple()">Add D1 temple</button>
               <button class="btn btn-soft btn-sm" type="button" onclick="loadDbTemples()">Refresh D1</button>
             </div>
           </div>
+          <p class="note">Use this screen for day-to-day D1 add/edit work, verification status, and admin labels. These changes save directly to D1.</p>
           <div class="filter-row">
             <input id="db-search" type="search" placeholder="Search D1 records..." oninput="renderDbTempleTable()" />
             <select id="db-status-filter" onchange="renderDbTempleTable()">
@@ -258,6 +268,17 @@
           </div>
           <div class="form-grid">
             <input type="hidden" id="db-detail-id" />
+            <div class="field"><label for="db-detail-name">Temple Name *</label><input id="db-detail-name" /></div>
+            <div class="field"><label for="db-detail-deity">Deity</label><input id="db-detail-deity" /></div>
+            <div class="field"><label for="db-detail-district">District</label><input id="db-detail-district" /></div>
+            <div class="field"><label for="db-detail-location">Location</label><input id="db-detail-location" /></div>
+            <div class="field"><label for="db-detail-lat">Latitude</label><input id="db-detail-lat" type="number" step="any" /></div>
+            <div class="field"><label for="db-detail-lng">Longitude</label><input id="db-detail-lng" type="number" step="any" /></div>
+            <div class="field"><label for="db-detail-timing">Timing</label><input id="db-detail-timing" /></div>
+            <div class="field"><label for="db-detail-phone">Phone</label><input id="db-detail-phone" /></div>
+            <div class="field full"><label for="db-detail-description">Description</label><textarea id="db-detail-description" rows="3"></textarea></div>
+            <div class="field"><label for="db-detail-source">Source URL</label><input id="db-detail-source" /></div>
+            <div class="field"><label for="db-detail-tags">Tags, comma separated</label><input id="db-detail-tags" /></div>
             <div class="field"><label for="db-detail-status">Status</label>
               <select id="db-detail-status">
                 <option value="verified">Verified</option>
@@ -267,11 +288,17 @@
               </select>
             </div>
             <div class="field"><label for="db-detail-label">Admin Label</label><input id="db-detail-label" placeholder="e.g. VERIFIED FROM SOURCE" /></div>
+            <div class="field"><label for="db-detail-source-json-id">Source JSON ID</label><input id="db-detail-source-json-id" type="number" step="1" /></div>
+            <div class="field">
+              <div class="checks" style="margin-top:24px">
+                <label><input id="db-detail-famous" type="checkbox" /> Famous temple</label>
+              </div>
+            </div>
           </div>
           <div id="db-detail-summary" class="note" style="margin-top:12px"></div>
           <div class="toolbar" style="margin-top:14px;margin-bottom:0">
             <span id="db-detail-msg" class="muted"></span>
-            <button class="btn btn-primary" type="button" onclick="saveDbTempleReview()">Save status and label</button>
+            <button class="btn btn-primary" type="button" onclick="saveDbTempleReview()">Save to D1</button>
           </div>
         </div>
       </section>
@@ -311,7 +338,7 @@
       <section class="section" id="section-editor">
         <div class="panel">
           <div class="panel-head">
-            <h3 id="editor-title">Add Temple</h3>
+            <h3 id="editor-title">JSON Draft Editor</h3>
             <div class="row-actions">
               <button class="btn btn-soft btn-sm" type="button" onclick="validateCurrentForm()">Validate form</button>
               <button class="btn btn-soft btn-sm" type="button" onclick="newTemple()">Clear</button>
@@ -343,7 +370,7 @@
             </div>
           </div>
           <div class="toolbar" style="margin-top:14px;margin-bottom:0">
-            <p class="note">Changes are saved to this browser first. Export/download JSON to update the actual site files.</p>
+            <p class="note">This legacy editor changes only the local JSON draft in this browser. Use Temple Maintenance for D1 edits, then use JSON export for the publishing cycle.</p>
             <div class="row-actions">
               <button class="btn btn-red" type="button" onclick="deleteFromForm()">Delete</button>
               <button class="btn btn-primary" type="button" onclick="saveTemple()">Save temple</button>
@@ -380,8 +407,9 @@
 
       <section class="section" id="section-import">
         <div class="panel">
-          <div class="panel-head"><h3>Import JSON</h3></div>
-          <p class="note">Import a JSON file or paste JSON below. Accepts either a plain array or <span class="kbd">{ "_defaults": {}, "temples": [] }</span>.</p>
+          <div class="panel-head"><h3>JSON Import</h3></div>
+          <p class="note">Import a JSON file or paste JSON below. This updates only the local JSON draft used for preview/export; it does not write to D1.</p>
+          <p class="note">Accepts either a plain array or <span class="kbd">{ "_defaults": {}, "temples": [] }</span>.</p>
           <div class="filter-row">
             <input type="file" id="import-file" accept=".json,application/json" onchange="readImportFile(this.files[0])" />
             <button class="btn btn-soft" type="button" onclick="loadActiveFromDisk()">Reload active state from site file</button>
@@ -401,10 +429,10 @@
         <div class="split">
           <div class="panel">
             <div class="panel-head">
-              <h3>Export</h3>
+              <h3>JSON Export</h3>
               <div class="row-actions">
-                <button class="btn btn-soft btn-sm" type="button" onclick="generateExport('active')">Active JSON</button>
-                <button class="btn btn-soft btn-sm" type="button" onclick="generateExport('all')">All states bundle</button>
+                <button class="btn btn-soft btn-sm" type="button" onclick="generateExport('active')">D1 active JSON</button>
+                <button class="btn btn-soft btn-sm" type="button" onclick="generateExport('all')">D1 all-state bundle</button>
                 <button class="btn btn-green btn-sm" type="button" onclick="copyExport()">Copy</button>
               </div>
             </div>
@@ -412,10 +440,11 @@
           </div>
           <div class="panel">
             <h3 style="margin-top:0">How To Apply</h3>
-            <p class="note">For a static website, browser admin pages cannot safely write files on the server. Use <strong>Download JSON</strong>, then replace the matching file in the project, for example <span class="kbd">data/kerala.json</span>.</p>
-            <p class="note">If your browser supports the File System Access API, the download button can be replaced later with direct save-to-file behavior.</p>
-            <button class="btn btn-green" type="button" onclick="downloadActiveJson()">Download active state JSON</button>
-            <button class="btn btn-soft" type="button" onclick="downloadAllJson()">Download all-state backup</button>
+            <p class="note">Public users read JSON, not D1. After D1 maintenance, export the updated state JSON and commit/upload it to GitHub during the 48-hour publishing cycle.</p>
+            <p class="note">D1 export includes <span class="kbd">verified</span>, <span class="kbd">unverified</span>, and <span class="kbd">needs_review</span> records. <span class="kbd">removed</span> records are excluded.</p>
+            <button class="btn btn-green" type="button" onclick="downloadActiveJson()">Download D1 active state JSON</button>
+            <button class="btn btn-soft" type="button" onclick="downloadAllJson()">Download D1 all-state bundle</button>
+            <button class="btn btn-soft" type="button" onclick="downloadLocalDraftJson()">Download local draft JSON</button>
           </div>
         </div>
       </section>
@@ -450,13 +479,20 @@
       'karnataka': { label: 'Karnataka', dataFile: 'data/karnataka.json', heroImage: 'sources/karnataka_hero.jpeg', eyebrow: 'Land of the Gods', mapLabel: 'Explore Karnataka' },
       'andhra-pradesh': { label: 'Andhra Pradesh', dataFile: 'data/andhra-pradesh.json', heroImage: 'sources/andhra_hero.jpeg', eyebrow: 'Sacred Land of Telugu Heritage', mapLabel: 'Explore Andhra Pradesh' },
       'goa': { label: 'Goa', dataFile: 'data/goa.json', heroImage: 'sources/goa_hero.jpeg', eyebrow: 'Land of Sacred Serenity', mapLabel: 'Explore Goa' },
-      'rajasthan': { label: 'Rajasthan', dataFile: 'data/rajasthan.json', heroImage: 'hero-bg.jpg', eyebrow: 'Land of Royal Temples', mapLabel: 'Explore Rajasthan' }
+      'rajasthan': { label: 'Rajasthan', dataFile: 'data/rajasthan.json', heroImage: 'hero-bg.jpg', eyebrow: 'Land of Royal Temples', mapLabel: 'Explore Rajasthan' },
+      'gujarat': { label: 'Gujarat', dataFile: 'data/gujarat.json', heroImage: 'sources/gujarat_hero.jpeg', eyebrow: 'Land of Jyotirlingas and Dwarka', mapLabel: 'Explore Gujarat' },
+      'assam': { label: 'Assam', dataFile: 'data/assam.json', heroImage: 'sources/assam_hero.jpeg', eyebrow: 'Sacred Brahmaputra Valley', mapLabel: 'Explore Assam' },
+      'west-bengal': { label: 'West Bengal', dataFile: 'data/west-bengal.json', heroImage: 'sources/west-bengal_hero.jpeg', eyebrow: 'Land of Shakti and Bhakti', mapLabel: 'Explore West Bengal' },
+      'madhya-pradesh': { label: 'Madhya Pradesh', dataFile: 'data/madhya-pradesh.json', heroImage: 'hero-bg.jpg', eyebrow: 'Heart of India', mapLabel: 'Explore Madhya Pradesh' },
+      'maharashtra': { label: 'Maharashtra', dataFile: 'data/maharashtra.json', heroImage: 'sources/maharashtra_hero.svg', eyebrow: 'Jyotirlingas of the Sahyadri', mapLabel: 'Explore Maharashtra' },
+      'jammu-kashmir': { label: 'Jammu & Kashmir', dataFile: 'data/jammu-kashmir.json', heroImage: 'hero-bg.jpg', eyebrow: 'Himalayan Sacred Heritage', mapLabel: 'Explore Jammu & Kashmir' },
+      'odisha': { label: 'Odisha', dataFile: 'data/odisha.json', heroImage: 'sources/odisha_hero.jpeg', eyebrow: 'Land of Kalinga Temples', mapLabel: 'Explore Odisha' }
     };
     const DEFAULTS = {
       dressCode: 'Men: Dhoti or mundu preferred; neat formal wear acceptable in outer areas. Women: Saree or churidar with dupatta. Modest dress required.',
       photography: 'Permitted in outer areas. Not allowed near sanctum during rituals.'
     };
-    const FIELD_ORDER = ['id','name','deity','district','location','lat','lng','timing','phone','description','famous','tags','dressCode','photography','nearestBus','nearestRail','famousFor','sourceUrl'];
+    const FIELD_ORDER = ['id','name','deity','district','location','lat','lng','timing','phone','description','famous','status','adminLabel','tags','dressCode','photography','nearestBus','nearestRail','famousFor','sourceUrl'];
     const app = {
       activeState: localStorage.getItem('td_admin_active_state') || 'kerala',
       configs: loadJson('td_admin_state_configs', STATE_CONFIGS),
@@ -525,14 +561,14 @@
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.section === name));
       document.getElementById('section-' + name).classList.add('active');
       const titles = {
-        overview: ['Overview', 'Quick status for the selected state.'],
-        temples: ['Temples', 'Search, edit, duplicate, and delete temple records.'],
-        db: ['D1 Records', 'Read canonical temple records from the current D1 database.'],
+        overview: ['Overview', 'D1 is the maintenance layer; JSON is the public rendering layer.'],
+        temples: ['Published JSON Preview', 'Search the JSON data currently rendered to public users.'],
+        db: ['Temple Maintenance', 'Add, edit, verify, and label temple records directly in D1.'],
         requests: ['Requests', 'Review community submissions, corrections, and deletion requests.'],
-        editor: ['Add / Edit', 'Create or update a temple record.'],
+        editor: ['JSON Draft Editor', 'Legacy local JSON draft editing for published files.'],
         states: ['States', 'Manage state metadata used by this dashboard.'],
-        import: ['Import', 'Replace the selected state data from JSON.'],
-        export: ['Export', 'Generate JSON for deployment.'],
+        import: ['JSON Import', 'Replace the selected local JSON draft from a JSON file.'],
+        export: ['JSON Export', 'Generate JSON for the 48-hour GitHub publishing cycle.'],
         health: ['Health', 'Check for missing fields, duplicate ids, and invalid coordinates.']
       };
       document.getElementById('page-title').textContent = titles[name][0];
@@ -673,14 +709,60 @@
       const temple = app.dbTemples.find(t => Number(t.id) === Number(id));
       if (!temple) return notify('D1 record not found in the loaded list.', 'bad');
       app.selectedDbTempleId = temple.id;
-      setValue('db-detail-id', temple.id);
-      setValue('db-detail-status', temple.status || 'unverified');
-      setValue('db-detail-label', temple.adminLabel || '');
+      fillDbTempleForm(temple);
       document.getElementById('db-detail-title').textContent = `D1 #${temple.id}: ${temple.name || 'Unnamed temple'}`;
       document.getElementById('db-detail-summary').innerHTML = dbTempleDetailSummary(temple);
       document.getElementById('db-detail-msg').textContent = '';
       document.getElementById('db-detail-panel').hidden = false;
       renderDbTempleTable();
+    }
+
+    function newDbTemple() {
+      const temple = {
+        id: '',
+        sourceJsonId: '',
+        state: app.activeState,
+        name: '',
+        deity: '',
+        district: '',
+        location: '',
+        lat: '',
+        lng: '',
+        timing: '',
+        phone: '',
+        description: '',
+        famous: false,
+        tags: [],
+        status: 'unverified',
+        adminLabel: 'ADMIN ADDED',
+        sourceUrl: ''
+      };
+      app.selectedDbTempleId = null;
+      fillDbTempleForm(temple);
+      document.getElementById('db-detail-title').textContent = 'Add D1 Temple';
+      document.getElementById('db-detail-summary').innerHTML = '<span class="muted">This will create a new row in D1 for the active state.</span>';
+      document.getElementById('db-detail-msg').textContent = '';
+      document.getElementById('db-detail-panel').hidden = false;
+      renderDbTempleTable();
+    }
+
+    function fillDbTempleForm(temple) {
+      setValue('db-detail-id', temple.id || '');
+      setValue('db-detail-name', temple.name || '');
+      setValue('db-detail-deity', temple.deity || '');
+      setValue('db-detail-district', temple.district || '');
+      setValue('db-detail-location', temple.location || '');
+      setValue('db-detail-lat', temple.lat ?? '');
+      setValue('db-detail-lng', temple.lng ?? '');
+      setValue('db-detail-timing', temple.timing || '');
+      setValue('db-detail-phone', temple.phone || '');
+      setValue('db-detail-description', temple.description || '');
+      setValue('db-detail-source', temple.sourceUrl || '');
+      setValue('db-detail-tags', Array.isArray(temple.tags) ? temple.tags.join(', ') : '');
+      setValue('db-detail-status', temple.status || 'unverified');
+      setValue('db-detail-label', temple.adminLabel || '');
+      setValue('db-detail-source-json-id', temple.sourceJsonId || '');
+      document.getElementById('db-detail-famous').checked = Boolean(temple.famous);
     }
 
     function closeDbDetail() {
@@ -717,10 +799,9 @@
 
     async function saveDbTempleReview() {
       const id = Number(document.getElementById('db-detail-id')?.value || 0);
-      const status = document.getElementById('db-detail-status')?.value || '';
-      const adminLabel = document.getElementById('db-detail-label')?.value.trim() || '';
+      const temple = collectDbTempleForm();
       const msg = document.getElementById('db-detail-msg');
-      if (!id) return notify('Open a D1 record first.', 'bad');
+      if (!temple.name) return notify('Temple name is required.', 'bad');
       try {
         if (msg) msg.textContent = 'Saving...';
         const res = await fetch('/api/temples', {
@@ -729,13 +810,14 @@
             'Content-Type': 'application/json',
             ...adminHeaders()
           },
-          body: JSON.stringify({ id, status, adminLabel, decidedBy: 'admin' })
+          body: JSON.stringify({ ...temple, decidedBy: 'admin' })
         });
         const json = await res.json();
         if (!res.ok || !json.ok) throw new Error(json.error || 'D1 update failed');
         const next = json.temple;
-        const idx = app.dbTemples.findIndex(t => Number(t.id) === id);
+        const idx = app.dbTemples.findIndex(t => Number(t.id) === Number(next?.id || id));
         if (idx !== -1 && next) app.dbTemples[idx] = next;
+        else if (next) app.dbTemples.push(next);
         if (next) openDbTempleDetail(next.id);
         if (msg) msg.textContent = 'Saved.';
         notify('D1 record updated.', 'ok');
@@ -743,6 +825,28 @@
         if (msg) msg.textContent = '';
         notify('D1 update failed: ' + err.message, 'bad');
       }
+    }
+
+    function collectDbTempleForm() {
+      return {
+        id: document.getElementById('db-detail-id')?.value || '',
+        state: app.activeState,
+        sourceJsonId: document.getElementById('db-detail-source-json-id')?.value || '',
+        name: document.getElementById('db-detail-name')?.value.trim() || '',
+        deity: document.getElementById('db-detail-deity')?.value.trim() || '',
+        district: document.getElementById('db-detail-district')?.value.trim() || '',
+        location: document.getElementById('db-detail-location')?.value.trim() || '',
+        lat: document.getElementById('db-detail-lat')?.value.trim() || '',
+        lng: document.getElementById('db-detail-lng')?.value.trim() || '',
+        timing: document.getElementById('db-detail-timing')?.value.trim() || '',
+        phone: document.getElementById('db-detail-phone')?.value.trim() || '',
+        description: document.getElementById('db-detail-description')?.value.trim() || '',
+        sourceUrl: document.getElementById('db-detail-source')?.value.trim() || '',
+        tags: document.getElementById('db-detail-tags')?.value.trim() || '',
+        status: document.getElementById('db-detail-status')?.value || 'unverified',
+        adminLabel: document.getElementById('db-detail-label')?.value.trim() || '',
+        famous: document.getElementById('db-detail-famous')?.checked || false
+      };
     }
 
     function openSelectedDbMap() {
@@ -1078,11 +1182,16 @@
       }
     }
 
-    function generateExport(mode) {
-      const out = mode === 'all'
-        ? JSON.stringify(Object.fromEntries(Object.keys(app.configs).map(key => [key, makeStateJson(key)])), null, 2)
-        : JSON.stringify(makeStateJson(app.activeState), null, 2);
-      document.getElementById('export-text').value = out + '\n';
+    async function generateExport(mode) {
+      try {
+        const out = mode === 'all'
+          ? JSON.stringify(await makeAllD1StateJson(), null, 2)
+          : JSON.stringify(await makeD1StateJson(app.activeState), null, 2);
+        document.getElementById('export-text').value = out + '\n';
+        notify('Generated D1 JSON export.', 'ok');
+      } catch (err) {
+        notify('D1 JSON export failed: ' + err.message, 'bad');
+      }
     }
 
     function makeStateJson(key) {
@@ -1092,24 +1201,97 @@
       };
     }
 
-    function copyExport() {
-      const ta = document.getElementById('export-text');
-      if (!ta.value) generateExport('active');
-      navigator.clipboard?.writeText(ta.value).then(() => notify('Copied export JSON.', 'ok')).catch(() => {
-        ta.select();
-        document.execCommand('copy');
-        notify('Copied export JSON.', 'ok');
+    async function makeAllD1StateJson() {
+      const out = {};
+      for (const key of Object.keys(app.configs)) {
+        out[key] = await makeD1StateJson(key);
+      }
+      return out;
+    }
+
+    async function makeD1StateJson(key) {
+      const temples = await fetchD1TemplesForExport(key);
+      return {
+        _defaults: app.defaults[key] || DEFAULTS,
+        temples: temples.map(d1TempleToPublicJson)
+      };
+    }
+
+    async function fetchD1TemplesForExport(key) {
+      const res = await fetch(`/api/temples?state=${encodeURIComponent(key)}&include=all`, {
+        cache: 'no-store',
+        headers: adminHeaders()
+      });
+      const json = await res.json();
+      if (!res.ok || !json.ok) throw new Error(json.error || `D1 export failed for ${key}`);
+      return (json.temples || [])
+        .filter(t => t.status !== 'removed')
+        .sort((a, b) => String(a.district || '').localeCompare(String(b.district || '')) || String(a.name || '').localeCompare(String(b.name || '')));
+    }
+
+    function d1TempleToPublicJson(t) {
+      return orderedRecord({
+        id: t.sourceJsonId || t.id,
+        name: t.name,
+        deity: t.deity,
+        district: t.district,
+        location: t.location,
+        lat: t.lat,
+        lng: t.lng,
+        timing: t.timing,
+        phone: t.phone,
+        description: t.description,
+        famous: Boolean(t.famous),
+        status: t.status,
+        adminLabel: t.adminLabel,
+        tags: Array.isArray(t.tags) ? t.tags : [],
+        dressCode: t.dressCode,
+        photography: t.photography,
+        nearestBus: t.nearestBus,
+        nearestRail: t.nearestRail,
+        famousFor: t.famousFor,
+        sourceUrl: t.sourceUrl
       });
     }
 
-    function downloadActiveJson() {
-      const cfg = app.configs[app.activeState];
-      downloadText(fileNameFromPath(cfg.dataFile || app.activeState + '.json'), JSON.stringify(makeStateJson(app.activeState), null, 2) + '\n');
+    async function copyExport() {
+      const ta = document.getElementById('export-text');
+      if (!ta.value) await generateExport('active');
+      if (navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText(ta.value).then(() => notify('Copied export JSON.', 'ok')).catch(() => {
+          ta.select();
+          document.execCommand('copy');
+          notify('Copied export JSON.', 'ok');
+        });
+        return;
+      }
+      ta.select();
+      document.execCommand('copy');
+      notify('Copied export JSON.', 'ok');
     }
 
-    function downloadAllJson() {
-      const stamp = new Date().toISOString().slice(0, 10);
-      downloadText('templediary-admin-backup-' + stamp + '.json', JSON.stringify(Object.fromEntries(Object.keys(app.configs).map(key => [key, makeStateJson(key)])), null, 2) + '\n');
+    async function downloadActiveJson() {
+      try {
+        const cfg = app.configs[app.activeState];
+        const stateJson = await makeD1StateJson(app.activeState);
+        downloadText(fileNameFromPath(cfg.dataFile || app.activeState + '.json'), JSON.stringify(stateJson, null, 2) + '\n');
+      } catch (err) {
+        notify('D1 JSON download failed: ' + err.message, 'bad');
+      }
+    }
+
+    async function downloadAllJson() {
+      try {
+        const stamp = new Date().toISOString().slice(0, 10);
+        downloadText('templediary-d1-export-' + stamp + '.json', JSON.stringify(await makeAllD1StateJson(), null, 2) + '\n');
+      } catch (err) {
+        notify('D1 all-state export failed: ' + err.message, 'bad');
+      }
+    }
+
+    function downloadLocalDraftJson() {
+      const cfg = app.configs[app.activeState];
+      downloadText('local-draft-' + fileNameFromPath(cfg.dataFile || app.activeState + '.json'), JSON.stringify(makeStateJson(app.activeState), null, 2) + '\n');
     }
 
     function runHealthChecks() {
