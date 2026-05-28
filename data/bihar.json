@@ -1,0 +1,83 @@
+{
+  "_defaults": {
+    "dressCode": "Modest traditional dress recommended. Follow temple-specific rules at the entrance.",
+    "photography": "Usually restricted inside sanctum areas. Check local signage before taking photos."
+  },
+  "temples": [
+    {
+      "id": 1,
+      "name": "Mahabodhi Temple",
+      "deity": "Buddha",
+      "district": "Gaya",
+      "location": "Bodh Gaya, Gaya District, Bihar",
+      "lat": 24.696,
+      "lng": 84.991,
+      "timing": "",
+      "phone": "",
+      "description": "A UNESCO World Heritage Buddhist temple marking the place where Gautama Buddha attained enlightenment.",
+      "famous": true,
+      "tags": ["buddhist", "unesco", "bodh-gaya", "major"],
+      "sourceUrl": "https://tourism.bihar.gov.in/en/destinations/gaya/mahabodhi-temple"
+    },
+    {
+      "id": 2,
+      "name": "Vishnupad Temple",
+      "deity": "Lord Vishnu",
+      "district": "Gaya",
+      "location": "Gaya, Bihar",
+      "lat": 24.778,
+      "lng": 84.722,
+      "timing": "",
+      "phone": "",
+      "description": "A major Vishnu shrine at Gaya, known for the sacred footprint of Lord Vishnu and Pind Daan rituals.",
+      "famous": true,
+      "tags": ["vishnu", "gaya", "pind-daan", "major"],
+      "sourceUrl": "https://tourism.bihar.gov.in/en/destinations/gaya/vishnupad-temple"
+    },
+    {
+      "id": 3,
+      "name": "Mundeshwari Devi Temple",
+      "deity": "Goddess Mundeshwari and Lord Shiva",
+      "district": "Kaimur",
+      "location": "Mundeshwari Hill, Kaimur District, Bihar",
+      "lat": 24.983,
+      "lng": 83.565,
+      "timing": "",
+      "phone": "",
+      "description": "An ancient functional temple on Mundeshwari Hill dedicated to Shakti and Shiva.",
+      "famous": true,
+      "tags": ["devi", "shiva", "kaimur", "heritage"],
+      "sourceUrl": "https://tourism.bihar.gov.in/en/destinations/kaimur/mundeshwari-devi-temple"
+    },
+    {
+      "id": 4,
+      "name": "Takhat Sri Harimandir Ji Patna Sahib",
+      "deity": "Guru Gobind Singh Ji",
+      "district": "Patna",
+      "location": "Patna City, Patna, Bihar",
+      "lat": 25.594,
+      "lng": 85.229,
+      "timing": "",
+      "phone": "",
+      "description": "One of the five Sikh takhts, revered as the birthplace of Guru Gobind Singh Ji.",
+      "famous": true,
+      "tags": ["sikh", "takht", "patna", "major"],
+      "sourceUrl": "https://tourism.bihar.gov.in/en/destinations/patna/takht-shri-harmandir-sahib"
+    },
+    {
+      "id": 5,
+      "name": "Jagannath Temple, Bodh Gaya",
+      "deity": "Lord Jagannath",
+      "district": "Gaya",
+      "location": "Bodh Gaya, Gaya District, Bihar",
+      "lat": 24.696,
+      "lng": 84.992,
+      "timing": "",
+      "phone": "",
+      "description": "A Jagannath shrine near the Mahabodhi Temple complex in Bodh Gaya.",
+      "famous": true,
+      "tags": ["jagannath", "bodh-gaya", "gaya", "major"],
+      "sourceUrl": "https://tourism.bihar.gov.in/en/destinations/gaya/jagannath-temple"
+    }
+  ]
+}

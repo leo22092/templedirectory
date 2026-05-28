@@ -8,6 +8,12 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const repoRoot = join(__dirname, '..', '..');
 
 const STATE_FILES = [
+  ['arunachal-pradesh', 'data/arunachal-pradesh.json'],
+  ['bihar', 'data/bihar.json'],
+  ['chhattisgarh', 'data/chhattisgarh.json'],
+  ['haryana', 'data/haryana.json'],
+  ['himachal-pradesh', 'data/himachal-pradesh.json'],
+  ['jharkhand', 'data/jharkhand.json'],
   ['kerala', 'data/kerala.json'],
   ['karnataka', 'data/karnataka.json'],
   ['andhra-pradesh', 'data/andhra-pradesh.json'],
@@ -19,13 +25,38 @@ const STATE_FILES = [
   ['west-bengal', 'data/west-bengal.json'],
   ['madhya-pradesh', 'data/madhya-pradesh.json'],
   ['maharashtra', 'data/maharashtra.json'],
+  ['manipur', 'data/manipur.json'],
+  ['meghalaya', 'data/meghalaya.json'],
+  ['mizoram', 'data/mizoram.json'],
+  ['nagaland', 'data/nagaland.json'],
   ['jammu-kashmir', 'data/jammu-kashmir.json'],
   ['odisha', 'data/odisha.json'],
+  ['punjab', 'data/punjab.json'],
+  ['sikkim', 'data/sikkim.json'],
+  ['telangana', 'data/telangana.json'],
+  ['tripura', 'data/tripura.json'],
+  ['uttar-pradesh', 'data/uttar-pradesh.json'],
+  ['uttarakhand', 'data/uttarakhand.json'],
 ];
 
 const outDir = process.argv[2] || 'tmp/d1-import-batches';
+const requestedStates = process.argv.slice(3);
 const status = process.env.TEMPLE_IMPORT_STATUS || 'unverified';
 const batchSize = Number.parseInt(process.env.TEMPLE_IMPORT_BATCH_SIZE || '100', 10);
+const stateFileMap = new Map(STATE_FILES);
+
+if (requestedStates.length) {
+  const unknownStates = requestedStates.filter((state) => !stateFileMap.has(state));
+  if (unknownStates.length) {
+    console.error(`Unknown state key(s): ${unknownStates.join(', ')}`);
+    console.error(`Known state keys: ${STATE_FILES.map(([state]) => state).join(', ')}`);
+    process.exit(1);
+  }
+}
+
+const selectedStateFiles = requestedStates.length
+  ? requestedStates.map((state) => [state, stateFileMap.get(state)])
+  : STATE_FILES;
 
 function sql(value) {
   if (value === null || value === undefined || value === '') return 'NULL';
@@ -111,7 +142,7 @@ function pushStatement(statement) {
   }
 }
 
-for (const [state, relativePath] of STATE_FILES) {
+for (const [state, relativePath] of selectedStateFiles) {
   const temples = readTempleFile(relativePath);
   pushStatement(`-- ${state}: ${basename(relativePath)} (${temples.length} temples)`);
   for (const temple of temples) {
@@ -145,6 +176,7 @@ for (const [index, batch] of batches.entries()) {
 writeFileSync(join(outputDir, 'manifest.txt'), manifest.join('\n') + '\n');
 
 console.log(`Wrote ${total} temple inserts across ${batches.length} batch files in ${outDir}`);
+console.log(`States: ${selectedStateFiles.map(([state]) => state).join(', ')}`);
 console.log(`Import status: ${status}`);
 console.log(`Batch size: ${batchSize}`);
 console.log(`Manifest: ${outDir}/manifest.txt`);

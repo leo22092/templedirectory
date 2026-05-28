@@ -1,0 +1,83 @@
+{
+  "_defaults": {
+    "dressCode": "Modest traditional dress recommended. Follow temple-specific rules at the entrance.",
+    "photography": "Usually restricted inside sanctum areas. Check local signage before taking photos."
+  },
+  "temples": [
+    {
+      "id": 1,
+      "name": "Kashi Vishwanath Temple",
+      "deity": "Lord Shiva",
+      "district": "Varanasi",
+      "location": "Varanasi, Uttar Pradesh",
+      "lat": 25.310,
+      "lng": 83.010,
+      "timing": "",
+      "phone": "",
+      "description": "One of India's most revered Shiva temples and a Jyotirlinga shrine in Varanasi.",
+      "famous": true,
+      "tags": ["shiva", "jyotirlinga", "varanasi", "major"],
+      "sourceUrl": "https://www.shrikashivishwanath.org/"
+    },
+    {
+      "id": 2,
+      "name": "Shri Ram Janmabhoomi Mandir",
+      "deity": "Lord Rama",
+      "district": "Ayodhya",
+      "location": "Ayodhya, Uttar Pradesh",
+      "lat": 26.795,
+      "lng": 82.194,
+      "timing": "",
+      "phone": "",
+      "description": "A major Rama temple at Ayodhya, one of North India's most important pilgrimage cities.",
+      "famous": true,
+      "tags": ["rama", "ayodhya", "major"],
+      "sourceUrl": "https://srjbtkshetra.org/"
+    },
+    {
+      "id": 3,
+      "name": "Shri Krishna Janmabhoomi Temple",
+      "deity": "Lord Krishna",
+      "district": "Mathura",
+      "location": "Mathura, Uttar Pradesh",
+      "lat": 27.505,
+      "lng": 77.669,
+      "timing": "",
+      "phone": "",
+      "description": "A major Krishna pilgrimage site in Mathura, the traditional birthplace city of Lord Krishna.",
+      "famous": true,
+      "tags": ["krishna", "mathura", "major"],
+      "sourceUrl": "https://mathura.nic.in/tourism/"
+    },
+    {
+      "id": 4,
+      "name": "Vindhyavasini Devi Temple",
+      "deity": "Goddess Vindhyavasini",
+      "district": "Mirzapur",
+      "location": "Vindhyachal, Mirzapur District, Uttar Pradesh",
+      "lat": 25.167,
+      "lng": 82.500,
+      "timing": "",
+      "phone": "",
+      "description": "A major Devi temple at Vindhyachal and one of Uttar Pradesh's important Shakti pilgrimage sites.",
+      "famous": true,
+      "tags": ["devi", "vindhyachal", "mirzapur", "major"],
+      "sourceUrl": "https://mirzapur.nic.in/tourism/"
+    },
+    {
+      "id": 5,
+      "name": "Hanuman Garhi",
+      "deity": "Lord Hanuman",
+      "district": "Ayodhya",
+      "location": "Ayodhya, Uttar Pradesh",
+      "lat": 26.798,
+      "lng": 82.199,
+      "timing": "",
+      "phone": "",
+      "description": "A prominent Hanuman temple in Ayodhya and a common pilgrimage stop before Ram temple darshan.",
+      "famous": true,
+      "tags": ["hanuman", "ayodhya", "major"],
+      "sourceUrl": "https://ayodhya.nic.in/tourism/"
+    }
+  ]
+}

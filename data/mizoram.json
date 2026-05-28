@@ -1,0 +1,83 @@
+{
+  "_defaults": {
+    "dressCode": "Modest dress recommended. Follow site-specific rules at the entrance.",
+    "photography": "Check local signage before taking photos, especially inside prayer areas."
+  },
+  "temples": [
+    {
+      "id": 1,
+      "name": "Solomon's Temple",
+      "deity": "Christian prayer house",
+      "district": "Aizawl",
+      "location": "Kidron Valley, Aizawl, Mizoram",
+      "lat": 23.728,
+      "lng": 92.717,
+      "timing": "",
+      "phone": "",
+      "description": "A major religious site in Aizawl, listed by Mizoram Tourism and the Aizawl district administration.",
+      "famous": true,
+      "tags": ["christian", "aizawl", "major"],
+      "sourceUrl": "https://aizawl.nic.in/mz/tourist-place/solomon-temple-2/"
+    },
+    {
+      "id": 2,
+      "name": "Shiv Mandir, Aizawl",
+      "deity": "Lord Shiva",
+      "district": "Aizawl",
+      "location": "Aizawl, Mizoram",
+      "lat": 23.728,
+      "lng": 92.717,
+      "timing": "",
+      "phone": "",
+      "description": "A Hindu Shiva temple in Aizawl serving the local Hindu community.",
+      "famous": true,
+      "tags": ["shiva", "aizawl", "hindu"],
+      "sourceUrl": "https://indiamap.com/places/aizawl/worship/shiv-mandir/"
+    },
+    {
+      "id": 3,
+      "name": "Shiv Mandir, Khatla",
+      "deity": "Lord Shiva",
+      "district": "Aizawl",
+      "location": "Khatla, Aizawl, Mizoram",
+      "lat": 23.720,
+      "lng": 92.715,
+      "timing": "",
+      "phone": "",
+      "description": "A Shiva temple in the Khatla area of Aizawl.",
+      "famous": false,
+      "tags": ["shiva", "aizawl", "hindu"],
+      "sourceUrl": "https://www.mappls.com/as2pdz"
+    },
+    {
+      "id": 4,
+      "name": "Kamalanagar Buddhist Temple",
+      "deity": "Buddha",
+      "district": "Lawngtlai",
+      "location": "Kamalanagar, Lawngtlai District, Mizoram",
+      "lat": 22.528,
+      "lng": 92.896,
+      "timing": "",
+      "phone": "",
+      "description": "A Buddhist temple at Kamalanagar, the headquarters of the Chakma Autonomous District Council.",
+      "famous": true,
+      "tags": ["buddhist", "kamalanagar", "lawngtlai"],
+      "sourceUrl": "https://en.wikipedia.org/wiki/Kamalanagar%2C_Mizoram"
+    },
+    {
+      "id": 5,
+      "name": "Topobhumi Buddha Vihar",
+      "deity": "Buddha",
+      "district": "Lawngtlai",
+      "location": "Kamalanagar, Lawngtlai District, Mizoram",
+      "lat": 22.529,
+      "lng": 92.897,
+      "timing": "",
+      "phone": "",
+      "description": "A Buddhist temple in Kamalanagar, Lawngtlai district.",
+      "famous": false,
+      "tags": ["buddhist", "kamalanagar", "lawngtlai"],
+      "sourceUrl": "https://www.cybo.com/IN-biz/topobhumi-buddha-vihar"
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "_defaults": {
+    "dressCode": "Modest traditional dress recommended. Follow temple-specific rules at the entrance.",
+    "photography": "Usually restricted inside sanctum areas. Check local signage before taking photos."
+  },
+  "temples": [
+    {
+      "id": 1,
+      "name": "Shree Shree Govindajee Temple",
+      "deity": "Radha Krishna",
+      "district": "Imphal East",
+      "location": "Near Kangla, Imphal, Manipur",
+      "lat": 24.806,
+      "lng": 93.941,
+      "timing": "",
+      "phone": "",
+      "description": "A historic Vaishnavite temple adjoining the former royal palace area of Manipur.",
+      "famous": true,
+      "tags": ["krishna", "vaishnavite", "imphal", "major"],
+      "sourceUrl": "https://imphaleast.nic.in/tourist-place/shree-shree-govindajee-temple/"
+    },
+    {
+      "id": 2,
+      "name": "Vishnu Temple, Bishnupur",
+      "deity": "Lord Vishnu",
+      "district": "Bishnupur",
+      "location": "Bishnupur, Manipur",
+      "lat": 24.629,
+      "lng": 93.762,
+      "timing": "",
+      "phone": "",
+      "description": "A 15th-century Vishnu temple built during the reign of King Kiyamba.",
+      "famous": true,
+      "tags": ["vishnu", "bishnupur", "heritage", "major"],
+      "sourceUrl": "https://bishnupur.nic.in/tourist-place/bishnupur/"
+    },
+    {
+      "id": 3,
+      "name": "Shri Bijoy Govindajee Temple",
+      "deity": "Radha Krishna",
+      "district": "Imphal West",
+      "location": "Sagolband, Imphal, Manipur",
+      "lat": 24.808,
+      "lng": 93.918,
+      "timing": "",
+      "phone": "",
+      "description": "A Vaishnavite temple included in Manipur's spiritual circuit development references.",
+      "famous": true,
+      "tags": ["krishna", "vaishnavite", "imphal", "spiritual-circuit"],
+      "sourceUrl": "https://imphaleast.nic.in/tourist-place/shree-shree-govindajee-temple/"
+    },
+    {
+      "id": 4,
+      "name": "Kaina Temple",
+      "deity": "Lord Krishna",
+      "district": "Imphal East",
+      "location": "Kaina, Imphal East District, Manipur",
+      "lat": 24.699,
+      "lng": 94.050,
+      "timing": "",
+      "phone": "",
+      "description": "A sacred Vaishnavite site at Kaina, listed in Manipur's spiritual circuit references.",
+      "famous": true,
+      "tags": ["krishna", "kaina", "vaishnavite", "major"],
+      "sourceUrl": "https://imphaleast.nic.in/tourist-place/shree-shree-govindajee-temple/"
+    },
+    {
+      "id": 5,
+      "name": "Sanamahi Temple",
+      "deity": "Lord Sanamahi",
+      "district": "Imphal West",
+      "location": "Imphal, Manipur",
+      "lat": 24.806,
+      "lng": 93.936,
+      "timing": "",
+      "phone": "",
+      "description": "A temple dedicated to Lord Sanamahi, an important deity in the indigenous Meitei religious tradition.",
+      "famous": true,
+      "tags": ["sanamahi", "meitei", "imphal", "major"],
+      "sourceUrl": "https://en.wikipedia.org/wiki/Sanamahi_Temple"
+    }
+  ]
+}

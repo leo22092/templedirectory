@@ -1,0 +1,83 @@
+{
+  "_defaults": {
+    "dressCode": "Modest traditional dress recommended. Follow temple-specific rules at the entrance.",
+    "photography": "Usually restricted inside sanctum areas. Check local signage before taking photos."
+  },
+  "temples": [
+    {
+      "id": 1,
+      "name": "Baba Baidyanath Dham",
+      "deity": "Lord Shiva",
+      "district": "Deoghar",
+      "location": "Deoghar, Jharkhand",
+      "lat": 24.492,
+      "lng": 86.699,
+      "timing": "",
+      "phone": "",
+      "description": "A major Shiva pilgrimage centre at Deoghar and one of India's best-known Jyotirlinga shrines.",
+      "famous": true,
+      "tags": ["shiva", "jyotirlinga", "deoghar", "major"],
+      "sourceUrl": "https://cm.jharkhand.gov.in/tour/art-culture-and-religion"
+    },
+    {
+      "id": 2,
+      "name": "Basukinath Dham",
+      "deity": "Lord Shiva",
+      "district": "Dumka",
+      "location": "Basukinath, Dumka District, Jharkhand",
+      "lat": 24.385,
+      "lng": 87.009,
+      "timing": "",
+      "phone": "",
+      "description": "A revered Shiva shrine near Deoghar, commonly visited as part of the Baidyanath pilgrimage circuit.",
+      "famous": true,
+      "tags": ["shiva", "basukinath", "dumka", "major"],
+      "sourceUrl": "https://cm.jharkhand.gov.in/tour/art-culture-and-religion"
+    },
+    {
+      "id": 3,
+      "name": "Maa Chhinnamastika Temple",
+      "deity": "Goddess Chhinnamasta",
+      "district": "Ramgarh",
+      "location": "Rajrappa, Ramgarh District, Jharkhand",
+      "lat": 23.626,
+      "lng": 85.709,
+      "timing": "",
+      "phone": "",
+      "description": "A revered Shakti shrine at Rajrappa, near the confluence of the Bhairavi and Damodar rivers.",
+      "famous": true,
+      "tags": ["devi", "shakti", "rajrappa", "major"],
+      "sourceUrl": "https://ramgarh.nic.in/tourist-place/chinnamastika-mandir/"
+    },
+    {
+      "id": 4,
+      "name": "Jagannath Mandir, Ranchi",
+      "deity": "Lord Jagannath",
+      "district": "Ranchi",
+      "location": "Dhurwa, Ranchi, Jharkhand",
+      "lat": 23.310,
+      "lng": 85.273,
+      "timing": "",
+      "phone": "",
+      "description": "A historic Jagannath temple at Dhurwa, Ranchi, known for its annual Rath Yatra.",
+      "famous": true,
+      "tags": ["jagannath", "ranchi", "rath-yatra", "major"],
+      "sourceUrl": "https://cm.jharkhand.gov.in/tour/art-culture-and-religion"
+    },
+    {
+      "id": 5,
+      "name": "Maluti Temples",
+      "deity": "Multiple deities",
+      "district": "Dumka",
+      "location": "Maluti, Dumka District, Jharkhand",
+      "lat": 24.184,
+      "lng": 87.735,
+      "timing": "",
+      "phone": "",
+      "description": "A historic temple town in Dumka district with a cluster of terracotta temples.",
+      "famous": true,
+      "tags": ["heritage", "terracotta", "dumka", "major"],
+      "sourceUrl": "https://cm.jharkhand.gov.in/tour/art-culture-and-religion"
+    }
+  ]
+}

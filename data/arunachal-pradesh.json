@@ -1,0 +1,83 @@
+{
+  "_defaults": {
+    "dressCode": "Modest traditional dress recommended. Follow site-specific rules at the entrance.",
+    "photography": "Usually restricted inside sanctum or prayer areas. Check local signage before taking photos."
+  },
+  "temples": [
+    {
+      "id": 1,
+      "name": "Tawang Monastery",
+      "deity": "Buddhist monastery",
+      "district": "Tawang",
+      "location": "Tawang, Arunachal Pradesh",
+      "lat": 27.586,
+      "lng": 91.859,
+      "timing": "",
+      "phone": "",
+      "description": "A 400-year-old Buddhist monastery at Tawang, described by the district administration as one of India's oldest and largest monasteries.",
+      "famous": true,
+      "tags": ["buddhist", "monastery", "tawang", "major"],
+      "sourceUrl": "https://tawang.nic.in/tourism/"
+    },
+    {
+      "id": 2,
+      "name": "Golden Pagoda",
+      "deity": "Buddha",
+      "district": "Namsai",
+      "location": "Tengapani, Namsai District, Arunachal Pradesh",
+      "lat": 27.669,
+      "lng": 95.869,
+      "timing": "",
+      "phone": "",
+      "description": "A notable Theravada Buddhist pagoda in Namsai, built on a plateau overlooking the foothills of the eastern Himalaya.",
+      "famous": true,
+      "tags": ["buddhist", "pagoda", "namsai", "major"],
+      "sourceUrl": "https://goldenpagoda.in/"
+    },
+    {
+      "id": 3,
+      "name": "Malinithan Temple Ruins",
+      "deity": "Goddess Malini",
+      "district": "Lower Siang",
+      "location": "Likabali, Lower Siang District, Arunachal Pradesh",
+      "lat": 27.567,
+      "lng": 94.746,
+      "timing": "",
+      "phone": "",
+      "description": "An archaeological temple site at Likabali associated with the worship of Goddess Malini and listed among Arunachal Pradesh's spiritual heritage sites.",
+      "famous": true,
+      "tags": ["devi", "heritage", "likabali", "major"],
+      "sourceUrl": "https://arunachaltourism.com/wp-content/uploads/2025/09/Arunachal-Pradesh-Tourism-Policy-compressed.pdf"
+    },
+    {
+      "id": 4,
+      "name": "Parshuram Kund",
+      "deity": "Lord Parshuram",
+      "district": "Lohit",
+      "location": "Near Wakro, Lohit District, Arunachal Pradesh",
+      "lat": 27.879,
+      "lng": 96.354,
+      "timing": "",
+      "phone": "",
+      "description": "A major Hindu pilgrimage site on the Lohit River, especially visited during Makar Sankranti.",
+      "famous": true,
+      "tags": ["parshuram", "pilgrimage", "lohit", "major"],
+      "sourceUrl": "https://arunachaltourism.com/wp-content/uploads/2025/09/Arunachal-Pradesh-Tourism-Policy-compressed.pdf"
+    },
+    {
+      "id": 5,
+      "name": "Gorsam Chorten",
+      "deity": "Buddhist chorten",
+      "district": "Tawang",
+      "location": "Zemithang, Tawang District, Arunachal Pradesh",
+      "lat": 27.718,
+      "lng": 91.727,
+      "timing": "",
+      "phone": "",
+      "description": "A historic Buddhist chorten at Zemithang, included in Arunachal Pradesh spiritual tourism references.",
+      "famous": true,
+      "tags": ["buddhist", "chorten", "zemithang", "heritage"],
+      "sourceUrl": "https://arunachaltourism.com/wp-content/uploads/2025/09/Arunachal-Pradesh-Tourism-Policy-compressed.pdf"
+    }
+  ]
+}

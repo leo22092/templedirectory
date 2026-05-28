@@ -1,0 +1,83 @@
+{
+  "_defaults": {
+    "dressCode": "Warm, modest traditional dress recommended. Follow shrine-specific rules at the entrance.",
+    "photography": "Usually restricted inside sanctum areas. Check local signage before taking photos."
+  },
+  "temples": [
+    {
+      "id": 1,
+      "name": "Badrinath Temple",
+      "deity": "Lord Vishnu",
+      "district": "Chamoli",
+      "location": "Badrinath, Chamoli District, Uttarakhand",
+      "lat": 30.744,
+      "lng": 79.493,
+      "timing": "",
+      "phone": "",
+      "description": "A major Vishnu temple in the Garhwal Himalaya and one of the Char Dham shrines.",
+      "famous": true,
+      "tags": ["vishnu", "char-dham", "badrinath", "major"],
+      "sourceUrl": "https://uttarakhandtourism.gov.in/destination/badrinath"
+    },
+    {
+      "id": 2,
+      "name": "Kedarnath Temple",
+      "deity": "Lord Shiva",
+      "district": "Rudraprayag",
+      "location": "Kedarnath, Rudraprayag District, Uttarakhand",
+      "lat": 30.735,
+      "lng": 79.067,
+      "timing": "",
+      "phone": "",
+      "description": "A high-Himalayan Shiva temple and one of the Char Dham pilgrimage shrines.",
+      "famous": true,
+      "tags": ["shiva", "char-dham", "kedarnath", "major"],
+      "sourceUrl": "https://www.uttarakhandtourism.gov.in/experiences/char-dham"
+    },
+    {
+      "id": 3,
+      "name": "Gangotri Temple",
+      "deity": "Goddess Ganga",
+      "district": "Uttarkashi",
+      "location": "Gangotri, Uttarkashi District, Uttarakhand",
+      "lat": 30.994,
+      "lng": 78.939,
+      "timing": "",
+      "phone": "",
+      "description": "A Char Dham shrine dedicated to Goddess Ganga in Uttarkashi district.",
+      "famous": true,
+      "tags": ["ganga", "char-dham", "gangotri", "major"],
+      "sourceUrl": "https://www.uttarakhandtourism.gov.in/experiences/char-dham"
+    },
+    {
+      "id": 4,
+      "name": "Yamunotri Temple",
+      "deity": "Goddess Yamuna",
+      "district": "Uttarkashi",
+      "location": "Yamunotri, Uttarkashi District, Uttarakhand",
+      "lat": 31.014,
+      "lng": 78.460,
+      "timing": "",
+      "phone": "",
+      "description": "A Char Dham shrine dedicated to Goddess Yamuna, reached from Janki Chatti by trek or pony route.",
+      "famous": true,
+      "tags": ["yamuna", "char-dham", "yamunotri", "major"],
+      "sourceUrl": "https://www.uttarakhandtourism.gov.in/destination/yamunotri"
+    },
+    {
+      "id": 5,
+      "name": "Jageshwar Dham",
+      "deity": "Lord Shiva",
+      "district": "Almora",
+      "location": "Jageshwar, Almora District, Uttarakhand",
+      "lat": 29.638,
+      "lng": 79.853,
+      "timing": "",
+      "phone": "",
+      "description": "A historic group of Shiva temples at Jageshwar in Kumaon.",
+      "famous": true,
+      "tags": ["shiva", "jageshwar", "almora", "heritage"],
+      "sourceUrl": "https://www.uttarakhandtourism.gov.in/experiences/char-dham"
+    }
+  ]
+}

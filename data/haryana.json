@@ -1,0 +1,83 @@
+{
+  "_defaults": {
+    "dressCode": "Modest traditional dress recommended. Follow temple-specific rules at the entrance.",
+    "photography": "Usually restricted inside sanctum areas. Check local signage before taking photos."
+  },
+  "temples": [
+    {
+      "id": 1,
+      "name": "Mata Mansa Devi Temple",
+      "deity": "Goddess Mansa Devi",
+      "district": "Panchkula",
+      "location": "MDC Sector 4, Panchkula, Haryana",
+      "lat": 30.741,
+      "lng": 76.832,
+      "timing": "",
+      "phone": "",
+      "description": "A major Shakti temple complex in Panchkula, especially visited during Navratri.",
+      "famous": true,
+      "tags": ["devi", "panchkula", "shakti", "major"],
+      "sourceUrl": "https://haryanatourism.gov.in/places_of_interest/mata-mansa-devi-temple/"
+    },
+    {
+      "id": 2,
+      "name": "Sheetala Devi Temple",
+      "deity": "Goddess Sheetala",
+      "district": "Gurugram",
+      "location": "Sector 104, Gurugram, Haryana",
+      "lat": 28.489,
+      "lng": 77.017,
+      "timing": "",
+      "phone": "",
+      "description": "A revered Sheetala Mata shrine in Gurugram, described by Haryana Tourism as a Shakti Peeth.",
+      "famous": true,
+      "tags": ["devi", "gurugram", "shakti", "major"],
+      "sourceUrl": "https://haryanatourism.gov.in/places_of_interest/sheetala-devi-temple/"
+    },
+    {
+      "id": 3,
+      "name": "Sthaneshwara Mahadev Temple",
+      "deity": "Lord Shiva",
+      "district": "Kurukshetra",
+      "location": "Thanesar, Kurukshetra District, Haryana",
+      "lat": 29.975,
+      "lng": 76.837,
+      "timing": "",
+      "phone": "",
+      "description": "A historic Shiva shrine at Thanesar, part of Kurukshetra's sacred landscape.",
+      "famous": true,
+      "tags": ["shiva", "kurukshetra", "thanesar", "major"],
+      "sourceUrl": "https://haryanatourism.gov.in/places_of_interest/sthaneshwara-mahadev-temple/"
+    },
+    {
+      "id": 4,
+      "name": "Agroha Dham",
+      "deity": "Mahalakshmi",
+      "district": "Hisar",
+      "location": "Agroha, Hisar District, Haryana",
+      "lat": 29.343,
+      "lng": 75.633,
+      "timing": "",
+      "phone": "",
+      "description": "A large Hindu temple complex at Agroha in Hisar district.",
+      "famous": true,
+      "tags": ["mahalakshmi", "agroha", "hisar", "major"],
+      "sourceUrl": "https://hisar.gov.in/agroha-dham/"
+    },
+    {
+      "id": 5,
+      "name": "Chandi Mandir",
+      "deity": "Goddess Chandi",
+      "district": "Panchkula",
+      "location": "Near Panchkula, Haryana",
+      "lat": 30.727,
+      "lng": 76.905,
+      "timing": "",
+      "phone": "",
+      "description": "A Devi temple near Chandigarh and Panchkula, associated with the name Chandigarh.",
+      "famous": true,
+      "tags": ["devi", "panchkula", "chandi", "major"],
+      "sourceUrl": "https://en.wikipedia.org/wiki/Chandi_Mandir"
+    }
+  ]
+}

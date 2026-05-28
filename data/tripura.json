@@ -1,0 +1,83 @@
+{
+  "_defaults": {
+    "dressCode": "Modest traditional dress recommended. Follow temple-specific rules at the entrance.",
+    "photography": "Usually restricted inside sanctum areas. Check local signage before taking photos."
+  },
+  "temples": [
+    {
+      "id": 1,
+      "name": "Tripura Sundari Temple",
+      "deity": "Goddess Tripura Sundari",
+      "district": "Gomati",
+      "location": "Udaipur, Tripura",
+      "lat": 23.531,
+      "lng": 91.483,
+      "timing": "",
+      "phone": "",
+      "description": "A major Shakti Peeth at Udaipur, also known as Matabari.",
+      "famous": true,
+      "tags": ["devi", "shakti-peetha", "udaipur", "major"],
+      "sourceUrl": "https://www.tripurasundari.tripura.gov.in/about-matabari-temple/"
+    },
+    {
+      "id": 2,
+      "name": "Kasba Kali Temple",
+      "deity": "Goddess Kali",
+      "district": "Sepahijala",
+      "location": "Kamalasagar, Sepahijala District, Tripura",
+      "lat": 23.672,
+      "lng": 91.252,
+      "timing": "",
+      "phone": "",
+      "description": "A hilltop Kali temple at Kamalasagar, built by Maharaja Dhanya Manikya in the late 15th century.",
+      "famous": true,
+      "tags": ["kali", "kamalasagar", "devi", "major"],
+      "sourceUrl": "https://sepahijala.nic.in/tourist-place/kasba-kali-temple/"
+    },
+    {
+      "id": 3,
+      "name": "Chaturdasha Devata Temple",
+      "deity": "Fourteen deities",
+      "district": "West Tripura",
+      "location": "Khayerpur, near Agartala, Tripura",
+      "lat": 23.880,
+      "lng": 91.334,
+      "timing": "",
+      "phone": "",
+      "description": "A historic temple at Khayerpur dedicated to the fourteen deities of Tripura.",
+      "famous": true,
+      "tags": ["fourteen-deities", "khayerpur", "heritage", "major"],
+      "sourceUrl": "https://tripuratoday.com/detail?v=5073"
+    },
+    {
+      "id": 4,
+      "name": "Bhuvaneswari Temple",
+      "deity": "Goddess Bhuvaneswari",
+      "district": "Gomati",
+      "location": "Udaipur, Tripura",
+      "lat": 23.532,
+      "lng": 91.489,
+      "timing": "",
+      "phone": "",
+      "description": "A historic temple at Udaipur associated with Tripura's Manikya period heritage.",
+      "famous": true,
+      "tags": ["devi", "udaipur", "heritage"],
+      "sourceUrl": "https://sd2.tourism.gov.in/DocumentRepoFiles/InceptionReport/INR4bb20fd6-c55f-439a-85ae-13ce12863065.pdf"
+    },
+    {
+      "id": 5,
+      "name": "Jagannath Temple, Agartala",
+      "deity": "Lord Jagannath",
+      "district": "West Tripura",
+      "location": "Agartala, Tripura",
+      "lat": 23.834,
+      "lng": 91.282,
+      "timing": "",
+      "phone": "",
+      "description": "A Jagannath temple in Agartala, part of the city's historic palace-area religious landscape.",
+      "famous": true,
+      "tags": ["jagannath", "agartala", "major"],
+      "sourceUrl": "https://sd2.tourism.gov.in/DocumentRepoFiles/InceptionReport/INR4bb20fd6-c55f-439a-85ae-13ce12863065.pdf"
+    }
+  ]
+}

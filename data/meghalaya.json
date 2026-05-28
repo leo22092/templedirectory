@@ -1,0 +1,83 @@
+{
+  "_defaults": {
+    "dressCode": "Modest traditional dress recommended. Follow site-specific rules at the entrance.",
+    "photography": "Usually restricted inside sanctum or prayer areas. Check local signage before taking photos."
+  },
+  "temples": [
+    {
+      "id": 1,
+      "name": "Nartiang Durga Temple",
+      "deity": "Goddess Durga",
+      "district": "West Jaintia Hills",
+      "location": "Nartiang, West Jaintia Hills District, Meghalaya",
+      "lat": 25.559,
+      "lng": 92.208,
+      "timing": "",
+      "phone": "",
+      "description": "An old Durga shrine at Nartiang, widely associated with the Jayanti Shakti Peeth tradition.",
+      "famous": true,
+      "tags": ["devi", "durga", "nartiang", "major"],
+      "sourceUrl": "https://en.wikipedia.org/wiki/Nartiang_Durga_Temple"
+    },
+    {
+      "id": 2,
+      "name": "Mahadev Khola Dham",
+      "deity": "Lord Shiva",
+      "district": "East Khasi Hills",
+      "location": "Shillong, Meghalaya",
+      "lat": 25.578,
+      "lng": 91.893,
+      "timing": "",
+      "phone": "",
+      "description": "A Shiva temple complex in Shillong and one of the better-known Hindu shrines in Meghalaya.",
+      "famous": true,
+      "tags": ["shiva", "shillong", "major"],
+      "sourceUrl": "https://mahadevkholadham.org/temples/"
+    },
+    {
+      "id": 3,
+      "name": "Shillong Kali Bari",
+      "deity": "Goddess Kali",
+      "district": "East Khasi Hills",
+      "location": "Shillong, Meghalaya",
+      "lat": 25.578,
+      "lng": 91.883,
+      "timing": "",
+      "phone": "",
+      "description": "A Kali shrine serving Shillong's Hindu community.",
+      "famous": true,
+      "tags": ["kali", "shillong", "devi"],
+      "sourceUrl": "https://www.shillongonline.in/guide/shillong-religious-places"
+    },
+    {
+      "id": 4,
+      "name": "Purana Shiva Mandir, Shillong",
+      "deity": "Lord Shiva",
+      "district": "East Khasi Hills",
+      "location": "Shillong, Meghalaya",
+      "lat": 25.576,
+      "lng": 91.883,
+      "timing": "",
+      "phone": "",
+      "description": "A Shiva temple in Shillong referenced among the city's Hindu religious places.",
+      "famous": false,
+      "tags": ["shiva", "shillong"],
+      "sourceUrl": "https://trekgo.in/blog/temples-meghalaya"
+    },
+    {
+      "id": 5,
+      "name": "Matri Mandir, Shillong",
+      "deity": "Goddess Kali",
+      "district": "East Khasi Hills",
+      "location": "Shillong, Meghalaya",
+      "lat": 25.575,
+      "lng": 91.884,
+      "timing": "",
+      "phone": "",
+      "description": "A small Kali temple in Shillong referenced in local religious-place guides.",
+      "famous": false,
+      "tags": ["kali", "shillong", "devi"],
+      "sourceUrl": "https://www.shillongonline.in/guide/shillong-religious-places"
+    }
+  ]
+}

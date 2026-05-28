@@ -1,0 +1,83 @@
+{
+  "_defaults": {
+    "dressCode": "Modest traditional dress recommended. Follow temple-specific rules at the entrance.",
+    "photography": "Usually restricted inside sanctum areas. Check local signage before taking photos."
+  },
+  "temples": [
+    {
+      "id": 1,
+      "name": "Shree Naina Devi Temple",
+      "deity": "Goddess Naina Devi",
+      "district": "Bilaspur",
+      "location": "Naina Devi, Bilaspur District, Himachal Pradesh",
+      "lat": 31.307,
+      "lng": 76.539,
+      "timing": "",
+      "phone": "",
+      "description": "A hilltop Shakti Peeth pilgrimage centre in Bilaspur district.",
+      "famous": true,
+      "tags": ["devi", "shakti-peetha", "bilaspur", "major"],
+      "sourceUrl": "https://himachaltourism.gov.in/destination/temples/"
+    },
+    {
+      "id": 2,
+      "name": "Shree Chintpurni Devi Temple",
+      "deity": "Goddess Chintpurni",
+      "district": "Una",
+      "location": "Chintpurni, Una District, Himachal Pradesh",
+      "lat": 31.804,
+      "lng": 76.157,
+      "timing": "",
+      "phone": "",
+      "description": "A deeply revered Shakti Peeth township and major pilgrimage centre in Una district.",
+      "famous": true,
+      "tags": ["devi", "shakti-peetha", "una", "major"],
+      "sourceUrl": "https://hptdc.in/index.php/mata-chintpurni-ji/"
+    },
+    {
+      "id": 3,
+      "name": "Shree Jwala Ji Temple",
+      "deity": "Goddess Jwala",
+      "district": "Kangra",
+      "location": "Jwalamukhi, Kangra District, Himachal Pradesh",
+      "lat": 31.874,
+      "lng": 76.320,
+      "timing": "",
+      "phone": "",
+      "description": "A famous Devi temple at Jwalamukhi, known for its natural sacred flames.",
+      "famous": true,
+      "tags": ["devi", "jwala", "kangra", "major"],
+      "sourceUrl": "https://himachaltourism.gov.in/destination/temples/"
+    },
+    {
+      "id": 4,
+      "name": "Chamunda Devi Temple",
+      "deity": "Goddess Chamunda",
+      "district": "Kangra",
+      "location": "Chamunda, Kangra District, Himachal Pradesh",
+      "lat": 32.148,
+      "lng": 76.412,
+      "timing": "",
+      "phone": "",
+      "description": "A major Devi shrine in Kangra district near the Dhauladhar range.",
+      "famous": true,
+      "tags": ["devi", "chamunda", "kangra", "major"],
+      "sourceUrl": "https://himachaltourism.gov.in/destination/temples/"
+    },
+    {
+      "id": 5,
+      "name": "Baijnath Temple",
+      "deity": "Lord Shiva",
+      "district": "Kangra",
+      "location": "Baijnath, Kangra District, Himachal Pradesh",
+      "lat": 32.051,
+      "lng": 76.650,
+      "timing": "",
+      "phone": "",
+      "description": "A historic Nagara-style Shiva temple at Baijnath, traditionally dated to the early 13th century.",
+      "famous": true,
+      "tags": ["shiva", "baijnath", "kangra", "heritage"],
+      "sourceUrl": "https://himachaltourism.gov.in/destination/temples/"
+    }
+  ]
+}
