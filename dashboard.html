@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard - TempleDiary</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" href="/assets/images/favicon/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon/favicon.svg" />
+  <link rel="apple-touch-icon" href="/assets/images/favicon/apple-touch-icon.png" />
+  <link rel="manifest" href="/assets/images/favicon/site.webmanifest" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    :root {
+      --ink: #1c0a02;
+      --muted: #6f675f;
+      --line: #e5d8c3;
+      --paper: #fffaf1;
+      --panel: #ffffff;
+      --gold: #c8932a;
+      --maroon: #7b1c1c;
+      --green: #047857;
+      --red: #be123c;
+      --blue: #1d4ed8;
+      --radius: 8px;
+      --font: Inter, "Segoe UI", system-ui, sans-serif;
+    }
+    body { margin: 0; min-height: 100vh; font-family: var(--font); color: var(--ink); background: #f4efe6; }
+    button, input, select, textarea { font: inherit; }
+    .topbar {
+      position: sticky; top: 0; z-index: 20; height: 60px; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 18px; background: var(--ink); border-bottom: 2px solid var(--gold); color: #fff;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .brand-mark { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; background: rgba(200,147,42,.18); color: var(--gold); }
+    .brand h1 { margin: 0; font-size: 1rem; color: var(--gold); }
+    .brand p { margin: 2px 0 0; font-size: .72rem; color: #c9bfae; }
+    .top-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+    .layout { display: grid; grid-template-columns: 236px minmax(0, 1fr); min-height: calc(100vh - 60px); }
+    .sidebar { background: #fff; border-right: 1px solid var(--line); padding: 16px 12px; }
+    .side-label { display: block; margin: 14px 8px 7px; color: #9b8c7a; font-size: .68rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+    .nav-btn, .side-link {
+      width: 100%; display: flex; align-items: center; gap: 9px; padding: 9px 10px; border: 0; border-radius: var(--radius);
+      background: transparent; color: #51463a; text-align: left; text-decoration: none; cursor: pointer;
+    }
+    .nav-btn:hover, .side-link:hover, .nav-btn.active { background: #f8ead0; color: var(--maroon); font-weight: 700; }
+    .main { padding: 20px; overflow: hidden; }
+    .section { display: none; }
+    .section.active { display: block; }
+    .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+    .toolbar h2 { margin: 0; font-size: 1.12rem; }
+    .toolbar p { margin: 3px 0 0; color: var(--muted); font-size: .86rem; }
+    .btn {
+      border: 1px solid transparent; border-radius: 999px; padding: 8px 13px; background: #eee; color: var(--ink);
+      cursor: pointer; font-weight: 800; font-size: .83rem; text-decoration: none; display: inline-flex; align-items: center; gap: 7px;
+    }
+    .btn:hover { filter: brightness(.98); transform: translateY(-1px); }
+    .btn-primary { background: var(--gold); color: var(--ink); }
+    .btn-dark { background: var(--ink); color: #fff; }
+    .btn-red { background: var(--maroon); color: #fff; }
+    .btn-green { background: var(--green); color: #fff; }
+    .btn-outline { background: transparent; border-color: #6b5b4b; color: #eee; }
+    .btn-soft { background: #fff7e8; border-color: var(--line); color: var(--maroon); }
+    .btn-sm { padding: 5px 9px; font-size: .76rem; }
+    .grid-stats { display: grid; grid-template-columns: repeat(5, minmax(120px, 1fr)); gap: 12px; margin-bottom: 16px; }
+    .stat { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 13px; }
+    .stat b { display: block; font-size: 1.55rem; color: var(--maroon); line-height: 1; }
+    .stat span { display: block; margin-top: 5px; color: var(--muted); font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; font-weight: 800; }
+    .panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 15px; margin-bottom: 15px; }
+    .panel-head { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+    .panel-head h3 { margin: 0; font-size: 1rem; }
+    .state-row, .filter-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .filter-row { margin-bottom: 12px; }
+    input, select, textarea {
+      width: 100%; border: 1px solid var(--line); border-radius: var(--radius); padding: 9px 10px; background: #fff; color: var(--ink); outline: none;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(200,147,42,.14); }
+    .filter-row input { max-width: 360px; }
+    .filter-row select { max-width: 220px; }
+    .table-wrap { overflow: auto; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; }
+    table { width: 100%; border-collapse: collapse; min-width: 980px; }
+    th { position: sticky; top: 0; z-index: 1; background: #f7efe2; color: #7b6e5d; text-align: left; font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; padding: 9px 10px; border-bottom: 1px solid var(--line); }
+    td { padding: 9px 10px; border-bottom: 1px solid #f0e6d5; vertical-align: top; font-size: .84rem; }
+    tr:hover td { background: #fffaf1; }
+    tr.selected-row td { background: #fff4d8; }
+    .name-cell { font-weight: 800; max-width: 280px; }
+    .muted { color: var(--muted); }
+    .pill { display: inline-flex; align-items: center; gap: 4px; padding: 2px 7px; border-radius: 999px; font-size: .72rem; font-weight: 800; }
+    .pill-green { color: var(--green); background: #ecfdf5; }
+    .pill-red { color: var(--red); background: #fff1f2; }
+    .pill-blue { color: var(--blue); background: #eff6ff; }
+    .diff-list { display: grid; gap: 8px; min-width: 280px; }
+    .diff-item { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: #fffdf8; }
+    .diff-field { padding: 6px 8px; background: #f7efe2; font-weight: 900; color: var(--maroon); }
+    .diff-row { display: grid; grid-template-columns: 70px minmax(0, 1fr); gap: 8px; padding: 5px 8px; border-top: 1px solid #f0e6d5; }
+    .diff-row b { color: #776855; font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; }
+    .diff-new { background: #ecfdf5; }
+    .diff-empty { color: #9b8c7a; font-style: italic; }
+    .row-actions { display: flex; gap: 5px; flex-wrap: wrap; }
+    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .field.full { grid-column: 1 / -1; }
+    .field label { display: block; margin-bottom: 5px; font-size: .72rem; font-weight: 900; color: #776855; text-transform: uppercase; letter-spacing: .07em; }
+    .checks { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .checks label { display: inline-flex; align-items: center; gap: 7px; margin: 0; text-transform: none; letter-spacing: 0; font-size: .9rem; color: var(--ink); }
+    .checks input { width: auto; }
+    .alert { display: none; margin-bottom: 12px; padding: 10px 12px; border-radius: var(--radius); font-size: .86rem; font-weight: 800; }
+    .alert.show { display: block; }
+    .alert-ok { background: #ecfdf5; color: #065f46; border: 1px solid #bbf7d0; }
+    .alert-bad { background: #fff1f2; color: #9f1239; border: 1px solid #fecdd3; }
+    .split { display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 14px; }
+    .textarea-mono { min-height: 330px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .78rem; white-space: pre; }
+    .health-list { display: grid; gap: 8px; }
+    .health-item { display: flex; justify-content: space-between; gap: 12px; padding: 10px; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; }
+    .danger-zone { border-color: #fecdd3; background: #fff7f8; }
+    .note { line-height: 1.6; color: var(--muted); font-size: .88rem; }
+    .kbd { padding: 1px 5px; border: 1px solid var(--line); border-radius: 4px; background: #fff; font-family: ui-monospace, monospace; font-size: .78rem; }
+    @media (max-width: 980px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { display: flex; gap: 6px; flex-wrap: wrap; border-right: 0; border-bottom: 1px solid var(--line); }
+      .side-label { display: none; }
+      .nav-btn, .side-link { width: auto; }
+      .grid-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .split, .form-grid { grid-template-columns: 1fr; }
+      .field.full { grid-column: auto; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">TD</div>
+      <div>
+        <h1>TempleDiary Admin</h1>
+        <p>D1 maintenance with JSON publishing</p>
+      </div>
+    </div>
+    <div class="top-actions">
+      <span id="dirty-indicator" class="pill pill-green">Saved locally</span>
+      <a href="index.html" class="btn btn-outline" target="_blank" rel="noopener">View site</a>
+      <button class="btn btn-red" type="button" onclick="logout()">Sign out</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <span class="side-label">Manage</span>
+      <button class="nav-btn active" type="button" data-section="overview">Overview</button>
+      <button class="nav-btn" type="button" data-section="db">Temple Maintenance</button>
+      <button class="nav-btn" type="button" data-section="requests">Requests</button>
+      <button class="nav-btn" type="button" data-section="temples">Published JSON Preview</button>
+      <button class="nav-btn" type="button" data-section="editor">JSON Draft Editor</button>
+      <button class="nav-btn" type="button" data-section="states">States</button>
+      <button class="nav-btn" type="button" data-section="import">JSON Import</button>
+      <button class="nav-btn" type="button" data-section="export">JSON Export</button>
+      <button class="nav-btn" type="button" data-section="health">Health</button>
+      <span class="side-label">Files</span>
+      <a class="side-link" href="sitemap.xml" target="_blank">Sitemap</a>
+      <a class="side-link" href="Robots.txt" target="_blank">Robots.txt</a>
+      <a class="side-link" href="privacy.html" target="_blank">Privacy</a>
+    </aside>
+
+    <main class="main">
+      <div class="toolbar">
+        <div>
+          <h2 id="page-title">Overview</h2>
+          <p id="page-subtitle">Maintain temples in D1, then publish JSON for the public site.</p>
+        </div>
+        <div class="state-row">
+          <select id="active-state" onchange="switchState(this.value)"></select>
+          <button class="btn btn-primary" type="button" onclick="showSection('db'); newDbTemple()">Add D1 temple</button>
+          <button class="btn btn-green" type="button" onclick="downloadActiveJson()">Download JSON</button>
+        </div>
+      </div>
+
+      <div id="alert" class="alert"></div>
+
+      <section class="section active" id="section-overview">
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Publishing Workflow</h3>
+            <button class="btn btn-primary btn-sm" type="button" onclick="showSection('db')">Open maintenance</button>
+          </div>
+          <p class="note">D1 is used for admin editing, verification, labels, and request approvals. The public site renders from JSON to avoid unnecessary D1 calls. Every 48 hours, export the updated D1 data to JSON and commit/upload it to GitHub.</p>
+        </div>
+        <div class="grid-stats" id="stats"></div>
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Published JSON Snapshot</h3>
+            <button class="btn btn-soft btn-sm" type="button" onclick="showSection('temples')">Open JSON preview</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>ID</th><th>Name</th><th>District</th><th>GPS</th><th>Source</th></tr></thead>
+              <tbody id="recent-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="section-temples">
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Published JSON Preview <span class="muted" id="list-count"></span></h3>
+            <div class="row-actions">
+              <button class="btn btn-soft btn-sm" type="button" onclick="duplicateSelected()">Duplicate selected</button>
+              <button class="btn btn-red btn-sm" type="button" onclick="deleteSelected()">Delete selected</button>
+            </div>
+          </div>
+          <p class="note">This is the JSON data currently used to render the public site. D1 edits are not reflected here until the 48-hour export/publish step updates the JSON files.</p>
+          <div class="filter-row">
+            <input id="search" type="search" placeholder="Search name, deity, location, tags..." oninput="renderTempleTable()" />
+            <select id="district-filter" onchange="renderTempleTable()"></select>
+            <select id="quality-filter" onchange="renderTempleTable()">
+              <option value="">All records</option>
+              <option value="gps">With GPS</option>
+              <option value="nogps">Missing GPS</option>
+              <option value="source">With source</option>
+              <option value="famous">Famous</option>
+            </select>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th><input type="checkbox" id="select-all" onchange="toggleAllRows(this.checked)" /></th><th>ID</th><th>Name</th><th>Deity</th><th>District</th><th>GPS</th><th>Famous</th><th>Actions</th></tr>
+              </thead>
+              <tbody id="temple-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="section-db">
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Temple Maintenance <span class="muted" id="db-count"></span></h3>
+            <div class="row-actions">
+              <button class="btn btn-primary btn-sm" type="button" onclick="newDbTemple()">Add D1 temple</button>
+              <button class="btn btn-soft btn-sm" type="button" onclick="loadDbTemples()">Refresh D1</button>
+            </div>
+          </div>
+          <p class="note">Use this screen for day-to-day D1 add/edit work, verification status, and admin labels. These changes save directly to D1.</p>
+          <div class="filter-row">
+            <input id="db-search" type="search" placeholder="Search D1 records..." oninput="renderDbTempleTable()" />
+            <select id="db-status-filter" onchange="renderDbTempleTable()">
+              <option value="">All statuses</option>
+              <option value="verified">Verified</option>
+              <option value="unverified">Unverified</option>
+              <option value="needs_review">Needs review</option>
+              <option value="removed">Removed</option>
+            </select>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>D1 ID</th><th>JSON ID</th><th>Name</th><th>District</th><th>Status</th><th>Admin Label</th><th>GPS</th><th>Actions</th></tr>
+              </thead>
+              <tbody id="db-temple-body"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="panel" id="db-detail-panel" hidden>
+          <div class="panel-head">
+            <h3 id="db-detail-title">D1 Record</h3>
+            <div class="row-actions">
+              <button class="btn btn-soft btn-sm" type="button" onclick="openSelectedDbMap()">Map</button>
+              <button class="btn btn-soft btn-sm" type="button" onclick="closeDbDetail()">Close</button>
+            </div>
+          </div>
+          <div class="form-grid">
+            <input type="hidden" id="db-detail-id" />
+            <div class="field"><label for="db-detail-name">Temple Name *</label><input id="db-detail-name" /></div>
+            <div class="field"><label for="db-detail-deity">Deity</label><input id="db-detail-deity" /></div>
+            <div class="field"><label for="db-detail-district">District</label><input id="db-detail-district" /></div>
+            <div class="field"><label for="db-detail-location">Location</label><input id="db-detail-location" /></div>
+            <div class="field"><label for="db-detail-lat">Latitude</label><input id="db-detail-lat" type="number" step="any" /></div>
+            <div class="field"><label for="db-detail-lng">Longitude</label><input id="db-detail-lng" type="number" step="any" /></div>
+            <div class="field"><label for="db-detail-timing">Timing</label><input id="db-detail-timing" /></div>
+            <div class="field"><label for="db-detail-phone">Phone</label><input id="db-detail-phone" /></div>
+            <div class="field full"><label for="db-detail-description">Description</label><textarea id="db-detail-description" rows="3"></textarea></div>
+            <div class="field"><label for="db-detail-source">Source URL</label><input id="db-detail-source" /></div>
+            <div class="field"><label for="db-detail-tags">Tags, comma separated</label><input id="db-detail-tags" /></div>
+            <div class="field"><label for="db-detail-status">Status</label>
+              <select id="db-detail-status">
+                <option value="verified">Verified</option>
+                <option value="unverified">Unverified</option>
+                <option value="needs_review">Needs review</option>
+                <option value="removed">Removed</option>
+              </select>
+            </div>
+            <div class="field"><label for="db-detail-label">Admin Label</label><input id="db-detail-label" placeholder="e.g. VERIFIED FROM SOURCE" /></div>
+            <div class="field"><label for="db-detail-source-json-id">Source JSON ID</label><input id="db-detail-source-json-id" type="number" step="1" /></div>
+            <div class="field">
+              <div class="checks" style="margin-top:24px">
+                <label><input id="db-detail-famous" type="checkbox" /> Famous temple</label>
+              </div>
+            </div>
+          </div>
+          <div id="db-detail-summary" class="note" style="margin-top:12px"></div>
+          <div class="toolbar" style="margin-top:14px;margin-bottom:0">
+            <span id="db-detail-msg" class="muted"></span>
+            <button class="btn btn-primary" type="button" onclick="saveDbTempleReview()">Save to D1</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="section-requests">
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Approval Requests <span class="muted" id="request-count"></span></h3>
+            <div class="row-actions">
+              <button class="btn btn-soft btn-sm" type="button" onclick="loadTempleRequests()">Refresh requests</button>
+            </div>
+          </div>
+          <div class="filter-row">
+            <select id="request-type-filter" onchange="loadTempleRequests()">
+              <option value="submission">Submission requests</option>
+              <option value="correction">Correction requests</option>
+              <option value="deletion">Deletion requests</option>
+            </select>
+            <select id="request-status-filter" onchange="loadTempleRequests()">
+              <option value="pending">Pending</option>
+              <option value="needs_review">Needs review</option>
+              <option value="approved">Approved archive</option>
+              <option value="rejected">Rejected archive</option>
+            </select>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Received</th><th>Type</th><th>Temple</th><th>Submitter</th><th>Admin Label</th><th>Current DB</th><th>Public JSON</th><th>Request Changes</th><th>Actions</th></tr>
+              </thead>
+              <tbody id="request-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="section-editor">
+        <div class="panel">
+          <div class="panel-head">
+            <h3 id="editor-title">JSON Draft Editor</h3>
+            <div class="row-actions">
+              <button class="btn btn-soft btn-sm" type="button" onclick="validateCurrentForm()">Validate form</button>
+              <button class="btn btn-soft btn-sm" type="button" onclick="newTemple()">Clear</button>
+            </div>
+          </div>
+          <div class="form-grid">
+            <input type="hidden" id="f-id" />
+            <div class="field"><label for="f-name">Temple Name *</label><input id="f-name" /></div>
+            <div class="field"><label for="f-deity">Deity *</label><input id="f-deity" /></div>
+            <div class="field"><label for="f-district">District *</label><input id="f-district" list="district-list" /></div>
+            <div class="field"><label for="f-location">Location</label><input id="f-location" /></div>
+            <div class="field"><label for="f-lat">Latitude</label><input id="f-lat" type="number" step="any" /></div>
+            <div class="field"><label for="f-lng">Longitude</label><input id="f-lng" type="number" step="any" /></div>
+            <div class="field"><label for="f-timing">Timing</label><input id="f-timing" /></div>
+            <div class="field"><label for="f-phone">Phone</label><input id="f-phone" /></div>
+            <div class="field full"><label for="f-description">Description</label><textarea id="f-description" rows="3"></textarea></div>
+            <div class="field full"><label for="f-famousFor">Famous For</label><textarea id="f-famousFor" rows="2"></textarea></div>
+            <div class="field"><label for="f-dressCode">Dress Code</label><input id="f-dressCode" /></div>
+            <div class="field"><label for="f-photography">Photography</label><input id="f-photography" /></div>
+            <div class="field"><label for="f-nearestBus">Nearest Bus</label><input id="f-nearestBus" /></div>
+            <div class="field"><label for="f-nearestRail">Nearest Rail</label><input id="f-nearestRail" /></div>
+            <div class="field"><label for="f-sourceUrl">Source URL</label><input id="f-sourceUrl" /></div>
+            <div class="field"><label for="f-tags">Tags, comma separated</label><input id="f-tags" /></div>
+            <div class="field full">
+              <div class="checks">
+                <label><input id="f-famous" type="checkbox" /> Famous temple</label>
+                <label><input id="f-remove-defaults" type="checkbox" checked /> Omit fields matching state defaults</label>
+              </div>
+            </div>
+          </div>
+          <div class="toolbar" style="margin-top:14px;margin-bottom:0">
+            <p class="note">This legacy editor changes only the local JSON draft in this browser. Use Temple Maintenance for D1 edits, then use JSON export for the publishing cycle.</p>
+            <div class="row-actions">
+              <button class="btn btn-red" type="button" onclick="deleteFromForm()">Delete</button>
+              <button class="btn btn-primary" type="button" onclick="saveTemple()">Save temple</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="section-states">
+        <div class="split">
+          <div class="panel">
+            <div class="panel-head"><h3>State Configuration</h3><button class="btn btn-primary btn-sm" type="button" onclick="addStateConfig()">Add State</button></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Key</th><th>Label</th><th>Data File</th><th>D1 Temples</th><th>Actions</th></tr></thead>
+                <tbody id="state-body"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="panel">
+            <h3 style="margin-top:0">State Editor</h3>
+            <div class="form-grid" style="grid-template-columns:1fr">
+              <div class="field"><label>Key</label><input id="s-key" placeholder="maharashtra" /></div>
+              <div class="field"><label>Label</label><input id="s-label" placeholder="Maharashtra" /></div>
+              <div class="field"><label>Data File</label><input id="s-dataFile" placeholder="data/maharashtra.json" /></div>
+              <div class="field"><label>Hero Image</label><input id="s-heroImage" placeholder="assets/images/sources/example.jpeg" /></div>
+              <div class="field"><label>Eyebrow</label><input id="s-eyebrow" /></div>
+              <div class="field"><label>Map Label</label><input id="s-mapLabel" /></div>
+            </div>
+            <div class="toolbar" style="margin:12px 0 0"><span></span><button class="btn btn-primary" type="button" onclick="saveStateConfig()">Save state config</button></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="section-import">
+        <div class="panel">
+          <div class="panel-head"><h3>JSON Import</h3></div>
+          <p class="note">Import a JSON file or paste JSON below. This updates only the local JSON draft used for preview/export; it does not write to D1.</p>
+          <p class="note">Accepts either a plain array or <span class="kbd">{ "_defaults": {}, "temples": [] }</span>.</p>
+          <div class="filter-row">
+            <input type="file" id="import-file" accept=".json,application/json" onchange="readImportFile(this.files[0])" />
+            <button class="btn btn-soft" type="button" onclick="loadActiveFromDisk()">Reload active state from site file</button>
+          </div>
+          <textarea id="import-text" class="textarea-mono" placeholder="Paste JSON here..."></textarea>
+          <div class="toolbar" style="margin-top:12px;margin-bottom:0">
+            <span></span>
+            <div class="row-actions">
+              <button class="btn btn-soft" type="button" onclick="previewImport()">Preview</button>
+              <button class="btn btn-primary" type="button" onclick="applyImport()">Replace active state data</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="section-export">
+        <div class="split">
+          <div class="panel">
+            <div class="panel-head">
+              <h3>JSON Export</h3>
+              <div class="row-actions">
+                <button class="btn btn-soft btn-sm" type="button" onclick="generateExport('active')">D1 active JSON</button>
+                <button class="btn btn-soft btn-sm" type="button" onclick="generateExport('all')">D1 all-state bundle</button>
+                <button class="btn btn-green btn-sm" type="button" onclick="copyExport()">Copy</button>
+              </div>
+            </div>
+            <textarea id="export-text" class="textarea-mono" readonly></textarea>
+          </div>
+          <div class="panel">
+            <h3 style="margin-top:0">How To Apply</h3>
+            <p class="note">Public users read JSON, not D1. After D1 maintenance, export the updated state JSON and commit/upload it to GitHub during the 48-hour publishing cycle.</p>
+            <p class="note">D1 export includes <span class="kbd">verified</span>, <span class="kbd">unverified</span>, and <span class="kbd">needs_review</span> records. <span class="kbd">removed</span> records are excluded.</p>
+            <button class="btn btn-green" type="button" onclick="downloadActiveJson()">Download D1 active state JSON</button>
+            <button class="btn btn-soft" type="button" onclick="downloadAllJson()">Download D1 all-state bundle</button>
+            <button class="btn btn-soft" type="button" onclick="downloadLocalDraftJson()">Download local draft JSON</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="section-health">
+        <div class="panel">
+          <div class="panel-head"><h3>Data Health</h3><button class="btn btn-primary btn-sm" type="button" onclick="runHealthChecks()">Run checks</button></div>
+          <div id="health-summary" class="grid-stats"></div>
+          <div id="health-list" class="health-list"></div>
+        </div>
+        <div class="panel danger-zone">
+          <div class="panel-head"><h3>Danger Zone</h3></div>
+          <div class="row-actions">
+            <button class="btn btn-red" type="button" onclick="resetLocalDraft()">Discard local draft for active state</button>
+            <button class="btn btn-red" type="button" onclick="resetAllDrafts()">Discard all local drafts</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <datalist id="district-list"></datalist>
+
+  <script src="assets/js/core/states.js?v=20260528-all-states"></script>
+  <script src="assets/js/admin/dashboard.js"></script>
+</body>
+</html>
