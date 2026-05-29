@@ -24,8 +24,25 @@
     document.querySelectorAll('.nav-btn[data-section]').forEach(btn => {
       btn.addEventListener('click', () => showSection(btn.dataset.section));
     });
+    document.addEventListener('click', handleDashboardClick);
 
     init();
+
+    function handleDashboardClick(event) {
+      const actionEl = event.target.closest('[data-admin-action]');
+      if (!actionEl) return;
+
+      const action = actionEl.dataset.adminAction;
+      if (action === 'new-db-temple') {
+        event.preventDefault();
+        showSection('db');
+        newDbTemple();
+      }
+      if (action === 'review-db-temple') {
+        event.preventDefault();
+        openDbTempleDetail(actionEl.dataset.id);
+      }
+    }
 
     async function init() {
       await loadD1StateConfigs();
@@ -267,7 +284,7 @@
           <td>${statusPill(t.status)}</td>
           <td>${esc(t.adminLabel || '')}</td>
           <td>${gpsPill(t)}</td>
-          <td><button class="btn btn-soft btn-sm" type="button" onclick="openDbTempleDetail(${t.id})">Review</button></td>
+          <td><button class="btn btn-soft btn-sm" type="button" data-admin-action="review-db-temple" data-id="${escAttr(t.id)}">Review</button></td>
         </tr>
       `).join('') || `<tr><td colspan="8" class="muted">No D1 records found.</td></tr>`;
     }
@@ -282,6 +299,7 @@
       document.getElementById('db-detail-msg').textContent = '';
       document.getElementById('db-detail-panel').hidden = false;
       renderDbTempleTable();
+      scrollDbDetailIntoView();
     }
 
     function newDbTemple() {
@@ -311,6 +329,13 @@
       document.getElementById('db-detail-msg').textContent = '';
       document.getElementById('db-detail-panel').hidden = false;
       renderDbTempleTable();
+      scrollDbDetailIntoView();
+    }
+
+    function scrollDbDetailIntoView() {
+      const panel = document.getElementById('db-detail-panel');
+      if (!panel) return;
+      window.setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0);
     }
 
     function fillDbTempleForm(temple) {
@@ -1099,6 +1124,8 @@
       readImportFile,
       resetAllDrafts,
       resetLocalDraft,
+      renderDbTempleTable,
+      renderTempleTable,
       runHealthChecks,
       saveDbTempleReview,
       saveStateConfig,

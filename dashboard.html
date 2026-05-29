@@ -167,7 +167,7 @@
         </div>
         <div class="state-row">
           <select id="active-state" onchange="switchState(this.value)"></select>
-          <button class="btn btn-primary" type="button" onclick="showSection('db'); newDbTemple()">Add D1 temple</button>
+          <button class="btn btn-primary" type="button" data-admin-action="new-db-temple">Add D1 temple</button>
           <button class="btn btn-green" type="button" onclick="downloadActiveJson()">Download JSON</button>
         </div>
       </div>
@@ -234,7 +234,7 @@
           <div class="panel-head">
             <h3>Temple Maintenance <span class="muted" id="db-count"></span></h3>
             <div class="row-actions">
-              <button class="btn btn-primary btn-sm" type="button" onclick="newDbTemple()">Add D1 temple</button>
+              <button class="btn btn-primary btn-sm" type="button" data-admin-action="new-db-temple">Add D1 temple</button>
               <button class="btn btn-soft btn-sm" type="button" onclick="loadDbTemples()">Refresh D1</button>
             </div>
           </div>
@@ -469,6 +469,6 @@
   <datalist id="district-list"></datalist>
 
   <script src="assets/js/core/states.js?v=20260528-all-states"></script>
-  <script src="assets/js/admin/dashboard.js"></script>
+  <script src="assets/js/admin/dashboard.js?v=20260529-admin-actions"></script>
 </body>
 </html>
