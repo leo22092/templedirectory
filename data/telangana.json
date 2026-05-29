@@ -12,27 +12,18 @@
       "location": "Bhadrachalam, Telangana",
       "lat": 17.668,
       "lng": 80.889,
-      "timing": "",
-      "phone": "",
       "description": "A famous Rama temple town on the banks of the Godavari River.",
       "famous": true,
-      "tags": ["rama", "bhadrachalam", "godavari", "major"],
+      "status": "unverified",
+      "tags": [
+        "rama",
+        "bhadrachalam",
+        "godavari",
+        "major"
+      ],
+      "dressCode": "Modest traditional dress recommended. Follow temple-specific rules at the entrance.",
+      "photography": "Usually restricted inside sanctum areas. Check local signage before taking photos.",
       "sourceUrl": "https://www.tourism.telangana.gov.in/attractions/bhadrachalam"
-    },
-    {
-      "id": 2,
-      "name": "Yadadri Lakshmi Narasimha Swamy Temple",
-      "deity": "Lord Narasimha",
-      "district": "Yadadri Bhuvanagiri",
-      "location": "Yadagirigutta, Telangana",
-      "lat": 17.590,
-      "lng": 78.944,
-      "timing": "",
-      "phone": "",
-      "description": "A major Narasimha temple at Yadagirigutta, also known as Yadadri.",
-      "famous": true,
-      "tags": ["narasimha", "yadadri", "major"],
-      "sourceUrl": "https://tourism.telangana.gov.in/storage/app/media/Telangana_Tourism_Policy_2025-2030.pdf"
     },
     {
       "id": 3,
@@ -42,27 +33,18 @@
       "location": "Alampur, Telangana",
       "lat": 15.879,
       "lng": 78.133,
-      "timing": "",
-      "phone": "",
       "description": "A Shakti Peeth at Alampur, listed by Telangana Tourism among the Alampur pilgrimage destinations.",
       "famous": true,
-      "tags": ["devi", "shakti-peetha", "alampur", "major"],
+      "status": "unverified",
+      "tags": [
+        "devi",
+        "shakti-peetha",
+        "alampur",
+        "major"
+      ],
+      "dressCode": "Modest traditional dress recommended. Follow temple-specific rules at the entrance.",
+      "photography": "Usually restricted inside sanctum areas. Check local signage before taking photos.",
       "sourceUrl": "https://www.tourism.telangana.gov.in/page/alampur-somasila"
-    },
-    {
-      "id": 4,
-      "name": "Vemulawada Rajarajeshwara Temple",
-      "deity": "Lord Shiva",
-      "district": "Rajanna Sircilla",
-      "location": "Vemulawada, Telangana",
-      "lat": 18.466,
-      "lng": 78.869,
-      "timing": "",
-      "phone": "",
-      "description": "A major Shiva temple at Vemulawada, included in Telangana tourism pilgrimage circuits.",
-      "famous": true,
-      "tags": ["shiva", "vemulawada", "major"],
-      "sourceUrl": "https://tourism.telangana.gov.in/storage/app/media/Telangana_Tourism_Policy_2025-2030.pdf"
     },
     {
       "id": 5,
@@ -72,11 +54,57 @@
       "location": "Basar, Telangana",
       "lat": 18.881,
       "lng": 77.953,
-      "timing": "",
-      "phone": "",
       "description": "A famous Saraswati temple at Basar on the Godavari, especially known for Aksharabhyasam rituals.",
       "famous": true,
-      "tags": ["saraswati", "basar", "godavari", "major"],
+      "status": "unverified",
+      "tags": [
+        "saraswati",
+        "basar",
+        "godavari",
+        "major"
+      ],
+      "dressCode": "Modest traditional dress recommended. Follow temple-specific rules at the entrance.",
+      "photography": "Usually restricted inside sanctum areas. Check local signage before taking photos.",
+      "sourceUrl": "https://tourism.telangana.gov.in/storage/app/media/Telangana_Tourism_Policy_2025-2030.pdf"
+    },
+    {
+      "id": 4,
+      "name": "Vemulawada Rajarajeshwara Temple",
+      "deity": "Lord Shiva",
+      "district": "Rajanna Sircilla",
+      "location": "Vemulawada, Telangana",
+      "lat": 18.466,
+      "lng": 78.869,
+      "description": "A major Shiva temple at Vemulawada, included in Telangana tourism pilgrimage circuits.",
+      "famous": true,
+      "status": "unverified",
+      "tags": [
+        "shiva",
+        "vemulawada",
+        "major"
+      ],
+      "dressCode": "Modest traditional dress recommended. Follow temple-specific rules at the entrance.",
+      "photography": "Usually restricted inside sanctum areas. Check local signage before taking photos.",
+      "sourceUrl": "https://tourism.telangana.gov.in/storage/app/media/Telangana_Tourism_Policy_2025-2030.pdf"
+    },
+    {
+      "id": 2,
+      "name": "Yadadri Lakshmi Narasimha Swamy Temple",
+      "deity": "Lord Narasimha",
+      "district": "Yadadri Bhuvanagiri",
+      "location": "Yadagirigutta, Telangana",
+      "lat": 17.59,
+      "lng": 78.944,
+      "description": "A major Narasimha temple at Yadagirigutta, also known as Yadadri.",
+      "famous": true,
+      "status": "unverified",
+      "tags": [
+        "narasimha",
+        "yadadri",
+        "major"
+      ],
+      "dressCode": "Modest traditional dress recommended. Follow temple-specific rules at the entrance.",
+      "photography": "Usually restricted inside sanctum areas. Check local signage before taking photos.",
       "sourceUrl": "https://tourism.telangana.gov.in/storage/app/media/Telangana_Tourism_Policy_2025-2030.pdf"
     }
   ]

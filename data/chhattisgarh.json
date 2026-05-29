@@ -5,6 +5,27 @@
   },
   "temples": [
     {
+      "id": 4,
+      "name": "Mahamaya Temple, Ratanpur",
+      "deity": "Goddess Mahamaya",
+      "district": "Bilaspur",
+      "location": "Ratanpur, Bilaspur District, Chhattisgarh",
+      "lat": 22.286,
+      "lng": 82.169,
+      "description": "A historic Devi shrine at Ratanpur, traditionally linked with the old Kalachuri capital.",
+      "famous": true,
+      "status": "unverified",
+      "tags": [
+        "devi",
+        "ratanpur",
+        "bilaspur",
+        "heritage"
+      ],
+      "dressCode": "Modest traditional dress recommended. Follow temple-specific rules at the entrance.",
+      "photography": "Usually restricted inside sanctum areas. Check local signage before taking photos.",
+      "sourceUrl": "https://bharatkisoch.com/Chhattisgarh"
+    },
+    {
       "id": 1,
       "name": "Maa Danteshwari Temple",
       "deity": "Goddess Danteshwari",
@@ -12,12 +33,39 @@
       "location": "Dantewada, Chhattisgarh",
       "lat": 18.899,
       "lng": 81.349,
-      "timing": "",
-      "phone": "",
       "description": "A major Shakti shrine and pilgrim centre in Dantewada, closely associated with Bastar Dussehra traditions.",
       "famous": true,
-      "tags": ["devi", "bastar", "dantewada", "major"],
+      "status": "unverified",
+      "tags": [
+        "devi",
+        "bastar",
+        "dantewada",
+        "major"
+      ],
+      "dressCode": "Modest traditional dress recommended. Follow temple-specific rules at the entrance.",
+      "photography": "Usually restricted inside sanctum areas. Check local signage before taking photos.",
       "sourceUrl": "https://dantewada.nic.in/en/tourism/"
+    },
+    {
+      "id": 5,
+      "name": "Rajiv Lochan Temple",
+      "deity": "Lord Vishnu",
+      "district": "Gariaband",
+      "location": "Rajim, Gariaband District, Chhattisgarh",
+      "lat": 20.968,
+      "lng": 81.879,
+      "description": "A revered Vishnu temple at Rajim, a major pilgrimage town at the confluence of Mahanadi, Pairi and Sondur rivers.",
+      "famous": true,
+      "status": "unverified",
+      "tags": [
+        "vishnu",
+        "rajim",
+        "confluence",
+        "major"
+      ],
+      "dressCode": "Modest traditional dress recommended. Follow temple-specific rules at the entrance.",
+      "photography": "Usually restricted inside sanctum areas. Check local signage before taking photos.",
+      "sourceUrl": "https://bharatkisoch.com/Chhattisgarh"
     },
     {
       "id": 2,
@@ -27,11 +75,17 @@
       "location": "Near Kawardha, Kabirdham District, Chhattisgarh",
       "lat": 22.117,
       "lng": 81.148,
-      "timing": "",
-      "phone": "",
       "description": "A historic Shiva temple complex near Kawardha, noted for its medieval temple architecture.",
       "famous": true,
-      "tags": ["shiva", "heritage", "kabirdham", "major"],
+      "status": "unverified",
+      "tags": [
+        "shiva",
+        "heritage",
+        "kabirdham",
+        "major"
+      ],
+      "dressCode": "Modest traditional dress recommended. Follow temple-specific rules at the entrance.",
+      "photography": "Usually restricted inside sanctum areas. Check local signage before taking photos.",
       "sourceUrl": "https://en.wikipedia.org/wiki/Bhoramdeo_Temple"
     },
     {
@@ -42,42 +96,18 @@
       "location": "Dongargarh, Rajnandgaon District, Chhattisgarh",
       "lat": 21.187,
       "lng": 80.754,
-      "timing": "",
-      "phone": "",
       "description": "A prominent hilltop Devi temple at Dongargarh and one of Chhattisgarh's best-known pilgrimage sites.",
       "famous": true,
-      "tags": ["devi", "dongargarh", "hill-temple", "major"],
+      "status": "unverified",
+      "tags": [
+        "devi",
+        "dongargarh",
+        "hill-temple",
+        "major"
+      ],
+      "dressCode": "Modest traditional dress recommended. Follow temple-specific rules at the entrance.",
+      "photography": "Usually restricted inside sanctum areas. Check local signage before taking photos.",
       "sourceUrl": "https://en.wikipedia.org/wiki/Bambleshwari_Temple"
-    },
-    {
-      "id": 4,
-      "name": "Mahamaya Temple, Ratanpur",
-      "deity": "Goddess Mahamaya",
-      "district": "Bilaspur",
-      "location": "Ratanpur, Bilaspur District, Chhattisgarh",
-      "lat": 22.286,
-      "lng": 82.169,
-      "timing": "",
-      "phone": "",
-      "description": "A historic Devi shrine at Ratanpur, traditionally linked with the old Kalachuri capital.",
-      "famous": true,
-      "tags": ["devi", "ratanpur", "bilaspur", "heritage"],
-      "sourceUrl": "https://bharatkisoch.com/Chhattisgarh"
-    },
-    {
-      "id": 5,
-      "name": "Rajiv Lochan Temple",
-      "deity": "Lord Vishnu",
-      "district": "Gariaband",
-      "location": "Rajim, Gariaband District, Chhattisgarh",
-      "lat": 20.968,
-      "lng": 81.879,
-      "timing": "",
-      "phone": "",
-      "description": "A revered Vishnu temple at Rajim, a major pilgrimage town at the confluence of Mahanadi, Pairi and Sondur rivers.",
-      "famous": true,
-      "tags": ["vishnu", "rajim", "confluence", "major"],
-      "sourceUrl": "https://bharatkisoch.com/Chhattisgarh"
     }
   ]
 }

@@ -5,21 +5,6 @@
   },
   "temples": [
     {
-      "id": 1,
-      "name": "Sri Harmandir Sahib",
-      "deity": "Guru Granth Sahib",
-      "district": "Amritsar",
-      "location": "Amritsar, Punjab",
-      "lat": 31.620,
-      "lng": 74.876,
-      "timing": "",
-      "phone": "",
-      "description": "The Golden Temple at Amritsar, the most revered gurdwara in Sikhism.",
-      "famous": true,
-      "tags": ["sikh", "amritsar", "golden-temple", "major"],
-      "sourceUrl": "https://www.goldentempleamritsar.org/"
-    },
-    {
       "id": 2,
       "name": "Durgiana Temple",
       "deity": "Goddess Durga",
@@ -27,12 +12,60 @@
       "location": "Amritsar, Punjab",
       "lat": 31.626,
       "lng": 74.872,
-      "timing": "",
-      "phone": "",
       "description": "A prominent Hindu temple complex in Amritsar, also known as Shri Durgiana Mandir.",
       "famous": true,
-      "tags": ["devi", "amritsar", "hindu", "major"],
+      "status": "unverified",
+      "tags": [
+        "devi",
+        "amritsar",
+        "hindu",
+        "major"
+      ],
+      "dressCode": "Modest traditional dress recommended. Follow temple-specific rules at the entrance.",
+      "photography": "Usually restricted inside sanctum areas. Check local signage before taking photos.",
       "sourceUrl": "https://en.wikipedia.org/wiki/Durgiana_Temple"
+    },
+    {
+      "id": 5,
+      "name": "Ram Tirath Temple",
+      "deity": "Maharishi Valmiki",
+      "district": "Amritsar",
+      "location": "Ram Tirath, Amritsar District, Punjab",
+      "lat": 31.634,
+      "lng": 74.734,
+      "description": "A pilgrimage site near Amritsar associated with Maharishi Valmiki and the Ramayana tradition.",
+      "famous": true,
+      "status": "unverified",
+      "tags": [
+        "valmiki",
+        "amritsar",
+        "ramayana",
+        "major"
+      ],
+      "dressCode": "Modest traditional dress recommended. Follow temple-specific rules at the entrance.",
+      "photography": "Usually restricted inside sanctum areas. Check local signage before taking photos.",
+      "sourceUrl": "https://en.wikipedia.org/wiki/Ram_Tirath_Temple"
+    },
+    {
+      "id": 1,
+      "name": "Sri Harmandir Sahib",
+      "deity": "Guru Granth Sahib",
+      "district": "Amritsar",
+      "location": "Amritsar, Punjab",
+      "lat": 31.62,
+      "lng": 74.876,
+      "description": "The Golden Temple at Amritsar, the most revered gurdwara in Sikhism.",
+      "famous": true,
+      "status": "unverified",
+      "tags": [
+        "sikh",
+        "amritsar",
+        "golden-temple",
+        "major"
+      ],
+      "dressCode": "Modest traditional dress recommended. Follow temple-specific rules at the entrance.",
+      "photography": "Usually restricted inside sanctum areas. Check local signage before taking photos.",
+      "sourceUrl": "https://www.goldentempleamritsar.org/"
     },
     {
       "id": 3,
@@ -42,11 +75,17 @@
       "location": "Jalandhar, Punjab",
       "lat": 31.339,
       "lng": 75.579,
-      "timing": "",
-      "phone": "",
       "description": "A famous Devi temple in Jalandhar, named after its sacred tank.",
       "famous": true,
-      "tags": ["devi", "jalandhar", "hindu", "major"],
+      "status": "unverified",
+      "tags": [
+        "devi",
+        "jalandhar",
+        "hindu",
+        "major"
+      ],
+      "dressCode": "Modest traditional dress recommended. Follow temple-specific rules at the entrance.",
+      "photography": "Usually restricted inside sanctum areas. Check local signage before taking photos.",
       "sourceUrl": "https://en.wikipedia.org/wiki/Devi_Talab_Mandir"
     },
     {
@@ -57,27 +96,18 @@
       "location": "Near Shahpur Kandi, Pathankot District, Punjab",
       "lat": 32.414,
       "lng": 75.686,
-      "timing": "",
-      "phone": "",
       "description": "A cave-temple complex dedicated to Lord Shiva near Shahpur Kandi in Pathankot district.",
       "famous": true,
-      "tags": ["shiva", "pathankot", "cave-temple", "major"],
+      "status": "unverified",
+      "tags": [
+        "shiva",
+        "pathankot",
+        "cave-temple",
+        "major"
+      ],
+      "dressCode": "Modest traditional dress recommended. Follow temple-specific rules at the entrance.",
+      "photography": "Usually restricted inside sanctum areas. Check local signage before taking photos.",
       "sourceUrl": "https://en.wikipedia.org/wiki/Mukteshwar_Mahadev_Temple"
-    },
-    {
-      "id": 5,
-      "name": "Ram Tirath Temple",
-      "deity": "Maharishi Valmiki",
-      "district": "Amritsar",
-      "location": "Ram Tirath, Amritsar District, Punjab",
-      "lat": 31.634,
-      "lng": 74.734,
-      "timing": "",
-      "phone": "",
-      "description": "A pilgrimage site near Amritsar associated with Maharishi Valmiki and the Ramayana tradition.",
-      "famous": true,
-      "tags": ["valmiki", "amritsar", "ramayana", "major"],
-      "sourceUrl": "https://en.wikipedia.org/wiki/Ram_Tirath_Temple"
     }
   ]
 }

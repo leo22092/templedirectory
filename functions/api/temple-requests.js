@@ -1,3 +1,15 @@
+import {
+  cleanEnum,
+  cleanState,
+  cleanText,
+  isTruthy,
+  jsonResponse as sharedJsonResponse,
+  parseCoordinate,
+  parseJson,
+  parseTags,
+  requireAdmin,
+} from '../_shared/api.js';
+
 const REQUEST_TYPES = new Set(['submission', 'correction', 'deletion']);
 const REQUEST_STATUSES = new Set(['pending', 'approved', 'rejected', 'needs_review']);
 
@@ -11,7 +23,11 @@ export async function onRequestGet({ request, env }) {
       return jsonResponse({ ok: false, error: 'D1 binding DB is not configured.' }, 500);
     }
 
-    const authError = requireAdmin(request, env);
+    const authError = requireAdmin(request, env, {
+      queryToken: true,
+      message: 'Admin token required.',
+      responseOptions: { methods: 'GET, OPTIONS', headers: 'Content-Type, x-admin-token' },
+    });
     if (authError) return authError;
 
     const url = new URL(request.url);
@@ -82,7 +98,11 @@ export async function onRequestPost({ request, env }) {
       return jsonResponse({ ok: false, error: 'D1 binding DB is not configured.' }, 500);
     }
 
-    const authError = requireAdmin(request, env);
+    const authError = requireAdmin(request, env, {
+      queryToken: true,
+      message: 'Admin token required.',
+      responseOptions: { methods: 'GET, OPTIONS', headers: 'Content-Type, x-admin-token' },
+    });
     if (authError) return authError;
 
     const payload = await request.json();
@@ -301,58 +321,11 @@ function rowToRequest(row) {
   };
 }
 
-function requireAdmin(request, env) {
-  if (!env.ADMIN_API_TOKEN) return null;
-
-  const url = new URL(request.url);
-  const token = request.headers.get('x-admin-token') || url.searchParams.get('token') || '';
-
-  if (token === env.ADMIN_API_TOKEN) return null;
-
-  return jsonResponse({ ok: false, error: 'Admin token required.' }, 401);
-}
-
 function defaultApprovedLabel(type) {
   if (type === 'submission') return 'COMMUNITY SUBMITTED';
   if (type === 'correction') return 'COMMUNITY CORRECTED';
   if (type === 'deletion') return 'REMOVED';
   return 'ADMIN REVIEWED';
-}
-
-function cleanText(value) {
-  return String(value || '').trim();
-}
-
-function cleanEnum(value, allowed) {
-  const text = String(value || '').trim().toLowerCase();
-  return allowed.has(text) ? text : '';
-}
-
-function cleanState(value) {
-  return String(value || '')
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9-]/g, '');
-}
-
-function parseCoordinate(value) {
-  const text = cleanText(value);
-  if (!text) return null;
-  const number = Number(text);
-  return Number.isFinite(number) ? number : null;
-}
-
-function parseTags(value) {
-  if (Array.isArray(value)) return value.map(cleanText).filter(Boolean);
-  return cleanText(value)
-    .split(',')
-    .map(tag => tag.trim().toLowerCase())
-    .filter(Boolean);
-}
-
-function isTruthy(value) {
-  const text = cleanText(value).toLowerCase();
-  return ['1', 'true', 'yes', 'y', 'on'].includes(text);
 }
 
 function copyText(target, key, value) {
@@ -399,24 +372,9 @@ function mergeRawCorrection(raw, payload) {
   if (payload.Message || payload.message) raw.lastCorrectionNote = cleanText(payload.Message || payload.message);
 }
 
-function parseJson(value, fallback) {
-  if (!value) return fallback;
-  try {
-    return JSON.parse(value);
-  } catch {
-    return fallback;
-  }
-}
-
 function jsonResponse(body, status = 200) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, x-admin-token',
-      'Cache-Control': 'no-store',
-    },
+  return sharedJsonResponse(body, status, {
+    methods: 'GET, OPTIONS',
+    headers: 'Content-Type, x-admin-token',
   });
 }

@@ -29,10 +29,10 @@
   <meta name="geo.placename" content="India" />
 
   <!-- Icons & Manifest -->
-  <link rel="icon" href="/favicon/favicon.ico" sizes="any" />
-  <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
-  <link rel="apple-touch-icon" href="/favicon/apple-touch-icon.png" />
-  <link rel="manifest" href="/favicon/site.webmanifest" />
+  <link rel="icon" href="/assets/images/favicon/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon/favicon.svg" />
+  <link rel="apple-touch-icon" href="/assets/images/favicon/apple-touch-icon.png" />
+  <link rel="manifest" href="/assets/images/favicon/site.webmanifest" />
 
   <!-- Structured Data -->
   <script type="application/ld+json">
@@ -62,7 +62,7 @@
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-XXXXXXXXXX');</script>
   -->
 
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="assets/css/style.css" />
   <style>
     /* ── Contribute section button layout ── */
     .contribute-section .contribute-group {
@@ -237,9 +237,6 @@
         </button>
         <button class="state-tab" data-state="odisha" role="tab" aria-selected="false" aria-label="View Odisha temples">
           <span class="state-flag">☀️</span> Odisha
-        </button>
-        <button class="state-tab coming-soon" disabled aria-disabled="true" title="Coming soon">
-          <span class="state-flag">🙏</span> More states… <span class="soon-badge">Soon</span>
         </button>
       </div>
     </div>
@@ -527,9 +524,9 @@
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <!-- State data files are loaded on-demand when a state tab is selected -->
-  <!-- To add a new state: add a scriptFile entry in main.js STATE_REGISTRY only -->
-  <script src="main.js?v=20260521-at-temple"></script>
-  <script src="submit-location.js?v=20260521-at-temple"></script>
+  <script src="assets/js/core/states.js?v=20260528-all-states"></script>
+  <script src="assets/js/public/main.js?v=20260521-at-temple"></script>
+  <script src="assets/js/public/submit-location.js?v=20260521-at-temple"></script>
 
 </body>
 </html>

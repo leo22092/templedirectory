@@ -9,15 +9,17 @@ TempleDiary uses a cheap public frontend with a separate D1-backed admin workflo
 ```mermaid
 flowchart LR
   Visitor[Public visitor] --> StaticJSON[data/*.json]
-  StaticJSON --> PublicUI[index.html / main.js / map.html / map.js]
+  StaticJSON --> PublicUI[index.html / assets/js/public/main.js / map.html / assets/js/public/map.js]
 
   Visitor --> SubmitUI[Submit / Correction modal]
   SubmitUI --> SubmitAPI[/api/submit-temple]
   SubmitAPI --> RequestTable[(D1 temple_requests)]
 
   Admin[Admin dashboard] --> TemplesAPI[/api/temples]
+  Admin --> StatesAPI[/api/temple-states]
   Admin --> RequestsAPI[/api/temple-requests]
   TemplesAPI --> TemplesTable[(D1 temples)]
+  StatesAPI --> TemplesTable
   RequestsAPI --> RequestTable
 
   Admin --> FutureActions[future approve / merge / reject APIs]
@@ -44,8 +46,9 @@ Purpose:
 Used by:
 
 ```text
-main.js
-map.js
+assets/js/public/main.js
+assets/js/public/map.js
+assets/js/core/states.js
 dashboard.html JSON editor section
 ```
 
@@ -168,19 +171,22 @@ Main public files:
 
 ```text
 index.html
-main.js
+assets/js/public/main.js
 map.html
-map.js
-style.css
-submit-location.js
+assets/js/public/map.js
+assets/css/style.css
+assets/js/public/submit-location.js
+assets/js/admin/dashboard.js
+assets/js/core/states.js
 ```
 
 ### Homepage Listing
 
 ```mermaid
 flowchart TD
-  index[index.html] --> main[main.js]
-  main --> StateRegistry[STATE_REGISTRY]
+  stateConfig[assets/js/core/states.js] --> main[assets/js/public/main.js]
+  index[index.html] --> main
+  main --> StateRegistry[shared state registry]
   StateRegistry --> JSON[data/state.json]
   JSON --> Cards[Temple cards]
   Cards --> DetailModal[Temple detail modal]
@@ -190,7 +196,7 @@ flowchart TD
 Owned by:
 
 ```text
-main.js
+assets/js/public/main.js
 ```
 
 Current data source:
@@ -203,8 +209,9 @@ data/*.json
 
 ```mermaid
 flowchart TD
-  maphtml[map.html] --> mapjs[map.js]
-  mapjs --> StateConfig[STATE_CONFIG]
+  stateConfig[assets/js/core/states.js] --> mapjs[assets/js/public/map.js]
+  maphtml[map.html] --> mapjs
+  mapjs --> StateConfig[shared state registry]
   StateConfig --> JSON[data/state.json]
   JSON --> Leaflet[Leaflet markers]
 ```
@@ -212,7 +219,7 @@ flowchart TD
 Owned by:
 
 ```text
-map.js
+assets/js/public/map.js
 ```
 
 Current data source:
@@ -325,6 +332,7 @@ Current sections:
 Overview       static JSON summary
 Temples        static JSON editor
 D1 Records     canonical DB records from /api/temples
+State list     D1 state discovery from /api/temple-states
 Requests       pending/archive request queue from /api/temple-requests
 Add / Edit     local JSON editor
 States         local state config editor
@@ -334,6 +342,18 @@ Health         JSON health checks
 ```
 
 ### D1 Records Tab
+
+State discovery endpoint:
+
+```text
+GET /api/temple-states
+```
+
+D1 record endpoint:
+
+```text
+GET /api/temples?state=kerala&include=all
+```
 
 Endpoint:
 
@@ -345,10 +365,12 @@ File:
 
 ```text
 functions/api/temples.js
+functions/api/temple-states.js
 ```
 
 Purpose:
 
+- Discover the admin state list from D1, then merge it with static display metadata.
 - Show canonical D1 records.
 - Filter by status.
 - Confirm `admin_label`.

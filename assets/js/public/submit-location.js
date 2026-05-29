@@ -15,7 +15,7 @@
 
    How to add to your site:
      Add ONE script tag in index.html AFTER main.js:
-       <script src="submit-location.js"></script>
+       <script src="assets/js/public/submit-location.js"></script>
 
    Dependencies: none. Vanilla JS, no libraries needed.
    Cloudflare Pages: just drop this file in your repo root.

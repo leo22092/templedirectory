@@ -1,3 +1,14 @@
+import {
+  cleanState,
+  cleanText,
+  isTruthy,
+  jsonResponse as sharedJsonResponse,
+  parseCoordinate,
+  parseInteger,
+  parseJson,
+  parseTags,
+} from '../_shared/api.js';
+
 const DEFAULT_TO_EMAIL = 'mymail2837@gmail.com';
 const FROM_EMAIL = 'TempleDiary <submissions@templediary.in>';
 const FORM_SUBMIT_ENDPOINT = 'https://formsubmit.co/ajax/';
@@ -285,50 +296,6 @@ async function saveTempleToD1(payload, request, env) {
   };
 }
 
-function cleanText(value) {
-  return String(value || '').trim();
-}
-
-function cleanState(value) {
-  return cleanText(value).toLowerCase().replace(/[^a-z0-9-]/g, '') || 'unknown';
-}
-
-function parseInteger(value) {
-  const text = cleanText(value);
-  if (!text) return null;
-  const number = Number.parseInt(text, 10);
-  return Number.isInteger(number) ? number : null;
-}
-
-function parseCoordinate(value) {
-  const text = cleanText(value);
-  if (!text) return null;
-  const number = Number(text);
-  return Number.isFinite(number) ? number : null;
-}
-
-function parseTags(value) {
-  if (Array.isArray(value)) return value.map(cleanText).filter(Boolean);
-  return cleanText(value)
-    .split(',')
-    .map(tag => tag.trim().toLowerCase())
-    .filter(Boolean);
-}
-
-function parseJson(value, fallback) {
-  if (!value) return fallback;
-  try {
-    return JSON.parse(value);
-  } catch {
-    return fallback;
-  }
-}
-
-function isTruthy(value) {
-  const text = cleanText(value).toLowerCase();
-  return ['1', 'true', 'yes', 'y', 'on'].includes(text);
-}
-
 async function sendWithResend(payload, env) {
   const to = env.SUBMISSION_TO_EMAIL || env.FORM_SUBMIT_EMAIL || DEFAULT_TO_EMAIL;
   const subject = makeSubject(payload);
@@ -391,13 +358,9 @@ function makeEmailText(payload) {
 }
 
 function jsonResponse(body, status = 200) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    },
+  return sharedJsonResponse(body, status, {
+    methods: 'POST, OPTIONS',
+    headers: 'Content-Type',
+    noStore: false,
   });
 }

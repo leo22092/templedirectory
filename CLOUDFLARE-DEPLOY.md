@@ -8,24 +8,33 @@
 ├── map.html
 ├── about.html
 ├── privacy.html
-├── style.css
-├── main.js
-├── map.js
-├── kerala-data.js
-├── tamil-nadu-data.js
-├── karnataka-data.js
+├── assets/
+│   ├── css/
+│   │   └── style.css
+│   ├── js/
+│   │   ├── core/
+│   │   │   └── states.js
+│   │   ├── public/
+│   │   │   ├── main.js
+│   │   │   ├── map.js
+│   │   │   ├── submit-location.js
+│   │   │   └── festivals-data.js
+│   │   └── admin/
+│   │       └── dashboard.js
+│   └── images/
+│       ├── hero-bg.jpg
+│       ├── favicon/
+│       └── sources/
+├── data/
+│   ├── kerala.json
+│   ├── tamil-nadu.json
+│   └── karnataka.json
 ├── _headers           ← Cloudflare security & cache headers
 ├── _redirects         ← Cloudflare URL redirects
 ├── robots.txt
 ├── sitemap.xml
-├── favicon.svg
-├── sources/
-│   ├── kerala-hero.jpg
-│   ├── tamilnadu-hero.jpg
-│   └── karnataka-hero.jpg
-└── admin/
-    ├── login.html
-    └── dashboard.html
+├── login.html
+└── dashboard.html
 ```
 
 ---
@@ -69,63 +78,115 @@ Every time you push changes to GitHub, Cloudflare rebuilds and redeploys automat
 
 ## Data file naming rules
 
-Each state data file must expose a specific global variable:
+Each state data file is static JSON loaded on demand from `data/<state>.json`.
 
-| File               | Variable name    |
-|--------------------|-----------------|
-| `kerala-data.js`   | `TEMPLES_KERALA` |
-| `tamil-nadu-data.js`| `TEMPLES_TN`    |
-| `karnataka-data.js`| `TEMPLES_KA`    |
+| File | Loaded by |
+| --- | --- |
+| `data/kerala.json` | `assets/js/public/main.js`, `assets/js/public/map.js` |
+| `data/tamil-nadu.json` | `assets/js/public/main.js`, `assets/js/public/map.js` |
+| `data/karnataka.json` | `assets/js/public/main.js`, `assets/js/public/map.js` |
 
 Template for each file:
-```js
-// kerala-data.js
-const TEMPLES_KERALA = [
-  { id:1, name:"...", deity:"...", district:"...", state:"kerala", ... },
-  ...
-];
+```json
+{
+  "_defaults": {
+    "dressCode": "...",
+    "photography": "..."
+  },
+  "temples": [
+    { "id": 1, "name": "...", "deity": "...", "district": "...", "state": "kerala" }
+  ]
+}
 ```
 
 ---
 
 ## Adding a new state (e.g. Andhra Pradesh)
 
-1. Create `andhra-data.js` with `const TEMPLES_AP = [...]`
-2. Add `<script src="andhra-data.js"></script>` in **both** `index.html` and `map.html`
-3. In `main.js` → `STATE_REGISTRY` add:
+1. Create `data/andhra-pradesh.json`.
+2. In `assets/js/core/states.js` add:
    ```js
-   'andhra': {
+   'andhra-pradesh': {
      label: 'Andhra Pradesh',
      eyebrow: '...',
      heroSub: '...',
      statTemples: '...',
      statDistricts: '26',
      mapLabel: 'Explore Andhra Pradesh',
-     heroImage: 'sources/andhra-hero.jpg',
-     getData: () => (typeof TEMPLES_AP !== 'undefined' ? TEMPLES_AP : []),
-     bodyClass: 'state-andhra',
+     heroImage: 'assets/images/sources/andhra_hero.jpeg',
+     dataFile: 'data/andhra-pradesh.json',
+     bodyClass: 'state-andhra-pradesh',
    },
    ```
-4. In `map.js` → `STATE_DATA` and `STATE_VIEWS` add `'andhra'` entry
-5. Add a tab button in `index.html` state-switcher bar
-6. Add a link in `map.html` state bar
-7. Add hero image to `sources/andhra-hero.jpg`
+3. Add hero image to `assets/images/sources/andhra_hero.jpeg` if available.
+
+Homepage tabs, map state links, and dashboard state options are rendered from
+`assets/js/core/states.js`.
 
 ---
 
-## Hero images (sources/ folder)
+## Hero images
 
-Place one landscape temple photo per state in the `sources/` folder:
+Place one landscape temple photo per state in `assets/images/sources/`:
 
 | File                       | Used for            |
 |----------------------------|---------------------|
-| `sources/kerala-hero.jpg`  | Kerala map section  |
-| `sources/tamilnadu-hero.jpg`| Tamil Nadu section |
-| `sources/karnataka-hero.jpg`| Karnataka section  |
+| `assets/images/sources/kerala_hero.jpeg` | Kerala map section |
+| `assets/images/sources/tamilnadu_hero.jpeg` | Tamil Nadu section |
+| `assets/images/sources/karnataka_hero.jpeg` | Karnataka section |
 
 Recommended: 1920×900px, compressed to under 300KB each.
 Free photos: [unsplash.com/s/photos/kerala-temple](https://unsplash.com/s/photos/kerala-temple)
 Compress at: [squoosh.app](https://squoosh.app)
+
+---
+
+## Publishing D1 export back to JSON
+
+Script details live in `scripts/README.md`.
+
+### Option A: direct Wrangler export
+
+If Wrangler is configured locally, export D1 straight into `data/*.json`:
+
+```bash
+node scripts/export-d1-to-json.mjs --write
+```
+
+The script shows a summary and asks for confirmation before writing unless
+`--yes` is passed.
+
+### Option B: dashboard bundle split
+
+The dashboard's D1 all-state bundle is valid JSON, but it is a single object keyed
+by state. The public site expects one file per state in `data/`.
+
+Dry-run the split first:
+
+```bash
+node scripts/split-d1-export-bundle.mjs templediary-d1-export-YYYY-MM-DD.json
+```
+
+Write the split files into `data/`:
+
+```bash
+node scripts/split-d1-export-bundle.mjs templediary-d1-export-YYYY-MM-DD.json --write
+```
+
+Then review and publish:
+
+```bash
+git diff -- data
+git add data/*.json
+git commit -m "Publish D1 temple data"
+git push
+```
+
+To update only selected states:
+
+```bash
+node scripts/split-d1-export-bundle.mjs templediary-d1-export-YYYY-MM-DD.json --write --states kerala,sikkim
+```
 
 ---
 

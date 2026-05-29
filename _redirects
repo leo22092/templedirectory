@@ -1,2 +1,12 @@
 /add /index.html 200
 /add/ /add 301
+/style.css /assets/css/style.css 301
+/main.js /assets/js/public/main.js 301
+/map.js /assets/js/public/map.js 301
+/submit-location.js /assets/js/public/submit-location.js 301
+/festivals-data.js /assets/js/public/festivals-data.js 301
+/hero-bg.jpg /assets/images/hero-bg.jpg 301
+/favicon.ico /assets/images/favicon/favicon.ico 301
+/favicon.svg /assets/images/favicon/favicon.svg 301
+/favicon/* /assets/images/favicon/:splat 301
+/sources/* /assets/images/sources/:splat 301

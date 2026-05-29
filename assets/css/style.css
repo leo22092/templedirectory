@@ -162,9 +162,9 @@ header {
   padding: 0 1.5rem;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 1.5rem;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .state-switcher-label {
@@ -180,8 +180,15 @@ header {
 .state-tabs {
   display: flex;
   gap: 0.75rem;
-  flex-wrap: wrap;
+  flex: 1;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 0.15rem;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
 }
+.state-tabs::-webkit-scrollbar { display: none; }
 
 .state-tab {
   display: flex;
@@ -474,9 +481,9 @@ header {
 }
 
 /* Background image layer
-   Replace hero-bg.jpg with your own temple photo.
+   Replace assets/images/hero-bg.jpg with your own temple photo.
    A free option: https://unsplash.com/s/photos/kerala-temple
-   Download, rename hero-bg.jpg, place in same folder as index.html */
+   Download, rename hero-bg.jpg, place in assets/images/ */
 .map-section-bg {
   position: absolute;
   inset: 0;
@@ -488,7 +495,7 @@ header {
       rgba(28,10,2,0.65) 50%,
       rgba(45,90,39,0.60) 100%
     ),
-    url('hero-bg.jpg') center center / cover no-repeat;
+    url('../images/hero-bg.jpg') center center / cover no-repeat;
   z-index: 0;
 }
 

@@ -5,21 +5,6 @@
   },
   "temples": [
     {
-      "id": 1,
-      "name": "Dimapur Kalibari",
-      "deity": "Goddess Kali",
-      "district": "Dimapur",
-      "location": "Dimapur, Nagaland",
-      "lat": 25.910,
-      "lng": 93.727,
-      "timing": "",
-      "phone": "",
-      "description": "A Kali temple in Dimapur, built in 1956 and known for Durga Puja and Kali Puja celebrations.",
-      "famous": true,
-      "tags": ["kali", "dimapur", "hindu", "major"],
-      "sourceUrl": "https://en.wikipedia.org/wiki/Dimapur_Kalibari"
-    },
-    {
       "id": 2,
       "name": "Dimapur Jain Temple",
       "deity": "Jain Tirthankaras",
@@ -27,27 +12,38 @@
       "location": "Dimapur, Nagaland",
       "lat": 25.911,
       "lng": 93.725,
-      "timing": "",
-      "phone": "",
       "description": "A Jain temple in Dimapur serving Nagaland's Jain community.",
       "famous": true,
-      "tags": ["jain", "dimapur", "major"],
+      "status": "unverified",
+      "tags": [
+        "jain",
+        "dimapur",
+        "major"
+      ],
+      "dressCode": "Modest dress recommended. Follow site-specific rules at the entrance.",
+      "photography": "Check local signage before taking photos, especially inside prayer areas.",
       "sourceUrl": "https://en.wikipedia.org/wiki/Dimapur_Jain_Temple"
     },
     {
-      "id": 3,
-      "name": "Shiv Mandir, Dimapur",
-      "deity": "Lord Shiva",
+      "id": 1,
+      "name": "Dimapur Kalibari",
+      "deity": "Goddess Kali",
       "district": "Dimapur",
       "location": "Dimapur, Nagaland",
-      "lat": 25.909,
-      "lng": 93.729,
-      "timing": "",
-      "phone": "",
-      "description": "A Shiva temple in Dimapur, referenced among the city's religious and historical places.",
-      "famous": false,
-      "tags": ["shiva", "dimapur", "hindu"],
-      "sourceUrl": "https://en.wikipedia.org/wiki/Dimapur"
+      "lat": 25.91,
+      "lng": 93.727,
+      "description": "A Kali temple in Dimapur, built in 1956 and known for Durga Puja and Kali Puja celebrations.",
+      "famous": true,
+      "status": "unverified",
+      "tags": [
+        "kali",
+        "dimapur",
+        "hindu",
+        "major"
+      ],
+      "dressCode": "Modest dress recommended. Follow site-specific rules at the entrance.",
+      "photography": "Check local signage before taking photos, especially inside prayer areas.",
+      "sourceUrl": "https://en.wikipedia.org/wiki/Dimapur_Kalibari"
     },
     {
       "id": 4,
@@ -57,11 +53,36 @@
       "location": "Dimapur, Nagaland",
       "lat": 25.912,
       "lng": 93.728,
-      "timing": "",
-      "phone": "",
       "description": "A Kali temple in Dimapur, referenced among local places of worship.",
       "famous": false,
-      "tags": ["kali", "dimapur", "hindu"],
+      "status": "unverified",
+      "tags": [
+        "kali",
+        "dimapur",
+        "hindu"
+      ],
+      "dressCode": "Modest dress recommended. Follow site-specific rules at the entrance.",
+      "photography": "Check local signage before taking photos, especially inside prayer areas.",
+      "sourceUrl": "https://en.wikipedia.org/wiki/Dimapur"
+    },
+    {
+      "id": 3,
+      "name": "Shiv Mandir, Dimapur",
+      "deity": "Lord Shiva",
+      "district": "Dimapur",
+      "location": "Dimapur, Nagaland",
+      "lat": 25.909,
+      "lng": 93.729,
+      "description": "A Shiva temple in Dimapur, referenced among the city's religious and historical places.",
+      "famous": false,
+      "status": "unverified",
+      "tags": [
+        "shiva",
+        "dimapur",
+        "hindu"
+      ],
+      "dressCode": "Modest dress recommended. Follow site-specific rules at the entrance.",
+      "photography": "Check local signage before taking photos, especially inside prayer areas.",
       "sourceUrl": "https://en.wikipedia.org/wiki/Dimapur"
     },
     {
@@ -72,11 +93,16 @@
       "location": "Dimapur area, Nagaland",
       "lat": 25.906,
       "lng": 93.728,
-      "timing": "",
-      "phone": "",
       "description": "A Shiva temple entry referenced in Nagaland tourism planning documents.",
       "famous": false,
-      "tags": ["shiva", "nagaland", "hindu"],
+      "status": "unverified",
+      "tags": [
+        "shiva",
+        "nagaland",
+        "hindu"
+      ],
+      "dressCode": "Modest dress recommended. Follow site-specific rules at the entrance.",
+      "photography": "Check local signage before taking photos, especially inside prayer areas.",
       "sourceUrl": "https://sd2.tourism.gov.in/DocumentRepoFiles/MasterPlan/MP031c34da-8316-4355-84c7-d1842878200d.pdf"
     }
   ]

@@ -1,3 +1,16 @@
+import {
+  cleanState,
+  cleanText,
+  isTruthy,
+  jsonResponse,
+  parseCoordinate,
+  parseInteger,
+  parseJson,
+  parseTags,
+  readFirst,
+  requireAdmin,
+} from '../_shared/api.js';
+
 const PUBLIC_STATUSES = new Set(['verified', 'unverified', 'needs_review']);
 const ADMIN_STATUSES = new Set(['verified', 'unverified', 'needs_review', 'removed']);
 
@@ -69,7 +82,7 @@ export async function onRequestPost({ request, env }) {
       return jsonResponse({ ok: false, error: 'D1 binding DB is not configured.' }, 500);
     }
 
-    const authError = requireAdmin(request, env);
+    const authError = requireAdmin(request, env, { bearer: true });
     if (authError) return authError;
 
     const payload = await request.json();
@@ -281,74 +294,4 @@ function rowToTemple(row) {
     approvedAt: row.approved_at || '',
     sourceUrl: row.source_url || raw.sourceUrl || '',
   };
-}
-
-function parseJson(value, fallback) {
-  if (!value) return fallback;
-  try {
-    return JSON.parse(value);
-  } catch {
-    return fallback;
-  }
-}
-
-function cleanState(value) {
-  return String(value || '')
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9-]/g, '');
-}
-
-function cleanText(value) {
-  return String(value || '').trim();
-}
-
-function readFirst(...values) {
-  return values.find(value => value !== undefined && value !== null && value !== '') ?? '';
-}
-
-function parseInteger(value) {
-  const text = cleanText(value);
-  if (!text) return null;
-  const number = Number.parseInt(text, 10);
-  return Number.isInteger(number) ? number : null;
-}
-
-function parseCoordinate(value) {
-  const text = cleanText(value);
-  if (!text) return null;
-  const number = Number(text);
-  return Number.isFinite(number) ? number : null;
-}
-
-function parseTags(value) {
-  if (Array.isArray(value)) return value.map(cleanText).filter(Boolean);
-  return cleanText(value)
-    .split(',')
-    .map(tag => tag.trim().toLowerCase())
-    .filter(Boolean);
-}
-
-function isTruthy(value) {
-  return ['1', 'true', 'yes', 'on'].includes(cleanText(value).toLowerCase()) || value === true;
-}
-
-function requireAdmin(request, env) {
-  if (!env.ADMIN_API_TOKEN) return null;
-  const token = request.headers.get('x-admin-token') || request.headers.get('authorization')?.replace(/^Bearer\s+/i, '');
-  if (token === env.ADMIN_API_TOKEN) return null;
-  return jsonResponse({ ok: false, error: 'Unauthorized.' }, 401);
-}
-
-function jsonResponse(body, status = 200) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, x-admin-token, Authorization',
-      'Cache-Control': 'no-store',
-    },
-  });
 }

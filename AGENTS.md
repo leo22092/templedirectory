@@ -20,11 +20,14 @@ the task explicitly needs them.
 - Static public pages live at repo root: `index.html`, `map.html`, `festivals.html`,
   `about.html`, `contact.html`, `privacy.html`, `terms.html`, `login.html`,
   `dashboard.html`.
-- Shared public styling is in `style.css`.
-- Main public behavior is in `main.js`.
-- Map behavior is in `map.js`.
-- Submission/correction modal helpers are in `submit-location.js`.
-- Festival data is in `festivals-data.js`.
+- Shared public styling is in `assets/css/style.css`.
+- Shared frontend state configuration is in `assets/js/core/states.js`.
+- Main public behavior is in `assets/js/public/main.js`.
+- Map behavior is in `assets/js/public/map.js`.
+- Submission/correction modal helpers are in `assets/js/public/submit-location.js`.
+- Festival data is in `assets/js/public/festivals-data.js`.
+- Admin dashboard behavior is in `assets/js/admin/dashboard.js`.
+- Public images, hero assets, and favicons live under `assets/images/`.
 - Public temple listing data lives in `data/*.json`.
 - Cloudflare Pages Functions live in `functions/api/*.js`.
 - D1 schema and migrations live in `schema.sql` and `scripts/d1/*.sql`.
@@ -32,12 +35,14 @@ the task explicitly needs them.
 
 ## Main Workflows
 
-- Public temple browsing: `index.html` -> `main.js` -> `data/*.json`.
-- Public map: `map.html` -> `map.js` -> `data/*.json` -> Leaflet markers.
+- Public temple browsing: `index.html` -> `assets/js/public/main.js` -> `data/*.json`.
+- Public map: `map.html` -> `assets/js/public/map.js` -> `data/*.json` -> Leaflet markers.
 - Community submission/correction: public UI -> `/api/submit-temple` ->
   `functions/api/submit-temple.js` -> D1 `temple_requests`.
 - Admin D1 records: `dashboard.html` -> `/api/temples` ->
   `functions/api/temples.js` -> D1 `temples`.
+- Admin D1 state discovery: `dashboard.html` -> `/api/temple-states` ->
+  `functions/api/temple-states.js` -> D1 `temples`.
 - Admin requests queue: `dashboard.html` -> `/api/temple-requests` ->
   `functions/api/temple-requests.js` -> D1 `temple_requests`.
 
@@ -54,10 +59,13 @@ the task explicitly needs them.
 ## Editing Guidance
 
 - Keep changes scoped; this is a mostly static site without a build step.
+- Keep page URLs at the repo root unless routing/redirects are updated and verified.
+- Put new shared frontend assets under `assets/` instead of adding more root-level JS/CSS/images.
+- Add or edit public state metadata in `assets/js/core/states.js`; homepage tabs,
+  map links, and dashboard state lists read from that shared config.
 - Preserve the existing plain HTML/CSS/vanilla JS style unless the user asks for a
   larger refactor.
 - Do not hand-edit generated files in `tmp/d1-import-batches/`; regenerate them with
   `node scripts/d1/import-json-to-d1.mjs` when needed.
 - `CLOUDFLARE-DEPLOY.md` contains some older naming examples. Prefer
   `ARCHITECTURE.md` and current source files when they disagree.
-

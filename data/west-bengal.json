@@ -5,36 +5,6 @@
   },
   "temples": [
     {
-      "id": 1,
-      "name": "Dakshineswar Kali Temple",
-      "deity": "Goddess Kali",
-      "district": "North 24 Parganas",
-      "location": "Dakshineswar, Kolkata, West Bengal",
-      "lat": 22.655,
-      "lng": 88.357,
-      "timing": "",
-      "phone": "",
-      "description": "A famous Kali temple on the eastern bank of the Hooghly River, associated with Sri Ramakrishna and Bengal's navaratna temple architecture.",
-      "famous": true,
-      "tags": ["kali", "kolkata", "hooghly", "major"],
-      "sourceUrl": "https://www.wb.gov.in/visitors-areas-to-visit-pilgrimage.aspx"
-    },
-    {
-      "id": 2,
-      "name": "Kalighat Kali Temple",
-      "deity": "Goddess Kali",
-      "district": "Kolkata",
-      "location": "Kalighat, Kolkata, West Bengal",
-      "lat": 22.52,
-      "lng": 88.342,
-      "timing": "",
-      "phone": "",
-      "description": "One of Kolkata's most important Kali shrines and a major pilgrimage destination in West Bengal.",
-      "famous": true,
-      "tags": ["kali", "kolkata", "shakti", "major"],
-      "sourceUrl": "https://www.wb.gov.in/visitors-areas-to-visit-pilgrimage.aspx"
-    },
-    {
       "id": 3,
       "name": "Tarapith Temple",
       "deity": "Goddess Tara",
@@ -42,11 +12,17 @@
       "location": "Tarapith, near Rampurhat, Birbhum District, West Bengal",
       "lat": 24.112,
       "lng": 87.796,
-      "timing": "",
-      "phone": "",
       "description": "A famous temple town near Rampurhat, known for the temple of Goddess Tara and its associated tantric traditions.",
       "famous": true,
-      "tags": ["tara", "devi", "birbhum", "major"],
+      "status": "unverified",
+      "tags": [
+        "tara",
+        "devi",
+        "birbhum",
+        "major"
+      ],
+      "dressCode": "Modest traditional dress recommended. Follow temple-specific rules at the entrance.",
+      "photography": "Usually restricted inside sanctum areas. Check local signage before taking photos.",
       "sourceUrl": "https://birbhum.gov.in/gallery/tarapith/"
     },
     {
@@ -57,11 +33,17 @@
       "location": "Tarakeswar, Hooghly District, West Bengal",
       "lat": 22.888,
       "lng": 88.018,
-      "timing": "",
-      "phone": "",
       "description": "A major Shiva pilgrimage shrine at Tarakeswar, built in 1729 according to Hooghly district administration.",
       "famous": true,
-      "tags": ["shiva", "tarakeswar", "hooghly", "major"],
+      "status": "unverified",
+      "tags": [
+        "shiva",
+        "tarakeswar",
+        "hooghly",
+        "major"
+      ],
+      "dressCode": "Modest traditional dress recommended. Follow temple-specific rules at the entrance.",
+      "photography": "Usually restricted inside sanctum areas. Check local signage before taking photos.",
       "sourceUrl": "https://hooghly.nic.in/tourist-place/baba-taraknath-temple/"
     },
     {
@@ -72,12 +54,60 @@
       "location": "Belur, Howrah District, West Bengal",
       "lat": 22.632,
       "lng": 88.356,
-      "timing": "",
-      "phone": "",
       "description": "The temple heart of Belur Math, headquarters of Ramakrishna Math and Ramakrishna Mission on the west bank of the Hooghly River.",
       "famous": true,
-      "tags": ["ramakrishna", "belur", "howrah", "major"],
+      "status": "unverified",
+      "tags": [
+        "ramakrishna",
+        "belur",
+        "howrah",
+        "major"
+      ],
+      "dressCode": "Modest traditional dress recommended. Follow temple-specific rules at the entrance.",
+      "photography": "Usually restricted inside sanctum areas. Check local signage before taking photos.",
       "sourceUrl": "https://howrah.gov.in/tourist-place/belur-math-temple/"
+    },
+    {
+      "id": 2,
+      "name": "Kalighat Kali Temple",
+      "deity": "Goddess Kali",
+      "district": "Kolkata",
+      "location": "Kalighat, Kolkata, West Bengal",
+      "lat": 22.52,
+      "lng": 88.342,
+      "description": "One of Kolkata's most important Kali shrines and a major pilgrimage destination in West Bengal.",
+      "famous": true,
+      "status": "unverified",
+      "tags": [
+        "kali",
+        "kolkata",
+        "shakti",
+        "major"
+      ],
+      "dressCode": "Modest traditional dress recommended. Follow temple-specific rules at the entrance.",
+      "photography": "Usually restricted inside sanctum areas. Check local signage before taking photos.",
+      "sourceUrl": "https://www.wb.gov.in/visitors-areas-to-visit-pilgrimage.aspx"
+    },
+    {
+      "id": 1,
+      "name": "Dakshineswar Kali Temple",
+      "deity": "Goddess Kali",
+      "district": "North 24 Parganas",
+      "location": "Dakshineswar, Kolkata, West Bengal",
+      "lat": 22.655,
+      "lng": 88.357,
+      "description": "A famous Kali temple on the eastern bank of the Hooghly River, associated with Sri Ramakrishna and Bengal's navaratna temple architecture.",
+      "famous": true,
+      "status": "unverified",
+      "tags": [
+        "kali",
+        "kolkata",
+        "hooghly",
+        "major"
+      ],
+      "dressCode": "Modest traditional dress recommended. Follow temple-specific rules at the entrance.",
+      "photography": "Usually restricted inside sanctum areas. Check local signage before taking photos.",
+      "sourceUrl": "https://www.wb.gov.in/visitors-areas-to-visit-pilgrimage.aspx"
     }
   ]
 }

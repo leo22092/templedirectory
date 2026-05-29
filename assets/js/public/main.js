@@ -1,170 +1,13 @@
 /* ═══════════════════════════════════════════════════
    TempleDiary — main.js
-   Multi-state architecture: Kerala, Tamil Nadu (+ more)
+   Multi-state architecture backed by assets/js/core/states.js.
    Data is loaded on-demand as JSON (data/<state>.json).
-   Adding a new state:
-     1. Run convert-to-json.sh to produce data/<state>.json
-     2. Add an entry in STATE_REGISTRY below
-     3. Add a tab button in the state switcher HTML
-   No <script> tags needed for data files.
 ═══════════════════════════════════════════════════ */
 
 (function () {
   'use strict';
 
-  /* ─────────────────────────────────────────────
-     STATE REGISTRY
-     To add a new state:
-       1. Run: bash convert-to-json.sh <state-data.js> data/<state>.json
-       2. Add an entry here (dataFile points to the JSON)
-       3. Add a tab button in the state switcher HTML
-     dataFile is relative to the site root (e.g. "data/kerala.json")
-  ───────────────────────────────────────────────── */
-  const STATE_REGISTRY = {
-    'kerala': {
-      label:        'Kerala',
-      eyebrow:      "God's Own Country",
-      heroSub:      'Find any temple in Kerala — search by name, district, deity or location.<br>Timings, contact numbers, travel info and more.',
-      statTemples:  '1,200+',
-      statDistricts:'14',
-      mapLabel:     'Explore Kerala',
-      heroImage:    'sources/kerala_hero.jpeg',
-      dataFile:     'data/kerala.json',
-      bodyClass:    'state-kerala',
-    },
-    'tamil-nadu': {
-      label:        'Tamil Nadu',
-      eyebrow:      'Land of Dravidian Glory',
-      heroSub:      'Find any temple in Tamil Nadu — Chola gopurams, Pancha Bhuta Stalas, Divya Desams and more.<br>Timings, contact numbers, travel info and more.',
-      statTemples:  '400+',
-      statDistricts:'38',
-      mapLabel:     'Explore Tamil Nadu',
-      heroImage:    './sources/tamilnadu_hero.jpeg',
-      dataFile:     'data/tamil-nadu.json',
-      bodyClass:    'state-tamil-nadu',
-    },
-    'karnataka': {
-      label:        'Karnataka',
-      eyebrow:      'Land of the Gods',
-      heroSub:      'Find any temple in Karnataka — from Hampi to Udupi, discover ancient shrines and living traditions.<br>Timings, contact numbers, travel info and more.',
-      statTemples:  '500+',
-      statDistricts:'31',
-      mapLabel:     'Explore Karnataka',
-      heroImage:    'sources/karnataka_hero.jpeg',
-      dataFile:     'data/karnataka.json',
-      bodyClass:    'state-karnataka',
-    },
-    'andhra-pradesh': {
-      label:        'Andhra Pradesh',
-      eyebrow:      'Sacred Land of Telugu Heritage',
-      heroSub:      'Find temples in Andhra Pradesh — from Tirupati and Srisailam to ancient coastal and hill shrines.<br>Timings, contact numbers, travel info and more.',
-      statTemples:  '500+',
-      statDistricts:'26',
-      mapLabel:     'Explore Andhra Pradesh',
-      heroImage:    'sources/andhra_hero.jpeg',
-      dataFile:     'data/andhra-pradesh.json',
-      bodyClass:    'state-andhra-pradesh',
-    },
-    'goa': {
-      label:        'Goa',
-      eyebrow:      'Land of Sacred Serenity',
-      heroSub:      'Discover temples of Goa — from ancient coastal shrines to serene hill temples rooted in Konkani tradition and heritage.<br>Timings, contact numbers, travel info and more.',
-      statTemples:  '150+',
-      statDistricts:'2',
-      mapLabel:     'Explore Goa',
-      heroImage:    'sources/goa_hero.jpeg',
-      dataFile:     'data/goa.json',
-      bodyClass:    'state-goa',
-    },
-    'rajasthan': {
-      label:        'Rajasthan',
-      eyebrow:      'Land of Forts and Sacred Traditions',
-      heroSub:      'Find temples in Rajasthan — from desert shrines and ancient pilgrimage towns to living royal-era temples.<br>Timings, contact numbers, travel info and more.',
-      statTemples:  '400+',
-      statDistricts:'33',
-      mapLabel:     'Explore Rajasthan',
-      heroImage:    'hero-bg.jpg',
-      dataFile:     'data/rajasthan.json',
-      bodyClass:    'state-rajasthan',
-    },
-    'gujarat': {
-      label:        'Gujarat',
-      eyebrow:      'Land of Jyotirlingas and Dwarka',
-      heroSub:      'Find temples in Gujarat — from Somnath and Dwarka to Shakti Peethas and heritage sun temples.<br>Timings, contact numbers, travel info and more.',
-      statTemples:  '8',
-      statDistricts:'7',
-      mapLabel:     'Explore Gujarat',
-      heroImage:    'sources/gujarat_hero.jpeg',
-      dataFile:     'data/gujarat.json',
-      bodyClass:    'state-gujarat',
-    },
-    'assam': {
-      label:        'Assam',
-      eyebrow:      'Sacred Brahmaputra Valley',
-      heroSub:      'Find temples in Assam — from Kamakhya on Nilachal Hill to river-island and Ahom-era shrines.<br>Timings, contact numbers, travel info and more.',
-      statTemples:  '8',
-      statDistricts:'4',
-      mapLabel:     'Explore Assam',
-      heroImage:    'sources/assam_hero.jpeg',
-      dataFile:     'data/assam.json',
-      bodyClass:    'state-assam',
-    },
-    'west-bengal': {
-      label:        'West Bengal',
-      eyebrow:      'Land of Shakti and Bhakti',
-      heroSub:      'Find temples in West Bengal — from Kolkata Kali temples to sacred towns of Birbhum.<br>Timings, contact numbers, travel info and more.',
-      statTemples:  '5',
-      statDistricts:'5',
-      mapLabel:     'Explore West Bengal',
-      heroImage:    'sources/west-bengal_hero.jpeg',
-      dataFile:     'data/west-bengal.json',
-      bodyClass:    'state-west-bengal',
-    },
-    'madhya-pradesh': {
-      label:        'Madhya Pradesh',
-      eyebrow:      'Heart of India',
-      heroSub:      'Find temples in Madhya Pradesh — from Ujjain and Omkareshwar to historic Shiva shrines.<br>Timings, contact numbers, travel info and more.',
-      statTemples:  '7',
-      statDistricts:'6',
-      mapLabel:     'Explore Madhya Pradesh',
-      heroImage:    'hero-bg.jpg',
-      dataFile:     'data/madhya-pradesh.json',
-      bodyClass:    'state-madhya-pradesh',
-    },
-    'maharashtra': {
-      label:        'Maharashtra',
-      eyebrow:      'Jyotirlingas of the Sahyadri',
-      heroSub:      'Find temples in Maharashtra — from Jyotirlingas in Nashik, Pune and Ellora to Mumbai Ganapati shrines.<br>Timings, contact numbers, travel info and more.',
-      statTemples:  '9',
-      statDistricts:'9',
-      mapLabel:     'Explore Maharashtra',
-      heroImage:    'sources/maharashtra_hero.svg',
-      dataFile:     'data/maharashtra.json',
-      bodyClass:    'state-maharashtra',
-    },
-    'jammu-kashmir': {
-      label:        'Jammu & Kashmir',
-      eyebrow:      'Himalayan Sacred Heritage',
-      heroSub:      'Find temples in Jammu & Kashmir — from Jammu temple complexes to historic Kashmir valley shrines.<br>Timings, contact numbers, travel info and more.',
-      statTemples:  '7',
-      statDistricts:'5',
-      mapLabel:     'Explore Jammu & Kashmir',
-      heroImage:    'hero-bg.jpg',
-      dataFile:     'data/jammu-kashmir.json',
-      bodyClass:    'state-jammu-kashmir',
-    },
-    'odisha': {
-      label:        'Odisha',
-      eyebrow:      'Land of Kalinga Temples',
-      heroSub:      'Find temples in Odisha — from Puri Jagannath and Lingaraj to Konark Sun Temple.<br>Timings, contact numbers, travel info and more.',
-      statTemples:  '8',
-      statDistricts:'5',
-      mapLabel:     'Explore Odisha',
-      heroImage:    'sources/odisha_hero.jpeg',
-      dataFile:     'data/odisha.json',
-      bodyClass:    'state-odisha',
-    },
-  };
+  const STATE_REGISTRY = window.TD_STATES?.registry || {};
 
   /* ── JSON data cache: stateKey → merged temple array ── */
   const _dataCache = {};
@@ -213,7 +56,7 @@
 
   /* ── Config ── */
   const PER_PAGE = 12;
-  const DEFAULT_STATE = 'kerala';
+  const DEFAULT_STATE = window.TD_STATES?.defaultState || 'kerala';
   const FORM_SUBMIT_EMAIL = 'mymail2837@gmail.com';
   const WORKER_SUBMISSION_ENDPOINT = '/api/submit-temple';
   const FORM_SUBMIT_ENDPOINT = `https://formsubmit.co/${FORM_SUBMIT_EMAIL}`;
@@ -272,6 +115,7 @@
 
     initCookieBanner();
     initHamburger();
+    renderStateTabs();
     initStateTabs();
     showGridLoader();
     loadStateData(activeState).then(() => applyState(activeState, false)); // false = don't push history on first load
@@ -300,6 +144,31 @@
   /* ══════════════════════════
      STATE SWITCHING
   ══════════════════════════ */
+  function renderStateTabs() {
+    const tabs = document.querySelector('.state-tabs');
+    if (!tabs) return;
+
+    tabs.innerHTML = Object.entries(STATE_REGISTRY).map(([key, cfg]) => `
+      <button class="state-tab${key === activeState ? ' active' : ''}" data-state="${escapeAttr(key)}" role="tab" aria-selected="${key === activeState}" aria-label="View ${escapeAttr(cfg.label)} temples">
+        <span class="state-flag">${cfg.icon || '🛕'}</span> ${escapeHtml(cfg.label)}
+      </button>
+    `).join('');
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, char => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;',
+    }[char]));
+  }
+
+  function escapeAttr(value) {
+    return escapeHtml(value).replace(/`/g, '&#096;');
+  }
+
   function initStateTabs() {
     document.querySelectorAll('.state-tab[data-state]').forEach(tab => {
       tab.addEventListener('click', () => {
@@ -1598,7 +1467,7 @@ async function handleSubmit(e) {
   /**
    * Opens the submit modal and immediately fires GPS detection.
    * Called by the "I'm at the Temple Now" button.
-   * submit-location.js handles the actual GPS + Nominatim logic
+   * assets/js/public/submit-location.js handles the actual GPS + Nominatim logic
    * via the window.tdDetectLocation hook below.
    */
   window.openSubmitModalAtTemple = function () {
@@ -1608,7 +1477,7 @@ async function handleSubmit(e) {
       return;
     }
 
-    // submit-location.js not loaded yet — click the injected button if present
+    // assets/js/public/submit-location.js not loaded yet — click the injected button if present
     const btn = document.getElementById('td-detect-location-btn');
     if (btn) btn.click();
   };
