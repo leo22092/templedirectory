@@ -27,6 +27,17 @@ export async function onRequestGet({ request, env }) {
     const url = new URL(request.url);
     const state = cleanState(url.searchParams.get('state') || 'kerala');
     const include = String(url.searchParams.get('include') || 'public').toLowerCase();
+
+    if (include === 'all') {
+      const authError = requireAdmin(request, env, {
+        bearer: true,
+        queryToken: true,
+        message: 'Admin token required.',
+        responseOptions: { methods: 'GET, OPTIONS', headers: 'Content-Type, x-admin-token, Authorization' },
+      });
+      if (authError) return authError;
+    }
+
     const statuses = include === 'all'
       ? ['verified', 'unverified', 'needs_review', 'removed']
       : [...PUBLIC_STATUSES];

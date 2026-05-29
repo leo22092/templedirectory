@@ -15,7 +15,13 @@ export function jsonResponse(body, status = 200, options = {}) {
 }
 
 export function requireAdmin(request, env, options = {}) {
-  if (!env.ADMIN_API_TOKEN) return null;
+  if (!env.ADMIN_API_TOKEN) {
+    return jsonResponse(
+      { ok: false, error: options.missingTokenMessage || 'Admin API token is not configured.' },
+      503,
+      options.responseOptions
+    );
+  }
 
   const tokens = [];
   if (options.header !== false) tokens.push(request.headers.get('x-admin-token'));
