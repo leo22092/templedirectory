@@ -11,7 +11,7 @@ import {
   requireAdmin,
 } from '../_shared/api.js';
 
-const PUBLIC_STATUSES = new Set(['verified', 'unverified', 'needs_review']);
+const PUBLIC_STATUSES = new Set(['verified', 'unverified']);
 const ADMIN_STATUSES = new Set(['verified', 'unverified', 'needs_review', 'removed']);
 
 export async function onRequestOptions() {
@@ -27,7 +27,6 @@ export async function onRequestGet({ request, env }) {
     const url = new URL(request.url);
     const state = cleanState(url.searchParams.get('state') || 'kerala');
     const include = String(url.searchParams.get('include') || 'public').toLowerCase();
-<<<<<<< Updated upstream
 
     if (include === 'all') {
       const authError = requireAdmin(request, env, {
@@ -36,10 +35,6 @@ export async function onRequestGet({ request, env }) {
         message: 'Admin token required.',
         responseOptions: { methods: 'GET, OPTIONS', headers: 'Content-Type, x-admin-token, Authorization' },
       });
-=======
-    if (include === 'all') {
-      const authError = requireAdmin(request, env, { bearer: true, queryToken: true });
->>>>>>> Stashed changes
       if (authError) return authError;
     }
 
