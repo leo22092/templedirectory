@@ -359,7 +359,7 @@ function makeEmailText(payload) {
 
 function jsonResponse(body, status = 200) {
   return sharedJsonResponse(body, status, {
-    methods: 'POST, OPTIONS',
+    methods: 'GET, POST, OPTIONS',
     headers: 'Content-Type',
     noStore: false,
   });

@@ -26,7 +26,7 @@ export async function onRequestGet({ request, env }) {
     const authError = requireAdmin(request, env, {
       queryToken: true,
       message: 'Admin token required.',
-      responseOptions: { methods: 'GET, OPTIONS', headers: 'Content-Type, x-admin-token' },
+      responseOptions: { methods: 'GET, POST, OPTIONS', headers: 'Content-Type, x-admin-token' },
     });
     if (authError) return authError;
 
@@ -101,7 +101,7 @@ export async function onRequestPost({ request, env }) {
     const authError = requireAdmin(request, env, {
       queryToken: true,
       message: 'Admin token required.',
-      responseOptions: { methods: 'GET, OPTIONS', headers: 'Content-Type, x-admin-token' },
+      responseOptions: { methods: 'GET, POST, OPTIONS', headers: 'Content-Type, x-admin-token' },
     });
     if (authError) return authError;
 
@@ -374,7 +374,7 @@ function mergeRawCorrection(raw, payload) {
 
 function jsonResponse(body, status = 200) {
   return sharedJsonResponse(body, status, {
-    methods: 'GET, OPTIONS',
+    methods: 'GET, POST, OPTIONS',
     headers: 'Content-Type, x-admin-token',
   });
 }
