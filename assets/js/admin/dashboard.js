@@ -1,4 +1,4 @@
-    if (sessionStorage.getItem('kd_admin_auth') !== 'true') {
+    if (sessionStorage.getItem('kd_admin_auth') !== 'true' || !sessionStorage.getItem('td_admin_api_token')) {
       window.location.href = 'login.html';
     }
 
@@ -115,6 +115,8 @@
 
     function logout() {
       sessionStorage.removeItem('kd_admin_auth');
+      sessionStorage.removeItem('td_admin_api_token');
+      localStorage.removeItem('td_admin_api_token');
       window.location.href = 'login.html';
     }
 
@@ -967,7 +969,7 @@
       return `<span class="pill ${cls}">${esc(text)}</span>`;
     }
     function adminHeaders() {
-      const token = localStorage.getItem('td_admin_api_token') || '';
+      const token = sessionStorage.getItem('td_admin_api_token') || '';
       return token ? { 'x-admin-token': token } : {};
     }
     function formatDate(value) {
