@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://www.templediary.in/sitemap.xml
+
+Disallow: /admin/
+Disallow: /draft/
+Disallow: /login.html
+Disallow: /dashboard.html

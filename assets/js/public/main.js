@@ -54,6 +54,14 @@
     if (grid) grid.innerHTML = '<div class="td-loading" aria-live="polite" style="grid-column:1/-1;text-align:center;padding:48px 0;color:var(--muted,#888);font-size:1rem;">🕌 Loading temples…</div>';
   }
 
+  function text(value) {
+    return String(value ?? '').trim();
+  }
+
+  function lower(value) {
+    return text(value).toLowerCase();
+  }
+
   /* ── Config ── */
   const PER_PAGE = 12;
   const DEFAULT_STATE = window.TD_STATES?.defaultState || 'kerala';
@@ -262,8 +270,8 @@
      POPULATE FILTERS DYNAMICALLY
   ══════════════════════════ */
   function populateFilters(temples) {
-    const districts = [...new Set(temples.map(t => t.district))].sort();
-    const deities   = [...new Set(temples.map(t => t.deity))].sort();
+    const districts = [...new Set(temples.map(t => text(t.district)).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+    const deities   = [...new Set(temples.map(t => text(t.deity)).filter(Boolean))].sort((a, b) => a.localeCompare(b));
 
     if (filterDist) {
       filterDist.innerHTML = '<option value="">All districts</option>';
@@ -289,7 +297,7 @@
   ══════════════════════════ */
   function populateChips(temples) {
     if (!distChips) return;
-    const districts = [...new Set(temples.map(t => t.district))].sort();
+    const districts = [...new Set(temples.map(t => text(t.district)).filter(Boolean))].sort((a, b) => a.localeCompare(b));
     distChips.innerHTML = '';
     districts.forEach(d => {
       const li  = document.createElement('li');
@@ -300,18 +308,7 @@
       a.textContent = d;
       a.addEventListener('click', e => {
         e.preventDefault();
-        if (state.district === d) {
-          state.district = '';
-          a.classList.remove('active');
-          if (filterDist) filterDist.value = '';
-        } else {
-          distChips.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-          a.classList.add('active');
-          state.district = d;
-          if (filterDist) filterDist.value = d;
-        }
-        state.page = 1;
-        render();
+        selectDistrict(state.district === d ? '' : d);
         document.getElementById('directory').scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
       li.appendChild(a);
@@ -324,7 +321,7 @@
   ══════════════════════════ */
   function initFilterListeners() {
     if (filterSearch) filterSearch.addEventListener('input', debounce(() => { state.query = filterSearch.value; state.page = 1; render(); }, 280));
-    if (filterDist)   filterDist.addEventListener('change', () => { state.district = filterDist.value; state.page = 1; render(); syncChips(); });
+    if (filterDist)   filterDist.addEventListener('change', () => { selectDistrict(filterDist.value); });
     if (filterDeity)  filterDeity.addEventListener('change', () => { state.deity = filterDeity.value; state.page = 1; render(); });
     if (sortSelect)   sortSelect.addEventListener('change', () => { state.sort = sortSelect.value; state.page = 1; render(); });
     if (clearBtn)     clearBtn.addEventListener('click', clearFilters);
@@ -335,7 +332,7 @@
     if (heroForm) {
       heroForm.addEventListener('submit', e => {
         e.preventDefault();
-        state.query = heroSearch.value;
+        state.query = text(heroSearch.value);
         state.page = 1;
         if (filterSearch) filterSearch.value = state.query;
         hideHeroSuggestions();
@@ -421,7 +418,7 @@
 
   function selectHeroSuggestion(t) {
     if (!heroSearch) return;
-    heroSearch.value = t.name || '';
+    heroSearch.value = text(t.name);
     state.query = heroSearch.value;
     state.page = 1;
     if (filterSearch) filterSearch.value = state.query;
@@ -486,22 +483,19 @@
   ══════════════════════════ */
   function getFiltered() {
     const temples = getStateData(activeState);
-    const q = state.query.toLowerCase().trim();
+    const q = lower(state.query);
     return temples
       .filter(t => {
         const matchQ = !q ||
-          t.name.toLowerCase().includes(q) ||
-          t.deity.toLowerCase().includes(q) ||
-          t.district.toLowerCase().includes(q) ||
-          t.location.toLowerCase().includes(q) ||
-          (t.description && t.description.toLowerCase().includes(q));
-        const matchD  = !state.district || t.district === state.district;
-        const matchDe = !state.deity    || t.deity    === state.deity;
+          [t.name, t.deity, t.district, t.location, t.description, ...(Array.isArray(t.tags) ? t.tags : [])]
+            .some(value => lower(value).includes(q));
+        const matchD  = !state.district || text(t.district) === state.district;
+        const matchDe = !state.deity    || text(t.deity)    === state.deity;
         return matchQ && matchD && matchDe;
       })
       .sort((a, b) => {
-        if (state.sort === 'district') return a.district.localeCompare(b.district) || a.name.localeCompare(b.name);
-        return a.name.localeCompare(b.name);
+        if (state.sort === 'district') return text(a.district).localeCompare(text(b.district)) || text(a.name).localeCompare(text(b.name));
+        return text(a.name).localeCompare(text(b.name));
       });
   }
 
@@ -538,12 +532,12 @@
     div.setAttribute('role', 'listitem');
     div.style.animationDelay = `${idx * 0.04}s`;
     div.setAttribute('tabindex', '0');
-    div.setAttribute('aria-label', `${t.name}, ${t.district}`);
+    div.setAttribute('aria-label', [t.name, t.district].map(text).filter(Boolean).join(', ') || 'Temple listing');
     div.innerHTML = `
       ${t.famous ? `<span class="badge-famous">⭐ Famous</span>` : ''}
       ${buildStatusLabel(t)}
-      <div class="card-deity">${escHtml(t.deity)}</div>
-      <h3 class="card-name">${escHtml(t.name)}</h3>
+      <div class="card-deity">${escHtml(t.deity || 'Temple')}</div>
+      <h3 class="card-name">${escHtml(t.name || 'Unnamed temple')}</h3>
       <p class="card-desc">${escHtml(t.description || '')}</p>
       <div class="card-meta">
         <div class="card-meta-row">${iconLocation()}<span>${escHtml(t.location)}</span></div>
@@ -564,6 +558,14 @@
     distChips.querySelectorAll('.chip').forEach(c => {
       c.classList.toggle('active', c.dataset.district === state.district);
     });
+  }
+
+  function selectDistrict(district) {
+    state.district = text(district);
+    state.page = 1;
+    if (filterDist) filterDist.value = state.district;
+    syncChips();
+    render();
   }
 
   /* ══════════════════════════
@@ -1455,7 +1457,7 @@ async function handleSubmit(e) {
   ══════════════════════════ */
   function escHtml(str) {
     if (!str) return '';
-    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
   }
   function debounce(fn, ms) {
     let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };

@@ -333,6 +333,48 @@
             </table>
           </div>
         </div>
+        <div class="panel" id="request-detail-panel" hidden>
+          <div class="panel-head">
+            <h3 id="request-detail-title">Review Request</h3>
+            <div class="row-actions">
+              <button class="btn btn-soft btn-sm" type="button" onclick="closeTempleRequestDetail()">Close</button>
+            </div>
+          </div>
+          <div class="form-grid">
+            <input type="hidden" id="request-detail-id" />
+            <div class="field"><label for="request-detail-label">Admin Label</label><input id="request-detail-label" /></div>
+            <div class="field"><label for="request-detail-state">State</label><input id="request-detail-state" /></div>
+            <div class="field request-match-field"><label for="request-detail-temple-id">D1 Temple ID</label><input id="request-detail-temple-id" type="number" step="1" /></div>
+            <div class="field request-match-field"><label for="request-detail-source-json-id">Source JSON ID</label><input id="request-detail-source-json-id" type="number" step="1" /></div>
+            <div class="field"><label for="request-detail-temple">Temple Name *</label><input id="request-detail-temple" /></div>
+            <div class="field"><label for="request-detail-deity">Deity</label><input id="request-detail-deity" /></div>
+            <div class="field"><label for="request-detail-district">District</label><input id="request-detail-district" /></div>
+            <div class="field"><label for="request-detail-location">Location</label><input id="request-detail-location" /></div>
+            <div class="field"><label for="request-detail-lat">Latitude</label><input id="request-detail-lat" type="number" step="any" /></div>
+            <div class="field"><label for="request-detail-lng">Longitude</label><input id="request-detail-lng" type="number" step="any" /></div>
+            <div class="field"><label for="request-detail-timing">Timing</label><input id="request-detail-timing" /></div>
+            <div class="field"><label for="request-detail-phone">Phone</label><input id="request-detail-phone" /></div>
+            <div class="field"><label for="request-detail-tags">Tags, comma separated</label><input id="request-detail-tags" /></div>
+            <div class="field"><label for="request-detail-source">Source URL</label><input id="request-detail-source" /></div>
+            <div class="field full"><label for="request-detail-description">Description</label><textarea id="request-detail-description" rows="3"></textarea></div>
+            <div class="field full"><label for="request-detail-message">Admin / submitter note</label><textarea id="request-detail-message" rows="2"></textarea></div>
+            <div class="field full">
+              <div class="checks">
+                <label><input id="request-detail-famous" type="checkbox" /> Famous temple</label>
+              </div>
+            </div>
+          </div>
+          <div id="request-detail-summary" class="note" style="margin-top:12px"></div>
+          <div class="toolbar" style="margin-top:14px;margin-bottom:0">
+            <span id="request-detail-msg" class="muted"></span>
+            <div class="row-actions">
+              <button class="btn btn-soft" type="button" onclick="saveTempleRequestEdits()">Save changes</button>
+              <button class="btn btn-green" type="button" onclick="decideTempleRequestFromEditor('approve')">Approve / merge</button>
+              <button class="btn btn-soft" type="button" onclick="decideTempleRequestFromEditor('needs_review')">Needs review</button>
+              <button class="btn btn-red" type="button" onclick="decideTempleRequestFromEditor('reject')">Reject</button>
+            </div>
+          </div>
+        </div>
       </section>
 
       <section class="section" id="section-editor">

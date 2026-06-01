@@ -5,6 +5,7 @@ import {
   isTruthy,
   jsonResponse as sharedJsonResponse,
   parseCoordinate,
+  parseInteger,
   parseJson,
   parseTags,
   requireAdmin,
@@ -112,12 +113,19 @@ export async function onRequestPost({ request, env }) {
     const adminLabel = cleanText(payload.adminLabel);
 
     if (!id) return jsonResponse({ ok: false, error: 'Request id is required.' }, 400);
-    if (!['approve', 'reject', 'needs_review'].includes(action)) {
+    if (!['approve', 'reject', 'needs_review', 'update'].includes(action)) {
       return jsonResponse({ ok: false, error: 'Unsupported action.' }, 400);
     }
 
     const requestRow = await env.DB.prepare('SELECT * FROM temple_requests WHERE id = ? LIMIT 1').bind(id).first();
     if (!requestRow) return jsonResponse({ ok: false, error: 'Request not found.' }, 404);
+    const payloadOverride = normalizePayloadOverride(payload.payload || payload.payloadOverride);
+
+    if (action === 'update') {
+      if (!payloadOverride) return jsonResponse({ ok: false, error: 'Edited request payload is required.' }, 400);
+      await updateRequestPayload(env, id, requestRow, payloadOverride, adminLabel);
+      return jsonResponse({ ok: true, id, status: requestRow.status || 'pending' });
+    }
 
     if (action === 'reject') {
       await archiveRequest(env, id, 'rejected', decidedBy, adminLabel || requestRow.admin_label);
@@ -125,6 +133,9 @@ export async function onRequestPost({ request, env }) {
     }
 
     if (action === 'needs_review') {
+      if (payloadOverride) {
+        await updateRequestPayload(env, id, requestRow, payloadOverride, adminLabel);
+      }
       await env.DB.prepare(`
         UPDATE temple_requests
         SET status = 'needs_review',
@@ -138,6 +149,11 @@ export async function onRequestPost({ request, env }) {
     }
 
     const requestData = rowToRequest(requestRow);
+    if (payloadOverride) {
+      requestData.payload = payloadOverride;
+      applyPayloadRefs(requestData, payloadOverride);
+      await updateRequestPayload(env, id, requestRow, payloadOverride, adminLabel);
+    }
     const label = adminLabel || requestData.adminLabel || defaultApprovedLabel(requestData.requestType);
 
     if (requestData.requestType === 'submission') {
@@ -297,6 +313,47 @@ async function archiveRequest(env, id, status, decidedBy, adminLabel) {
         updated_at = CURRENT_TIMESTAMP
     WHERE id = ?
   `).bind(status, adminLabel || '', decidedBy, id).run();
+}
+
+async function updateRequestPayload(env, id, requestRow, payload, adminLabel) {
+  const requestData = rowToRequest(requestRow);
+  applyPayloadRefs(requestData, payload);
+
+  await env.DB.prepare(`
+    UPDATE temple_requests
+    SET payload_json = ?,
+        state = COALESCE(NULLIF(?, ''), state),
+        temple_id = ?,
+        source_json_id = ?,
+        admin_label = COALESCE(NULLIF(?, ''), admin_label),
+        updated_at = CURRENT_TIMESTAMP
+    WHERE id = ?
+  `).bind(
+    JSON.stringify(payload),
+    requestData.state || '',
+    requestData.templeId,
+    requestData.sourceJsonId,
+    adminLabel || '',
+    id
+  ).run();
+}
+
+function normalizePayloadOverride(value) {
+  if (value === undefined || value === null) return null;
+  if (typeof value === 'string') return parseJson(value, null);
+  if (typeof value === 'object' && !Array.isArray(value)) return value;
+  return null;
+}
+
+function applyPayloadRefs(requestData, payload) {
+  const nextState = cleanState(payload.State || payload.state || requestData.state);
+  if (nextState) requestData.state = nextState;
+
+  const templeId = parseInteger(payload.templeId || payload.temple_id || payload['D1 Temple ID']);
+  if (templeId !== null) requestData.templeId = templeId;
+
+  const sourceJsonId = parseInteger(payload.sourceJsonId || payload.source_json_id || payload['Source JSON ID']);
+  if (sourceJsonId !== null) requestData.sourceJsonId = sourceJsonId;
 }
 
 function rowToRequest(row) {

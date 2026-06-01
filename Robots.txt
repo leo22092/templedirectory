@@ -6,3 +6,20 @@ Sitemap: https://www.templediary.in/sitemap.xml
 # Block any admin or private paths (add as needed)
 Disallow: /admin/
 Disallow: /draft/
+User-agent: GPTBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /

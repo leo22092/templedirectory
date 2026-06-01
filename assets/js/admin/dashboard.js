@@ -17,6 +17,7 @@
       dbTemples: [],
       selectedDbTempleId: null,
       templeRequests: [],
+      selectedTempleRequestId: null,
       selected: new Set(),
       dirty: new Set()
     };
@@ -502,20 +503,21 @@
       const approveText = req.requestType === 'correction' ? 'Merge' : (req.requestType === 'deletion' ? 'Remove' : 'Approve');
       const encodedLabel = encodeURIComponent(req.adminLabel || '');
       return [
+        `<button class="btn btn-soft btn-sm" type="button" onclick="openTempleRequestDetail('${escAttr(req.id)}')">Review</button>`,
         `<button class="btn btn-green btn-sm" type="button" onclick="decideTempleRequest('${escAttr(req.id)}','approve','${encodedLabel}')">${approveText}</button>`,
         `<button class="btn btn-soft btn-sm" type="button" onclick="decideTempleRequest('${escAttr(req.id)}','needs_review','${encodedLabel}')">Needs review</button>`,
         `<button class="btn btn-red btn-sm" type="button" onclick="decideTempleRequest('${escAttr(req.id)}','reject','${encodedLabel}')">Reject</button>`
       ].join('');
     }
 
-    async function decideTempleRequest(id, action, encodedCurrentLabel) {
+    async function decideTempleRequest(id, action, encodedCurrentLabel, payloadOverride) {
       const actionText = action === 'approve' ? 'approve/merge' : action.replace('_', ' ');
-      if (!confirm(`Are you sure you want to ${actionText} this request?`)) return;
+      if (!confirm(`Are you sure you want to ${actionText} this request?`)) return false;
 
       let adminLabel = decodeURIComponent(encodedCurrentLabel || '');
       if (action === 'approve' || action === 'needs_review') {
         const nextLabel = prompt('Admin label for this request:', adminLabel);
-        if (nextLabel === null) return;
+        if (nextLabel === null) return false;
         adminLabel = nextLabel.trim();
       }
 
@@ -530,7 +532,8 @@
             id,
             action,
             adminLabel,
-            decidedBy: 'admin'
+            decidedBy: 'admin',
+            payloadOverride
           })
         });
         const json = await res.json();
@@ -538,9 +541,151 @@
         notify('Request updated.', 'ok');
         await loadTempleRequests();
         if (action === 'approve') await loadDbTemples();
+        return true;
       } catch (err) {
         notify('Request update failed: ' + err.message, 'bad');
+        return false;
       }
+    }
+
+    function openTempleRequestDetail(id) {
+      const req = app.templeRequests.find(row => String(row.id) === String(id));
+      if (!req) return notify('Request not found in the loaded list.', 'bad');
+      const payload = req.payload || {};
+      app.selectedTempleRequestId = req.id;
+
+      setValue('request-detail-id', req.id || '');
+      setValue('request-detail-label', req.adminLabel || '');
+      setValue('request-detail-state', payload.State || payload.state || req.state || app.activeState);
+      setValue('request-detail-temple-id', payload.templeId || payload.temple_id || payload['D1 Temple ID'] || req.templeId || '');
+      setValue('request-detail-source-json-id', payload.sourceJsonId || payload.source_json_id || payload['Source JSON ID'] || req.sourceJsonId || '');
+      setValue('request-detail-temple', payload.Temple || payload.temple || '');
+      setValue('request-detail-deity', payload.Deity || payload.deity || '');
+      setValue('request-detail-district', payload.District || payload.district || '');
+      setValue('request-detail-location', payload.Location || payload.location || '');
+      setValue('request-detail-lat', payload.Latitude || payload.lat || '');
+      setValue('request-detail-lng', payload.Longitude || payload.lng || '');
+      setValue('request-detail-timing', payload.Timing || payload.timing || '');
+      setValue('request-detail-phone', payload.Phone || payload.phone || '');
+      setValue('request-detail-tags', Array.isArray(payload.Tags || payload.tags) ? (payload.Tags || payload.tags).join(', ') : (payload.Tags || payload.tags || ''));
+      setValue('request-detail-source', payload.SourceUrl || payload.sourceUrl || payload['Source URL'] || '');
+      setValue('request-detail-description', payload.Description || payload.description || '');
+      setValue('request-detail-message', payload.Message || payload.message || '');
+      document.getElementById('request-detail-famous').checked = ['1', 'true', 'yes', 'y', 'on'].includes(String(payload.Famous || payload.famous || '').toLowerCase()) || payload.Famous === true || payload.famous === true;
+      document.querySelectorAll('.request-match-field').forEach(field => {
+        field.hidden = req.requestType === 'submission';
+      });
+
+      document.getElementById('request-detail-title').textContent = `${req.requestType.replace(/_/g, ' ')} request: ${payload.Temple || payload.temple || req.id}`;
+      document.getElementById('request-detail-summary').innerHTML = requestDetailSummary(req);
+      document.getElementById('request-detail-msg').textContent = '';
+      document.getElementById('request-detail-panel').hidden = false;
+      window.setTimeout(() => document.getElementById('request-detail-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0);
+    }
+
+    function closeTempleRequestDetail() {
+      app.selectedTempleRequestId = null;
+      document.getElementById('request-detail-panel').hidden = true;
+    }
+
+    function requestDetailSummary(req) {
+      return [
+        `<strong>Submitted by:</strong> ${esc(req.submittedBy || '')} ${req.submitterEmail ? `&lt;${esc(req.submitterEmail)}&gt;` : ''}`,
+        `<strong>Received:</strong> ${esc(formatDate(req.createdAt))}`,
+        `<strong>Current DB:</strong><br>${compactTempleSummary(req.currentDb, 'No DB match')}`,
+        `<strong>Public JSON:</strong><br>${compactTempleSummary(req.currentPublic, 'No public JSON snapshot')}`
+      ].join('<br>');
+    }
+
+    function collectTempleRequestPayload() {
+      const id = document.getElementById('request-detail-id')?.value || app.selectedTempleRequestId;
+      const req = app.templeRequests.find(row => String(row.id) === String(id));
+      const payload = deepClone(req?.payload || {});
+      const state = val('request-detail-state') || app.activeState;
+      const templeId = val('request-detail-temple-id');
+      const sourceJsonId = val('request-detail-source-json-id');
+
+      payload.State = state;
+      payload.state = state;
+      payload.Temple = val('request-detail-temple');
+      payload.Deity = val('request-detail-deity');
+      payload.District = val('request-detail-district');
+      payload.Location = val('request-detail-location');
+      payload.Latitude = val('request-detail-lat');
+      payload.Longitude = val('request-detail-lng');
+      payload.Timing = val('request-detail-timing');
+      payload.Phone = val('request-detail-phone');
+      payload.Tags = val('request-detail-tags');
+      payload.SourceUrl = val('request-detail-source');
+      payload['Source URL'] = val('request-detail-source');
+      payload.Description = val('request-detail-description');
+      payload.Message = val('request-detail-message');
+      payload.Famous = document.getElementById('request-detail-famous')?.checked ? 'Yes' : '';
+
+      if (templeId) {
+        payload.templeId = templeId;
+        payload['D1 Temple ID'] = templeId;
+      } else {
+        delete payload.templeId;
+        delete payload['D1 Temple ID'];
+      }
+
+      if (sourceJsonId) {
+        payload.sourceJsonId = sourceJsonId;
+        payload['Source JSON ID'] = sourceJsonId;
+      } else {
+        delete payload.sourceJsonId;
+        delete payload['Source JSON ID'];
+      }
+
+      return payload;
+    }
+
+    async function saveTempleRequestEdits() {
+      const id = document.getElementById('request-detail-id')?.value || app.selectedTempleRequestId;
+      if (!id) return notify('Open a request first.', 'bad');
+      const payloadOverride = collectTempleRequestPayload();
+      const adminLabel = val('request-detail-label');
+      const msg = document.getElementById('request-detail-msg');
+      try {
+        if (msg) msg.textContent = 'Saving...';
+        const res = await fetch('/api/temple-requests', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...adminHeaders()
+          },
+          body: JSON.stringify({
+            id,
+            action: 'update',
+            adminLabel,
+            payloadOverride,
+            decidedBy: 'admin'
+          })
+        });
+        const json = await res.json();
+        if (!res.ok || !json.ok) throw new Error(json.error || 'Request update failed');
+        if (msg) msg.textContent = 'Saved.';
+        notify('Request edits saved.', 'ok');
+        await loadTempleRequests();
+        if (app.templeRequests.some(row => String(row.id) === String(id))) {
+          openTempleRequestDetail(id);
+        } else {
+          closeTempleRequestDetail();
+        }
+      } catch (err) {
+        if (msg) msg.textContent = '';
+        notify('Request edit failed: ' + err.message, 'bad');
+      }
+    }
+
+    async function decideTempleRequestFromEditor(action) {
+      const id = document.getElementById('request-detail-id')?.value || app.selectedTempleRequestId;
+      if (!id) return notify('Open a request first.', 'bad');
+      const adminLabel = encodeURIComponent(val('request-detail-label'));
+      const payloadOverride = action === 'reject' ? undefined : collectTempleRequestPayload();
+      const updated = await decideTempleRequest(id, action, adminLabel, payloadOverride);
+      if (updated) closeTempleRequestDetail();
     }
 
     function newTemple() {
@@ -1100,8 +1245,10 @@
       addStateConfig,
       applyImport,
       closeDbDetail,
+      closeTempleRequestDetail,
       copyExport,
       decideTempleRequest,
+      decideTempleRequestFromEditor,
       deleteFromForm,
       deleteSelected,
       downloadActiveJson,
@@ -1120,6 +1267,7 @@
       openDbTempleDetail,
       openMap,
       openSelectedDbMap,
+      openTempleRequestDetail,
       previewImport,
       readImportFile,
       resetAllDrafts,
@@ -1130,6 +1278,7 @@
       saveDbTempleReview,
       saveStateConfig,
       saveTemple,
+      saveTempleRequestEdits,
       showSection,
       switchState,
       toggleAllRows,
