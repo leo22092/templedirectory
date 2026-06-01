@@ -32,6 +32,7 @@ the task explicitly needs them.
 - Cloudflare Pages Functions live in `functions/api/*.js`.
 - D1 schema and migrations live in `schema.sql` and `scripts/d1/*.sql`.
 - D1 import tooling lives in `scripts/d1/import-json-to-d1.mjs`.
+- D1-to-public JSON publishing helper lives in `scripts/split-d1-export-bundle.mjs`.
 
 ## Main Workflows
 
@@ -44,7 +45,10 @@ the task explicitly needs them.
 - Admin D1 state discovery: `dashboard.html` -> `/api/temple-states` ->
   `functions/api/temple-states.js` -> D1 `temples`.
 - Admin requests queue: `dashboard.html` -> `/api/temple-requests` ->
-  `functions/api/temple-requests.js` -> D1 `temple_requests`.
+  `functions/api/temple-requests.js` -> D1 `temple_requests` and, on approval,
+  D1 `temples`.
+- Publish approved D1 data to public JSON: admin dashboard D1 all-state export ->
+  `scripts/split-d1-export-bundle.mjs` -> `data/*.json`.
 
 ## Data Model Pointers
 
@@ -52,7 +56,8 @@ the task explicitly needs them.
 - `temple_requests` is the review queue for submissions, corrections, and deletion
   requests.
 - Static JSON is still the fast public data source. D1 updates do not automatically
-  rewrite `data/*.json`.
+  rewrite `data/*.json`; use `scripts/split-d1-export-bundle.mjs` with a dashboard
+  D1 export bundle when publishing approved D1 changes.
 - Cloudflare D1 binding name expected by the code is `DB`.
 - If `ADMIN_API_TOKEN` is configured, admin APIs require `x-admin-token` or `?token=`.
 

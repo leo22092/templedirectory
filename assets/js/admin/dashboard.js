@@ -539,6 +539,10 @@
         const json = await res.json();
         if (!res.ok || !json.ok) throw new Error(json.error || 'Request update failed');
         notify('Request updated.', 'ok');
+        if (action === 'needs_review') {
+          const statusFilter = document.getElementById('request-status-filter');
+          if (statusFilter) statusFilter.value = 'needs_review';
+        }
         await loadTempleRequests();
         if (action === 'approve') await loadDbTemples();
         return true;

@@ -40,6 +40,9 @@ flowchart TD
   ImportScript[scripts/d1/import-json-to-d1.mjs] --> StaticData
   ImportScript --> ImportSQL[tmp/d1-import-batches/*.sql]
   ImportSQL --> Temples
+  Admin --> ExportBundle[D1 all-state export bundle]
+  ExportBundle --> SplitScript[scripts/split-d1-export-bundle.mjs]
+  SplitScript --> StaticData
 ```
 
 ## File Ownership
@@ -51,12 +54,12 @@ flowchart TD
 | Shared state config | `assets/js/core/states.js` | Single source for public state metadata, data files, hero images, map views, tabs, map links, dashboard state list. |
 | Temple data | `data/*.json` | Public cacheable source of temple listings by state. Avoid loading every state unless needed. |
 | Submissions UI | `assets/js/public/submit-location.js`, `assets/js/public/main.js`, `contact.html` | Posts visitor submissions and corrections to `/api/submit-temple`. |
-| Admin dashboard | `dashboard.html`, `assets/js/admin/dashboard.js` | Static JSON editor, D1 records, request queue, import/export/health sections. |
+| Admin dashboard | `dashboard.html`, `assets/js/admin/dashboard.js` | Static JSON editor, D1 records, editable request queue, import/export/health sections. |
 | Static assets | `assets/css/`, `assets/js/`, `assets/images/` | Frontend code, shared CSS, hero images, source images, favicons. |
 | API: state discovery | `functions/api/temple-states.js` | Returns D1-backed state list/counts for admin maintenance. |
 | API: temples | `functions/api/temples.js` | Reads and writes canonical D1 `temples` records. |
 | API: submit | `functions/api/submit-temple.js` | Accepts public submissions/corrections/deletions and stores request rows. |
-| API: requests | `functions/api/temple-requests.js` | Admin request queue and approve/reject/needs-review actions. |
+| API: requests | `functions/api/temple-requests.js` | Admin request queue, editable payloads, and approve/reject/needs-review actions. |
 | Database | `schema.sql`, `scripts/d1/add-request-workflow.sql` | D1 table definitions and migration history. |
 | D1 import | `scripts/d1/import-json-to-d1.mjs` | Generates import batches from `data/*.json`. |
 | D1 export publish | `scripts/split-d1-export-bundle.mjs` | Splits dashboard all-state D1 export bundle into `data/<state>.json` files. |
@@ -75,6 +78,8 @@ flowchart TD
   `functions/api/temple-states.js` if state discovery is involved.
 - Change request approval behavior: open `dashboard.html` plus
   `assets/js/admin/dashboard.js` plus `functions/api/temple-requests.js`.
+  Submission approvals insert new D1 rows; correction/deletion approvals match an
+  existing D1 row by `temple_id`, `source_json_id`, then state/name fallback.
 - Change public submission fields: open `assets/js/public/main.js`,
   `assets/js/public/submit-location.js`, and `functions/api/submit-temple.js`.
 - Change D1 schema/import: open `schema.sql`,
@@ -99,6 +104,8 @@ flowchart TD
 - D1 holds canonical/admin-managed records and community request queues.
 - Admin maintenance discovers available states from D1 via `/api/temple-states`,
   then merges those states with static display metadata.
-- Community submissions and corrections are reviewed before becoming canonical.
-- Static JSON is not automatically synced from D1 yet.
+- Community submissions, corrections, and deletions are editable in the admin
+  request queue before approval.
+- Static JSON is not automatically synced from D1; publish with a dashboard D1
+  bundle and `scripts/split-d1-export-bundle.mjs`.
 - Cloudflare Pages deploys the root static files and `functions/api` routes.

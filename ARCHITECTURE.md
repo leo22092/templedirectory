@@ -22,9 +22,9 @@ flowchart LR
   StatesAPI --> TemplesTable
   RequestsAPI --> RequestTable
 
-  Admin --> FutureActions[future approve / merge / reject APIs]
-  FutureActions --> TemplesTable
-  FutureActions --> RequestTable
+  Admin --> RequestActions[edit / approve / merge / reject requests]
+  RequestActions --> TemplesTable
+  RequestActions --> RequestTable
 ```
 
 ## Data Stores
@@ -56,7 +56,9 @@ Current behavior:
 
 - Public users still see temples from JSON.
 - JSON is not automatically rewritten when D1 changes.
-- A future publish/export workflow can sync approved D1 data back to JSON.
+- The admin dashboard can export approved D1 records as a bundle.
+- `scripts/split-d1-export-bundle.mjs` splits that bundle back into `data/*.json`
+  for the public site publishing step.
 
 ### D1: `temple_diary_db`
 
@@ -143,17 +145,17 @@ id                   UUID
 request_type         submission, correction, deletion
 status               pending, approved, rejected, needs_review
 state                state key
-temple_id            matched D1 temple id if known
-source_json_id       matched static JSON id if known
+temple_id            matched D1 temple id if known; used for corrections/deletions
+source_json_id       matched static JSON id if known; fallback for old JSON-sourced records
 admin_label          default label proposed for the request
 submitted_by         community submitter name
 submitter_email      optional
-payload_json         raw community request
+payload_json         community request, editable by admin before approval
 current_db_json      snapshot of current D1 record at request time
 current_public_json  snapshot of public JSON record at request time
-decided_by           future admin action field
-decided_at           future admin action field
-archived_at          future archive field
+decided_by           admin action actor
+decided_at           admin action timestamp
+archived_at          archive timestamp for approved/rejected requests
 ```
 
 Request statuses:
@@ -268,8 +270,9 @@ sequenceDiagram
 Current behavior:
 
 - New submissions are stored as pending requests.
-- They are not inserted into `temples` automatically.
-- Admin approval action is still a future step.
+- They are not inserted into `temples` automatically at submission time.
+- Admin can edit the submitted fields before approval.
+- Approval inserts a new row into `temples` for the submitted state.
 
 ### Correction Request
 
@@ -303,14 +306,14 @@ Current DB | Current Public JSON | Submitted Correction
 
 ### Deletion Request
 
-Deletion requests are planned in the same table:
+Deletion requests use the same table:
 
 ```text
 request_type=deletion
 status=pending
 ```
 
-Future admin accept behavior:
+Admin accept behavior:
 
 ```text
 UPDATE temples SET status='removed' WHERE id = ?
@@ -333,7 +336,7 @@ Overview       static JSON summary
 Temples        static JSON editor
 D1 Records     canonical DB records from /api/temples
 State list     D1 state discovery from /api/temple-states
-Requests       pending/archive request queue from /api/temple-requests
+Requests       editable pending/archive request queue from /api/temple-requests
 Add / Edit     local JSON editor
 States         local state config editor
 Import         JSON import
@@ -347,12 +350,6 @@ State discovery endpoint:
 
 ```text
 GET /api/temple-states
-```
-
-D1 record endpoint:
-
-```text
-GET /api/temples?state=kerala&include=all
 ```
 
 Endpoint:
@@ -394,9 +391,23 @@ Purpose:
 - View pending submissions.
 - View pending corrections.
 - View pending deletion requests.
-- View approved/rejected archive later.
+- Edit submitted temple fields before approval.
+- Approve submissions into new D1 `temples` rows.
+- Merge corrections into existing D1 `temples` rows.
+- Mark deletion requests as `removed` in D1.
+- View approved/rejected archives.
 
-Admin action buttons are not implemented yet. Current tab is read-only.
+For submissions, the request editor hides matching fields because approval creates
+a new D1 row. For corrections and deletions, the editor exposes matching fields:
+
+```text
+D1 Temple ID     strongest match; updates/removes that exact D1 row
+Source JSON ID   fallback for records imported from data/*.json
+state + name     final fallback when ids are missing
+```
+
+Admins can use the `update` action to save edited request payloads before deciding,
+or approve/merge directly with an edited payload override.
 
 ## API Reference
 
@@ -467,6 +478,30 @@ or:
 ?token=<token>
 ```
 
+### `POST /api/temple-requests`
+
+Updates or decides request queue rows. Requires admin auth.
+
+Actions:
+
+```text
+update        save edited payload_json/admin_label without approving
+approve       approve submission or merge correction
+needs_review  save for later review
+reject        archive as rejected
+```
+
+For `approve`, request behavior depends on `request_type`:
+
+```text
+submission -> INSERT INTO temples
+correction -> UPDATE matching temples row
+deletion   -> UPDATE matching temples row SET status='removed'
+```
+
+The request body may include `payloadOverride`; when present, approval uses that
+edited payload instead of the originally submitted `payload_json`.
+
 ## Deployment Flow
 
 ```mermaid
@@ -515,16 +550,17 @@ SET admin_label = 'COMMUNITY'
 WHERE admin_label IS NULL OR admin_label = '';
 ```
 
-## Future Work
+## Request Workflow And Publishing
 
 ### Admin Merge Correction
 
-Planned behavior:
+Current behavior:
 
 ```mermaid
 flowchart LR
   Request[correction request] --> Compare[Admin compares DB / JSON / correction]
-  Compare --> Merge[Merge]
+  Compare --> Edit[Admin edits request payload if needed]
+  Edit --> Merge[Merge]
   Merge --> UpdateTemple[UPDATE temples]
   Merge --> Archive[status=approved, archived_at set]
   Compare --> Reject[Reject]
@@ -533,7 +569,7 @@ flowchart LR
 
 ### Approve Submission
 
-Planned behavior:
+Current behavior:
 
 ```text
 pending submission -> INSERT INTO temples -> request status approved
@@ -549,11 +585,34 @@ COMMUNITY SUBMITTED
 
 Current public frontend uses JSON.
 
-Later options:
+Preferred publishing flow:
 
 ```text
-Option A: keep public JSON and export approved D1 records into data/*.json
-Option B: switch public frontend to /api/temples with caching
+Dashboard JSON Export -> Download D1 all-state bundle
+node scripts/split-d1-export-bundle.mjs <bundle.json> --write
+review git diff data/
+commit and deploy
 ```
 
-For lowest cost, Option A remains preferred.
+Other later option:
+
+```text
+switch public frontend to /api/temples with caching
+```
+
+For lowest cost, keeping public JSON and publishing D1 exports remains preferred.
+
+
+======================================NOTES============================
+  5. If output looks correct, write into data/*.json:
+
+  node scripts/split-d1-export-bundle.mjs templediary-d1-export-2026-06-01.json
+  --write
+
+  For only one state:
+
+  node scripts/split-d1-export-bundle.mjs templediary-d1-export-2026-06-01.json
+  --write --states kerala
+
+  That updates the public data/<state>.json files from the D1 export. Then
+  review git diff data/ before committing.

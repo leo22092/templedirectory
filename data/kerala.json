@@ -15923,6 +15923,18 @@
       "nearestRail": "Karunagappally Railway Station"
     },
     {
+      "id": 3839,
+      "name": "Arathakandappan Temple Thudayannoor",
+      "district": "Kollam",
+      "location": "Thudayanoor, kadakkal,Kerala , 691536",
+      "lat": 8.8576456,
+      "lng": 76.9432265,
+      "famous": false,
+      "status": "verified",
+      "adminLabel": "COMMUNITY SUBMITTED-Sidharth G.S",
+      "tags": []
+    },
+    {
       "id": 828,
       "name": "Arithrkkovil Siva Temple [MINOR]",
       "deity": "Lord Shiva",
