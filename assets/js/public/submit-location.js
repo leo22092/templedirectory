@@ -31,45 +31,89 @@
   /* ── Button HTML injected next to lat/lng fields ─────────── */
   const BTN_ID     = 'td-detect-location-btn';
   const STATUS_ID  = 'td-location-status';
+  const MANUAL_HELPER_ID = 'td-manual-location-help';
+  let promptMode = 'gps';
 
   const BUTTON_HTML = `
     <div id="td-location-row" style="
       grid-column: 1 / -1;
-      display: flex;
-      align-items: center;
+      display: grid;
+      align-items: start;
       gap: 10px;
+      padding: 12px;
+      background: #fffaf0;
+      border: 1px solid #ead7a8;
+      border-radius: 10px;
       margin-bottom: 4px;
     ">
-      <button
-        type="button"
-        id="${BTN_ID}"
-        style="
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          padding: 7px 14px;
-          background: #f5f0e8;
-          border: 1px solid #c8a96e;
-          border-radius: 6px;
-          font-size: 0.82rem;
-          font-family: inherit;
-          color: #7a4f1e;
+      <div style="font-size: 0.88rem; color: #5b4631; line-height: 1.45;">
+        <strong style="color:#7b1c1c;">Are you inside the temple or at the temple premises?</strong><br>
+        If yes, click <strong>Detect my location</strong> and allow location permission. Latitude, longitude and address will be filled automatically.
+        If you are submitting from home, skip this button and paste the Google Maps link or address in the Location / Address box.
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <button
+          type="button"
+          id="${BTN_ID}"
+          style="
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 15px;
+            background: #7b1c1c;
+            border: 1px solid #7b1c1c;
+            border-radius: 999px;
+            font-size: 0.84rem;
+            font-family: inherit;
+            font-weight: 800;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.2s;
+            white-space: nowrap;
+          "
+        >
+          📍 Detect my location
+        </button>
+        <span
+          id="${STATUS_ID}"
+          style="
+            font-size: 0.78rem;
+            color: #888;
+            font-family: inherit;
+          "
+          aria-live="polite"
+        ></span>
+      </div>
+    </div>
+  `;
+
+  const MANUAL_HELPER_HTML = `
+    <div id="${MANUAL_HELPER_ID}" style="
+      grid-column: 1 / -1;
+      display: none;
+      margin-bottom: 4px;
+    ">
+      <details style="
+        padding: 12px;
+        background: #fffaf0;
+        border: 1px solid #ead7a8;
+        border-radius: 10px;
+        color: #5b4631;
+      ">
+        <summary style="
           cursor: pointer;
-          transition: background 0.2s;
-          white-space: nowrap;
-        "
-      >
-        📍 Detect my location
-      </button>
-      <span
-        id="${STATUS_ID}"
-        style="
-          font-size: 0.78rem;
-          color: #888;
-          font-family: inherit;
-        "
-        aria-live="polite"
-      ></span>
+          font-weight: 800;
+          color: #7b1c1c;
+        ">Need latitude and longitude? How to get it from Google Maps</summary>
+        <ol style="margin: 10px 0 0; padding-left: 20px; line-height: 1.55; font-size: 0.9rem;">
+          <li>Open Google Maps and search the temple name.</li>
+          <li>Tap or long-press the exact temple location to drop a pin.</li>
+          <li>Google Maps will show two numbers at the top or in the place details, like <strong>10.12345, 76.12345</strong>.</li>
+          <li>Copy the first number into <strong>Latitude</strong>.</li>
+          <li>Copy the second number into <strong>Longitude</strong>.</li>
+          <li>If this feels difficult, leave Latitude and Longitude blank and paste the Google Maps link or best address in the Location / Address box.</li>
+        </ol>
+      </details>
     </div>
   `;
 
@@ -94,7 +138,10 @@
   /* ── Inject the button into the form ────────────────────── */
   function injectButton() {
     // Don't inject twice
-    if (document.getElementById(BTN_ID)) return;
+    if (document.getElementById(BTN_ID) && document.getElementById(MANUAL_HELPER_ID)) {
+      applyPromptMode();
+      return;
+    }
 
     // Find the lat field row — insert our button row just before it
     const latInput = document.getElementById('sf-lat');
@@ -104,11 +151,29 @@
     const latRow = latInput.closest('.sf-row');
     if (!latRow) return;
 
-    // Insert button row before the lat/lng row
-    latRow.insertAdjacentHTML('beforebegin', BUTTON_HTML);
+    // Insert helper and GPS rows before the lat/lng row
+    if (!document.getElementById(MANUAL_HELPER_ID)) {
+      latRow.insertAdjacentHTML('beforebegin', MANUAL_HELPER_HTML);
+    }
+    if (!document.getElementById(BTN_ID)) {
+      latRow.insertAdjacentHTML('beforebegin', BUTTON_HTML);
+    }
 
     // Bind click
-    document.getElementById(BTN_ID).addEventListener('click', handleDetectClick);
+    document.getElementById(BTN_ID)?.addEventListener('click', handleDetectClick);
+    applyPromptMode();
+  }
+
+  function applyPromptMode() {
+    const gpsRow = document.getElementById('td-location-row');
+    const manualHelper = document.getElementById(MANUAL_HELPER_ID);
+
+    if (gpsRow) {
+      gpsRow.style.display = promptMode === 'manual' ? 'none' : 'grid';
+    }
+    if (manualHelper) {
+      manualHelper.style.display = promptMode === 'manual' ? 'block' : 'none';
+    }
   }
 
   /* ── Main handler ────────────────────────────────────────── */
@@ -277,8 +342,15 @@
   // Expose so main.js can trigger GPS programmatically
   // (used by the "I'm at the Temple Now" button flow)
   window.tdDetectLocation = function () {
+    promptMode = 'gps';
     injectButton();
+    applyPromptMode();
     handleDetectClick();
+  };
+
+  window.tdSetLocationPromptMode = function (mode) {
+    promptMode = mode === 'manual' ? 'manual' : 'gps';
+    applyPromptMode();
   };
 
   if (document.readyState === 'loading') {

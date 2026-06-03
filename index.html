@@ -18,7 +18,7 @@
   <meta property="og:image" content="https://www.templediary.in/og-image.jpg" />
   <meta property="og:locale" content="en_IN" />
   <meta property="og:site_name" content="TempleDiary" />
-  <meta name="twitter:title" content="Temple Diary - India Temple Directory" />
+  <meta name="twitter:title" content="TempleDiary - India Temple Directory" />
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="TempleDiary — India Temple Directory" />
@@ -29,9 +29,10 @@
   <meta name="geo.placename" content="India" />
 
   <!-- Icons & Manifest -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicon/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon/favicon-16x16.png" />
   <link rel="icon" href="/assets/images/favicon/favicon.ico" sizes="any" />
-  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon/favicon.svg" />
-  <link rel="apple-touch-icon" href="/assets/images/favicon/apple-touch-icon.png" />
   <link rel="manifest" href="/assets/images/favicon/site.webmanifest" />
 
   <!-- Structured Data -->
@@ -90,8 +91,9 @@
     }
     .contribute-actions {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 12px;
+      justify-content: center;
     }
     .contribute-btn {
       display: flex;
@@ -142,9 +144,102 @@
       color: #7a4500;
       font-weight: 600;
     }
+    .contribute-btn--home,
+    .contribute-btn--temple {
+      display: none;
+    }
+    .contribute-btn--missing {
+      background: #fff;
+      border-color: #7b1c1c;
+      color: #5f1515;
+      font-weight: 700;
+      grid-column: 2;
+    }
+      .contribute-btn--missing .contribute-btn-icon {
+        font-size: 1.9rem;
+      }
+    .contribute-tagline {
+      margin: -4px auto 12px;
+      color: #7b1c1c;
+      font-family: var(--font-display, Georgia, serif);
+      font-size: 1.05rem;
+      font-style: italic;
+      font-weight: 700;
+      max-width: 720px;
+    }
+    .missing-guide {
+      display: grid;
+      gap: 14px;
+      margin-top: 4px;
+    }
+    .missing-guide-intro {
+      margin: 0;
+      color: #5b4631;
+      line-height: 1.6;
+    }
+    .missing-guide-options {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .missing-guide-card {
+      display: grid;
+      gap: 8px;
+      padding: 16px;
+      border: 1px solid #ead7a8;
+      border-radius: 12px;
+      background: #fffaf0;
+      color: #4a2f0d;
+      text-align: left;
+    }
+    .missing-guide-card strong {
+      font-size: 1rem;
+      color: #7b1c1c;
+    }
+    .missing-guide-card p,
+    .missing-guide-card ol {
+      margin: 0;
+      color: #6f5a40;
+      font-size: 0.9rem;
+      line-height: 1.55;
+    }
+    .missing-guide-card ol {
+      padding-left: 18px;
+    }
+    .missing-guide-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .missing-guide-actions button,
+    .missing-guide-actions a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 10px 16px;
+      border: 0;
+      border-radius: 999px;
+      background: #7b1c1c;
+      color: #fff;
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .missing-guide-actions .secondary {
+      background: #f4ead2;
+      color: #6b3f0e;
+    }
     @media (max-width: 760px) {
       .contribute-actions {
         grid-template-columns: 1fr;
+      }
+      .missing-guide-options {
+        grid-template-columns: 1fr;
+      }
+      .contribute-btn--missing {
+        grid-column: auto;
       }
       .contribute-btn {
         width: 100%;
@@ -172,6 +267,7 @@
       <a href="index.html" class="logo" aria-label="TempleDiary home">
         <span class="logo-main">TempleDiary</span>
         <span class="logo-sub">India Temple Directory</span>
+        <span class="logo-tagline">No temple fades into oblivion</span>
       </a>
       <button class="nav-toggle" id="nav-toggle" aria-controls="nav-menu" aria-expanded="false" aria-label="Open menu">
         <span></span><span></span><span></span>
@@ -404,6 +500,7 @@
   <section class="contribute-section">
     <div class="container">
       <h2>Is your temple not listed?</h2>
+      <p class="contribute-tagline">No temple fades into oblivion.</p>
       <p>
         Contribute what you know! We rely on devotees like you to keep our directory accurate and
         comprehensive. Help us preserve our rich heritage by adding missing temples.
@@ -415,13 +512,24 @@
         <div class="contribute-actions">
           <button
             class="contribute-btn contribute-btn--home"
-            onclick="window.openSubmitModal(null)"
+            onclick="window.openSubmitModalFromHome()"
             aria-label="Submit a temple from home manually"
           >
             <span class="contribute-btn-icon">🏠</span>
             <span class="contribute-btn-text">
               <strong>Submitting from Home</strong>
               <small>Fill in details manually</small>
+            </span>
+          </button>
+          <button
+            class="contribute-btn contribute-btn--missing"
+            onclick="window.openMissingTempleGuide()"
+            aria-label="Your temple missing? Submit a temple with location help"
+          >
+            <span class="contribute-btn-icon">🛕</span>
+            <span class="contribute-btn-text">
+              <strong>Your temple missing?</strong>
+              <small>Submit a Temple</small>
             </span>
           </button>
           <a

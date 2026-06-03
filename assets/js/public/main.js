@@ -707,6 +707,7 @@
   let submitOverlay = null;
   let submitSourceTemple = null;
   let submitKind = 'temple-submission';
+  let missingGuideOverlay = null;
 
   function initSubmitModal() {
     submitOverlay = document.createElement('div');
@@ -741,8 +742,8 @@
                 <input type="text" id="sf-district" name="District" placeholder="District" />
               </div>
               <div class="sf-group">
-                <label for="sf-location">Location / Address</label>
-                <input type="text" id="sf-location" name="Location" placeholder="Town, District" />
+                <label for="sf-location">Location / Address / Google Maps link</label>
+                <input type="text" id="sf-location" name="Location" placeholder="Town, District, or paste Google Maps link here" />
               </div>
             </div>
             <div class="sf-row">
@@ -869,6 +870,87 @@
   function closeSubmitModal() {
     if (submitOverlay) submitOverlay.classList.remove('open');
     document.body.style.overflow = '';
+  }
+
+  function initMissingTempleGuide() {
+    missingGuideOverlay = document.createElement('div');
+    missingGuideOverlay.className = 'modal-overlay submit-overlay';
+    missingGuideOverlay.setAttribute('role', 'dialog');
+    missingGuideOverlay.setAttribute('aria-modal', 'true');
+    missingGuideOverlay.setAttribute('aria-label', 'Submit a missing temple');
+    missingGuideOverlay.innerHTML = `
+      <div class="modal">
+        <div class="modal-header">
+          <div class="modal-name">Your temple missing?</div>
+          <button class="modal-close" aria-label="Close">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="missing-guide">
+            <p class="missing-guide-intro">
+              We need the temple name and correct location. Choose the option that matches where you are now.
+            </p>
+            <div class="missing-guide-options">
+              <div class="missing-guide-card">
+                <strong>Yes, I am at the temple now</strong>
+                <p>Tap this if you are inside or very near the temple. Your phone will ask permission to share location. Please allow it.</p>
+                <div class="missing-guide-actions">
+                  <button type="button" id="missing-at-temple">Allow location and continue</button>
+                </div>
+              </div>
+              <div class="missing-guide-card">
+                <strong>No, I am submitting from home</strong>
+                <p>No location permission is needed. Open the form and type the address or any location details you know.</p>
+                <div class="missing-guide-actions">
+                  <button type="button" id="missing-from-home">Open form for manual entry</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    document.body.appendChild(missingGuideOverlay);
+    missingGuideOverlay.querySelector('.modal-close').addEventListener('click', closeMissingTempleGuide);
+    missingGuideOverlay.addEventListener('click', e => { if (e.target === missingGuideOverlay) closeMissingTempleGuide(); });
+    missingGuideOverlay.querySelector('#missing-at-temple').addEventListener('click', () => {
+      closeMissingTempleGuide(false);
+      window.openSubmitModalAtTemple();
+    });
+    missingGuideOverlay.querySelector('#missing-from-home').addEventListener('click', () => {
+      closeMissingTempleGuide(false);
+      openSubmitModal(null);
+      setSubmitLocationMode('manual');
+      showManualLocationHelp();
+    });
+  }
+
+  function openMissingTempleGuide() {
+    if (!missingGuideOverlay) initMissingTempleGuide();
+    missingGuideOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMissingTempleGuide(restoreScroll = true) {
+    if (missingGuideOverlay) missingGuideOverlay.classList.remove('open');
+    if (restoreScroll) document.body.style.overflow = '';
+  }
+
+  function showManualLocationHelp() {
+    setSubmitLocationMode('manual');
+    const msg = submitOverlay.querySelector('#sf-msg');
+    msg.textContent = [
+      'Submitting from home: fill temple details manually.',
+      'No location permission is needed.',
+      'In the Location / Address box, type the best address you know or paste a Google Maps share link.'
+    ].join(' ');
+    msg.className = 'sf-msg sf-msg--success';
+    msg.hidden = false;
+    setTimeout(() => submitOverlay.querySelector('#sf-temple')?.focus(), 80);
+  }
+
+  function setSubmitLocationMode(mode) {
+    if (typeof window.tdSetLocationPromptMode === 'function') {
+      window.tdSetLocationPromptMode(mode);
+    }
   }
 
   /* ══════════════════════════
@@ -1465,6 +1547,12 @@ async function handleSubmit(e) {
 
   /* ── Global Exports ── */
   window.openSubmitModal = openSubmitModal;
+  window.openMissingTempleGuide = openMissingTempleGuide;
+  window.openSubmitModalFromHome = function () {
+    openSubmitModal(null);
+    setSubmitLocationMode('manual');
+    showManualLocationHelp();
+  };
 
   /**
    * Opens the submit modal and immediately fires GPS detection.
@@ -1474,6 +1562,7 @@ async function handleSubmit(e) {
    */
   window.openSubmitModalAtTemple = function () {
     openSubmitModal(null);
+    setSubmitLocationMode('gps');
     if (typeof window.tdDetectLocation === 'function') {
       window.tdDetectLocation();
       return;
