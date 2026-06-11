@@ -1,6 +1,6 @@
 {
-  "name": "templedirectory",
-  "short_name": "temp_dir",
+  "name": "TempleDiary",
+  "short_name": "TD",
   "icons": [
     {
       "src": "/assets/images/favicon/web-app-manifest-192x192.png",
@@ -15,7 +15,7 @@
       "purpose": "maskable"
     }
   ],
-  "theme_color": "#e8bfbf",
-  "background_color": "#efcaca",
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
   "display": "standalone"
 }
