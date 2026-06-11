@@ -1,12 +1,11 @@
-name: Publish Static JSON
+  name: Publish Static JSON
 
-  on:
+  "on":
     workflow_dispatch:
 
   jobs:
     dry-run:
       runs-on: ubuntu-latest
-
       steps:
         - name: Checkout production branch
           uses: actions/checkout@v4
@@ -15,4 +14,9 @@ name: Publish Static JSON
           run: |
             echo "Publish Static JSON workflow is installed."
             echo "Next step: add Cloudflare D1 export and JSON commit steps."
+
+
+
+
+
 
