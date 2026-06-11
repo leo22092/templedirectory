@@ -33,7 +33,7 @@
       padding: 0 18px; background: var(--ink); border-bottom: 2px solid var(--gold); color: #fff;
     }
     .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
-    .brand-mark { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; background: rgba(200,147,42,.18); color: var(--gold); }
+    .brand-mark { width: 34px; height: 34px; flex: 0 0 auto; border-radius: 8px; }
     .brand h1 { margin: 0; font-size: 1rem; color: var(--gold); }
     .brand p { margin: 2px 0 0; font-size: .72rem; color: #c9bfae; }
     .top-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
@@ -129,7 +129,7 @@
 <body>
   <header class="topbar">
     <div class="brand">
-      <div class="brand-mark">TD</div>
+      <img class="brand-mark" src="/assets/images/favicon/favicon-96x96.png" alt="" width="34" height="34" aria-hidden="true" />
       <div>
         <h1>TempleDiary Admin</h1>
         <p>D1 maintenance with JSON publishing</p>
@@ -313,7 +313,11 @@
             </div>
           </div>
           <div class="filter-row">
+            <select id="request-state-filter" onchange="loadTempleRequests()">
+              <option value="all">All states</option>
+            </select>
             <select id="request-type-filter" onchange="loadTempleRequests()">
+              <option value="">All request types</option>
               <option value="submission">Submission requests</option>
               <option value="correction">Correction requests</option>
               <option value="deletion">Deletion requests</option>
@@ -328,7 +332,7 @@
           <div class="table-wrap">
             <table>
               <thead>
-                <tr><th>Received</th><th>Type</th><th>Temple</th><th>Submitter</th><th>Admin Label</th><th>Current DB</th><th>Public JSON</th><th>Request Changes</th><th>Actions</th></tr>
+                <tr><th>Received</th><th>State</th><th>Type</th><th>Temple</th><th>Submitter</th><th>Admin Label</th><th>Current DB</th><th>Public JSON</th><th>Request Changes</th><th>Actions</th></tr>
               </thead>
               <tbody id="request-body"></tbody>
             </table>
@@ -351,6 +355,7 @@
             <div class="field"><label for="request-detail-deity">Deity</label><input id="request-detail-deity" /></div>
             <div class="field"><label for="request-detail-district">District</label><input id="request-detail-district" /></div>
             <div class="field"><label for="request-detail-location">Location</label><input id="request-detail-location" /></div>
+            <div class="field full"><label for="request-detail-map-link">Google Maps Link</label><input id="request-detail-map-link" /></div>
             <div class="field"><label for="request-detail-lat">Latitude</label><input id="request-detail-lat" type="number" step="any" /></div>
             <div class="field"><label for="request-detail-lng">Longitude</label><input id="request-detail-lng" type="number" step="any" /></div>
             <div class="field"><label for="request-detail-timing">Timing</label><input id="request-detail-timing" /></div>

@@ -221,7 +221,7 @@ async function approveSubmission(env, requestData, label, decidedBy) {
     requestData.submittedBy || cleanText(payload['Submitted By'] || payload.name),
     payload.receivedAt || requestData.createdAt || new Date().toISOString(),
     decidedBy,
-    cleanText(payload.SourceUrl || payload.sourceUrl || payload['Source URL']),
+    cleanText(payload.SourceUrl || payload.sourceUrl || payload['Source URL'] || payload['Google Maps Link'] || payload.googleMapsLink),
     JSON.stringify(payload)
   ).run();
 }
@@ -241,7 +241,7 @@ async function approveCorrection(env, requestData, label, decidedBy) {
   copyText(updates, 'timing', payload.Timing || payload.timing);
   copyText(updates, 'phone', payload.Phone || payload.phone);
   copyText(updates, 'description', payload.Description || payload.description);
-  copyText(updates, 'source_url', payload.SourceUrl || payload.sourceUrl || payload['Source URL']);
+  copyText(updates, 'source_url', payload.SourceUrl || payload.sourceUrl || payload['Source URL'] || payload['Google Maps Link'] || payload.googleMapsLink);
 
   if (payload.Famous !== undefined || payload.famous !== undefined) {
     updates.famous = isTruthy(payload.Famous || payload.famous) ? 1 : 0;
@@ -425,7 +425,7 @@ function mergeRawCorrection(raw, payload) {
   });
 
   if (payload.Tags || payload.tags) raw.tags = parseTags(payload.Tags || payload.tags);
-  if (payload['Google Maps Link']) raw.googleMapsCorrection = cleanText(payload['Google Maps Link']);
+  if (payload['Google Maps Link'] || payload.googleMapsLink) raw.googleMapsCorrection = cleanText(payload['Google Maps Link'] || payload.googleMapsLink);
   if (payload.Message || payload.message) raw.lastCorrectionNote = cleanText(payload.Message || payload.message);
 }
 

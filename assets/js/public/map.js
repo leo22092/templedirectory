@@ -218,7 +218,7 @@ document.getElementById('clear-map-filters')?.addEventListener('click', () => {
 
 /* ── 10. PAGE TITLE & HEADING ─────────────────────────── */
 const stateLabel = activeConfig.label || 'India';
-document.title = `${stateLabel} Temple Map — BharatDevasthanam`;
+document.title = `${stateLabel} Temple Map — TempleDiary`;
 
 const pageHeading = document.getElementById('map-page-title');
 if (pageHeading) pageHeading.textContent = `${stateLabel} Temple Map`;

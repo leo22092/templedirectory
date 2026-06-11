@@ -10,6 +10,7 @@
     const FIELD_ORDER = ['id','name','deity','district','location','lat','lng','timing','phone','description','famous','status','adminLabel','tags','dressCode','photography','nearestBus','nearestRail','famousFor','sourceUrl'];
     const app = {
       activeState: localStorage.getItem('td_admin_active_state') || 'kerala',
+      requestState: localStorage.getItem('td_admin_request_state') || 'all',
       configs: loadStateConfigs(),
       data: {},
       defaults: {},
@@ -48,6 +49,7 @@
     async function init() {
       await loadD1StateConfigs();
       renderStateSelect();
+      renderRequestStateSelect();
       await loadAllStates();
       switchState(app.activeState, false);
       showSection('overview');
@@ -171,6 +173,18 @@
         return `<option value="${esc(key)}">${esc(cfg.label || key)}${count}</option>`;
       }).join('');
       select.value = app.activeState;
+    }
+
+    function renderRequestStateSelect() {
+      const select = document.getElementById('request-state-filter');
+      if (!select) return;
+      const options = [
+        '<option value="all">All states</option>',
+        ...Object.entries(app.configs).map(([key, cfg]) => `<option value="${esc(key)}">${esc(cfg.label || key)}</option>`)
+      ];
+      select.innerHTML = options.join('');
+      if (app.requestState !== 'all' && !app.configs[app.requestState]) app.requestState = 'all';
+      select.value = app.requestState;
     }
 
     function switchState(key, rerender = true) {
@@ -450,16 +464,16 @@
 
     async function loadTempleRequests() {
       const body = document.getElementById('request-body');
-        if (body) body.innerHTML = `<tr><td colspan="9" class="muted">Loading requests...</td></tr>`;
-      const type = document.getElementById('request-type-filter')?.value || 'submission';
+      if (body) body.innerHTML = `<tr><td colspan="10" class="muted">Loading requests...</td></tr>`;
+      const stateFilter = document.getElementById('request-state-filter')?.value || app.requestState || 'all';
+      const type = document.getElementById('request-type-filter')?.value || '';
       const status = document.getElementById('request-status-filter')?.value || 'pending';
+      app.requestState = stateFilter;
+      localStorage.setItem('td_admin_request_state', stateFilter);
       try {
-        const params = new URLSearchParams({
-          state: app.activeState,
-          type,
-          status,
-          limit: '100'
-        });
+        const params = new URLSearchParams({ status, limit: '200' });
+        if (stateFilter !== 'all') params.set('state', stateFilter);
+        if (type) params.set('type', type);
         const res = await fetch(`/api/temple-requests?${params.toString()}`, {
           cache: 'no-store',
           headers: adminHeaders()
@@ -470,7 +484,7 @@
         renderTempleRequests();
       } catch (err) {
         app.templeRequests = [];
-        if (body) body.innerHTML = `<tr><td colspan="9" class="muted">Could not load requests: ${esc(err.message)}</td></tr>`;
+        if (body) body.innerHTML = `<tr><td colspan="10" class="muted">Could not load requests: ${esc(err.message)}</td></tr>`;
       }
     }
 
@@ -485,6 +499,7 @@
         return `
           <tr>
             <td>${esc(formatDate(req.createdAt))}</td>
+            <td>${esc(labelFromStateKey(req.state || ''))}</td>
             <td>${statusPill(req.requestType)}</td>
             <td class="name-cell">${esc(payload.Temple || payload.temple || current.name || '')}<div class="muted">D1 ${esc(req.templeId || '')} JSON ${esc(req.sourceJsonId || '')}</div></td>
             <td>${esc(req.submittedBy || payload['Submitted By'] || '')}<div class="muted">${esc(req.submitterEmail || payload['Submitter Email'] || '')}</div></td>
@@ -495,7 +510,7 @@
             <td><div class="row-actions">${requestActionButtons(req)}</div></td>
           </tr>
         `;
-      }).join('') || `<tr><td colspan="9" class="muted">No matching requests.</td></tr>`;
+      }).join('') || `<tr><td colspan="10" class="muted">No matching requests.</td></tr>`;
     }
 
     function requestActionButtons(req) {
@@ -567,6 +582,7 @@
       setValue('request-detail-deity', payload.Deity || payload.deity || '');
       setValue('request-detail-district', payload.District || payload.district || '');
       setValue('request-detail-location', payload.Location || payload.location || '');
+      setValue('request-detail-map-link', payload['Google Maps Link'] || payload.googleMapsLink || payload.googleMapsCorrection || '');
       setValue('request-detail-lat', payload.Latitude || payload.lat || '');
       setValue('request-detail-lng', payload.Longitude || payload.lng || '');
       setValue('request-detail-timing', payload.Timing || payload.timing || '');
@@ -615,6 +631,15 @@
       payload.Deity = val('request-detail-deity');
       payload.District = val('request-detail-district');
       payload.Location = val('request-detail-location');
+      const googleMapsLink = val('request-detail-map-link');
+      if (googleMapsLink) {
+        payload['Google Maps Link'] = googleMapsLink;
+        payload.googleMapsLink = googleMapsLink;
+      } else {
+        delete payload['Google Maps Link'];
+        delete payload.googleMapsLink;
+        delete payload.googleMapsCorrection;
+      }
       payload.Latitude = val('request-detail-lat');
       payload.Longitude = val('request-detail-lng');
       payload.Timing = val('request-detail-timing');

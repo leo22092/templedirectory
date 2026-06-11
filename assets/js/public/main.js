@@ -825,6 +825,18 @@
     submitOverlay.addEventListener('click', e => { if (e.target === submitOverlay) closeSubmitModal(); });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSubmitModal(); });
     submitOverlay.querySelector('.submit-form').addEventListener('submit', handleSubmit);
+    submitOverlay.querySelector('#sf-location').addEventListener('input', handleSubmitLocationInput);
+    submitOverlay.querySelector('#sf-location').addEventListener('change', handleSubmitLocationInput);
+  }
+
+  function handleSubmitLocationInput() {
+    const location = submitOverlay.querySelector('#sf-location')?.value || '';
+    const coords = parseMapLinkCoordinates(location);
+    if (!coords) return;
+    const latInput = submitOverlay.querySelector('#sf-lat');
+    const lngInput = submitOverlay.querySelector('#sf-lng');
+    if (latInput && !latInput.value.trim()) latInput.value = coords.lat.toFixed(6);
+    if (lngInput && !lngInput.value.trim()) lngInput.value = coords.lng.toFixed(6);
   }
 
   function openSubmitModal(t) {
@@ -1187,6 +1199,10 @@
     return Number.isFinite(lat) && Number.isFinite(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
   }
 
+  function looksLikeMapLink(value) {
+    return /(?:google\.[a-z.]+\/maps|maps\.app\.goo\.gl|goo\.gl\/maps)/i.test(String(value || ''));
+  }
+
   async function handleCorrectionSubmit(e) {
     e.preventDefault();
 
@@ -1343,7 +1359,9 @@ async function handleSubmit(e) {
   formData.append('Temple', temple);
   formData.append('Deity', submitOverlay.querySelector('#sf-deity').value.trim());
   formData.append('District', submitOverlay.querySelector('#sf-district').value.trim());
-  formData.append('Location', submitOverlay.querySelector('#sf-location').value.trim());
+  const submittedLocation = submitOverlay.querySelector('#sf-location').value.trim();
+  formData.append('Location', submittedLocation);
+  if (looksLikeMapLink(submittedLocation)) formData.append('Google Maps Link', submittedLocation);
   formData.append('Latitude', submitOverlay.querySelector('#sf-lat').value.trim());
   formData.append('Longitude', submitOverlay.querySelector('#sf-lng').value.trim());
   formData.append('Phone', submitOverlay.querySelector('#sf-phone').value.trim());
@@ -1449,6 +1467,7 @@ async function handleSubmit(e) {
       ['Deity', submitOverlay.querySelector('#sf-deity').value.trim()],
       ['District', submitOverlay.querySelector('#sf-district').value.trim()],
       ['Location', submitOverlay.querySelector('#sf-location').value.trim()],
+      ['Google Maps Link', looksLikeMapLink(submitOverlay.querySelector('#sf-location').value.trim()) ? submitOverlay.querySelector('#sf-location').value.trim() : ''],
       ['Latitude', submitOverlay.querySelector('#sf-lat').value.trim()],
       ['Longitude', submitOverlay.querySelector('#sf-lng').value.trim()],
       ['Phone', submitOverlay.querySelector('#sf-phone').value.trim()],
