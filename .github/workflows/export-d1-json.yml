@@ -1,0 +1,61 @@
+name: Export D1 to JSON
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 18 * * *" # daily 00:00 IST
+
+permissions:
+  contents: write
+
+concurrency:
+  group: export-d1-json
+  cancel-in-progress: false
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      TEMPLE_D1_DATABASE: ${{ vars.TEMPLE_D1_DATABASE || 'temple_diary_db' }}
+      WRANGLER_SEND_METRICS: "false"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install Wrangler
+        run: npm install --no-save wrangler
+
+      - name: Export D1 to JSON
+        run: node scripts/export-d1-to-json.mjs --write --yes --remote
+
+      - name: Validate JSON output
+        run: |
+          node -e "const fs=require('fs'); for (const f of fs.readdirSync('data').filter(f=>f.endsWith('.json'))) JSON.parse(fs.readFileSync('data/'+f,'utf8'));"
+          git diff --check -- data
+
+      - name: Show changed data files
+        run: git status --short data
+
+      - name: Commit and push if changed
+        run: |
+          if [ -z "$(git status --porcelain data)" ]; then
+            echo "No data changes."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add data/*.json
+          git commit -m "Publish D1 temple data"
+          git push

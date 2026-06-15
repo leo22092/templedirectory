@@ -1,11 +1,12 @@
 User-agent: *
 Allow: /
+Disallow: /admin/
+Disallow: /draft/
+Disallow: /login.html
+Disallow: /dashboard.html
 
 Sitemap: https://www.templediary.in/sitemap.xml
 
-# Block any admin or private paths (add as needed)
-Disallow: /admin/
-Disallow: /draft/
 User-agent: GPTBot
 Disallow: /
 

@@ -86,3 +86,22 @@ git add data/*.json
 git commit -m "Publish D1 temple data"
 git push
 ```
+
+## GitHub Actions Automation
+
+The workflow `.github/workflows/export-d1-json.yml` publishes D1 data to `data/*.json` automatically.
+
+Required GitHub repository secrets:
+
+```text
+CLOUDFLARE_API_TOKEN
+CLOUDFLARE_ACCOUNT_ID
+```
+
+Optional GitHub repository variable:
+
+```text
+TEMPLE_D1_DATABASE=temple_diary_db
+```
+
+Run it manually from GitHub Actions with **Export D1 to JSON → Run workflow**. It also runs daily at `00:00` IST. The workflow writes the JSON files, validates that every `data/*.json` file parses, and commits only when data files changed.
