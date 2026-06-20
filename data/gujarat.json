@@ -171,6 +171,34 @@
       "dressCode": "Modest traditional dress recommended. Follow temple-specific rules at the entrance.",
       "photography": "Usually restricted inside sanctum areas. Check local signage before taking photos.",
       "sourceUrl": "https://mahesana.nic.in/tourist-place/sun-temple-modhera/"
+    },
+    {
+      "id": 3841,
+      "name": "Ayyappa Temple",
+      "deity": "Lord Ayyappa",
+      "district": "Valsad",
+      "location": "HW9V+57F, Parnera, Gujarat 396020",
+      "lat": 20.567931,
+      "lng": 72.943192,
+      "famous": false,
+      "status": "unverified",
+      "adminLabel": "COMMUNITY SUBMITTED-->shivani",
+      "tags": [],
+      "State": "gujarat",
+      "Request Type": "submission",
+      "Admin Label": "COMMUNITY SUBMITTED",
+      "Temple": "Ayyappa Temple",
+      "Deity": "Lord Ayyappa",
+      "District": "Valsad",
+      "Location": "HW9V+57F, Parnera, Gujarat 396020",
+      "Latitude": "20.567931",
+      "Longitude": "72.943192",
+      "Submitted By": "Shivani",
+      "kind": "temple-submission",
+      "source": "submit-modal",
+      "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Mobile Safari/537.36",
+      "receivedAt": "2026-06-16T09:15:24.509Z",
+      "state": "gujarat"
     }
   ]
 }
