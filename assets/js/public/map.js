@@ -76,6 +76,17 @@ function populateDropdowns() {
 /* ── 7. MARKERS ───────────────────────────────────────── */
 let markers = [];
 
+function updateMapRobotsMeta(districtVal, deityVal, famousVal, searchVal) {
+  const hasFilters = districtVal || deityVal || famousVal || searchVal;
+  let robotsMeta = document.querySelector('meta[name="robots"]');
+  if (!robotsMeta) {
+    robotsMeta = document.createElement('meta');
+    robotsMeta.name = 'robots';
+    document.head.appendChild(robotsMeta);
+  }
+  robotsMeta.content = hasFilters ? 'noindex, follow' : 'index, follow';
+}
+
 function renderMarkers() {
   markers.forEach(m => map.removeLayer(m));
   markers = [];
@@ -84,6 +95,8 @@ function renderMarkers() {
   const deityVal    = (document.getElementById('deity-filter')?.value    || '').trim();
   const famousVal   =  document.getElementById('famous-filter')?.value   || '';
   const searchVal   = (document.getElementById('search-filter')?.value   || '').toLowerCase().trim();
+
+  updateMapRobotsMeta(districtVal, deityVal, famousVal, searchVal);
 
   const filtered = activeTemples.filter(t => {
     const mDist   = !districtVal || t.district === districtVal;
@@ -219,6 +232,11 @@ document.getElementById('clear-map-filters')?.addEventListener('click', () => {
 /* ── 10. PAGE TITLE & HEADING ─────────────────────────── */
 const stateLabel = activeConfig.label || 'India';
 document.title = `${stateLabel} Temple Map — TempleDiary`;
+
+let canonical = document.querySelector('link[rel="canonical"]');
+if (canonical) {
+  canonical.href = `https://www.templediary.in/map.html?state=${selectedState}`;
+}
 
 const pageHeading = document.getElementById('map-page-title');
 if (pageHeading) pageHeading.textContent = `${stateLabel} Temple Map`;

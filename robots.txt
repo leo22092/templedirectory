@@ -4,6 +4,7 @@ Disallow: /admin/
 Disallow: /draft/
 Disallow: /login.html
 Disallow: /dashboard.html
+Disallow: /*?q=*
 
 Sitemap: https://www.templediary.in/sitemap.xml
 

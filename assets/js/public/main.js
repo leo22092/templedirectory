@@ -11,6 +11,7 @@
 
   /* ── JSON data cache: stateKey → merged temple array ── */
   const _dataCache = {};
+  const _pendingSubmissionCache = {};
 
   /**
    * Fetches data/<state>.json if not already cached.
@@ -35,13 +36,72 @@
       const defaults = json._defaults || {};
       const raw      = Array.isArray(json) ? json : (json.temples || []);
 
-      _dataCache[stateKey] = raw.map(t => ({ ...defaults, ...t }));
+      const publishedTemples = raw.map(t => ({ ...defaults, ...t }));
+      const pendingSubmissions = await loadPendingSubmissions(stateKey);
+
+      _dataCache[stateKey] = mergePendingSubmissions(publishedTemples, pendingSubmissions);
     } catch (err) {
       console.warn('TempleDiary: failed to load', cfg.dataFile, err);
       _dataCache[stateKey] = [];
     }
 
     return _dataCache[stateKey];
+  }
+
+  async function loadPendingSubmissions(stateKey) {
+    if (_pendingSubmissionCache[stateKey]) return _pendingSubmissionCache[stateKey];
+
+    try {
+      const res = await fetch(`/api/public-submissions?state=${encodeURIComponent(stateKey)}`, { cache: 'no-store' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const json = await res.json();
+      _pendingSubmissionCache[stateKey] = Array.isArray(json.submissions) ? json.submissions : [];
+    } catch (err) {
+      console.warn('TempleDiary: failed to load pending public submissions', stateKey, err);
+      _pendingSubmissionCache[stateKey] = [];
+    }
+
+    return _pendingSubmissionCache[stateKey];
+  }
+
+  function invalidateStateData(stateKey) {
+    delete _dataCache[stateKey];
+    delete _pendingSubmissionCache[stateKey];
+  }
+
+  async function refreshActiveStateData(options = {}) {
+    const stateKey = activeState;
+    invalidateStateData(stateKey);
+    const temples = await loadStateData(stateKey);
+    if (stateKey !== activeState) return;
+
+    const cfg = STATE_REGISTRY[stateKey];
+    if (cfg) {
+      if (statTemples) statTemples.textContent = formatTempleStat(temples.length, cfg.statTemples);
+      if (statDistricts) statDistricts.textContent = formatDistrictStat(temples, cfg.statDistricts);
+    }
+
+    populateFilters(temples);
+    populateChips(temples);
+    if (options.resetFilters) resetDirectoryFilters();
+    syncChips();
+    render();
+    updateHeroSuggestions();
+  }
+
+  function mergePendingSubmissions(publishedTemples, pendingSubmissions) {
+    if (!pendingSubmissions.length) return publishedTemples;
+
+    const publishedKeys = new Set(
+      publishedTemples.map(t => `${lower(t.name)}|${lower(t.district)}|${lower(t.location)}`)
+    );
+
+    const uniquePending = pendingSubmissions.filter(t => {
+      const key = `${lower(t.name)}|${lower(t.district)}|${lower(t.location)}`;
+      return !publishedKeys.has(key);
+    });
+
+    return [...uniquePending, ...publishedTemples];
   }
 
   /** Convenience: get already-loaded data synchronously (empty array if not loaded yet) */
@@ -192,6 +252,13 @@
     const cfg = STATE_REGISTRY[stateKey];
     if (!cfg) return;
     activeState = stateKey;
+
+    // SEO Updates
+    document.title = `${cfg.label} Temple Directory | TempleDiary`;
+    let canonical = document.querySelector('link[rel="canonical"]');
+    if (canonical) {
+      canonical.href = `https://www.templediary.in/?state=${stateKey}`;
+    }
 
     // Update tab UI
     document.querySelectorAll('.state-tab[data-state]').forEach(t => {
@@ -502,6 +569,17 @@
   /* ══════════════════════════
      RENDER
   ══════════════════════════ */
+  function updateRobotsMeta() {
+    const hasFilters = state.query || state.district || state.deity || state.sort !== 'name' || state.page > 1;
+    let robotsMeta = document.querySelector('meta[name="robots"]');
+    if (!robotsMeta) {
+      robotsMeta = document.createElement('meta');
+      robotsMeta.name = 'robots';
+      document.head.appendChild(robotsMeta);
+    }
+    robotsMeta.content = hasFilters ? 'noindex, follow' : 'index, follow';
+  }
+
   function render() {
     const filtered = getFiltered();
     const total    = filtered.length;
@@ -509,6 +587,8 @@
     state.page     = Math.min(state.page, pages);
     const start    = (state.page - 1) * PER_PAGE;
     const slice    = filtered.slice(start, start + PER_PAGE);
+
+    updateRobotsMeta();
 
     if (countEl) countEl.textContent = total.toLocaleString();
     if (!grid) return;
@@ -528,7 +608,7 @@
   ══════════════════════════ */
   function buildCard(t, idx) {
     const div = document.createElement('article');
-    div.className = 'temple-card';
+    div.className = `temple-card${t.isPendingSubmission ? ' temple-card-pending' : ''}`;
     div.setAttribute('role', 'listitem');
     div.style.animationDelay = `${idx * 0.04}s`;
     div.setAttribute('tabindex', '0');
@@ -538,6 +618,7 @@
       ${buildStatusLabel(t)}
       <div class="card-deity">${escHtml(t.deity || 'Temple')}</div>
       <h3 class="card-name">${escHtml(t.name || 'Unnamed temple')}</h3>
+      ${t.submittedBy ? `<p class="card-submitter">Submitted by ${escHtml(t.submittedBy)}</p>` : ''}
       <p class="card-desc">${escHtml(t.description || '')}</p>
       <div class="card-meta">
         <div class="card-meta-row">${iconLocation()}<span>${escHtml(t.location)}</span></div>
@@ -572,6 +653,11 @@
      CLEAR FILTERS
   ══════════════════════════ */
   function clearFilters() {
+    resetDirectoryFilters();
+    render();
+  }
+
+  function resetDirectoryFilters() {
     state.query = ''; state.district = ''; state.deity = ''; state.sort = 'name'; state.page = 1;
     if (filterSearch) filterSearch.value = '';
     if (filterDist)   filterDist.value   = '';
@@ -579,7 +665,6 @@
     if (sortSelect)   sortSelect.value   = 'name';
     if (heroSearch)   heroSearch.value   = '';
     if (distChips) distChips.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-    render();
   }
 
   /* ══════════════════════════
@@ -654,6 +739,7 @@
       ['District',    t.district],
       ['Timings',     t.timing],
       ['Phone',       t.phone ? `<a href="tel:${escHtml(t.phone)}">${escHtml(t.phone)}</a>` : null],
+      ['Submitted By', t.submittedBy],
       ['Dress Code',  t.dressCode],
       ['Photography', t.photography],
       ['Nearest Bus', t.nearestBus],
@@ -693,8 +779,10 @@
   function buildStatusLabel(t) {
     const status = String(t.status || '').trim().toLowerCase();
     const adminLabel = String(t.adminLabel || t.admin_label || '').trim();
-    if (!status && !adminLabel) return '';
-    const label = adminLabel || status.replace(/_/g, ' ');
+    if (!status && !adminLabel && !t.isPendingSubmission) return '';
+    const label = t.isPendingSubmission
+      ? 'Community submitted · Unverified'
+      : (adminLabel || status.replace(/_/g, ' '));
     const cls = status === 'verified'
       ? 'status-verified'
       : (status === 'needs_review' ? 'status-needs-review' : 'status-unverified');
@@ -1403,7 +1491,12 @@ async function handleSubmit(e) {
       throw formSubmitResult.error || workerResult.error || new Error('Submission failed.');
     }
 
-    showMsg(msg, 'success', '✅ Thank you! Your submission has been sent.');
+    if (!isCorrection && workerResult.ok) {
+      await refreshActiveStateData({ resetFilters: true });
+      showMsg(msg, 'success', '✅ Thank you! Your temple is now listed as Community submitted · Unverified.');
+    } else {
+      showMsg(msg, 'success', '✅ Thank you! Your submission has been sent.');
+    }
 
     setTimeout(() => {
       closeSubmitModal();
