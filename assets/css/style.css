@@ -366,7 +366,7 @@ header {
   padding: 5rem 1.5rem 4rem;
   text-align: center;
   position: relative;
-  overflow: hidden;
+  overflow: visible; /* must be visible so search dropdown escapes */
 }
 .hero::before {
   content: '';
@@ -441,7 +441,7 @@ header {
   top: calc(100% + 8px);
   left: 0;
   right: 0;
-  z-index: 20;
+  z-index: 1100; /* above hero, welfare banner, and state switcher */
   max-height: min(360px, 56vh);
   overflow-y: auto;
   background: #fff;
