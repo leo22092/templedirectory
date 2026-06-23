@@ -129,9 +129,21 @@ const FOOT = `<footer><div class="container footer-inner">
 <div class="footer-bottom"><p>&copy; ${new Date().getFullYear()} TempleDiary. All rights reserved.</p></div>
 </footer><script>document.getElementById('nt').addEventListener('click',function(){const o=this.getAttribute('aria-expanded')==='true';this.setAttribute('aria-expanded',String(!o));document.getElementById('nm').classList.toggle('open',!o);});</script>`;
 
-function page({ title, desc, canonical, bc, h1, body, schema }) {
+function page({ title, desc, canonical, bc, h1, body, schema, spaLink }) {
   const bcHtml = bc.map((b, i) => i < bc.length - 1 ? `<a href="${b.url}">${esc(b.label)}</a>` : `<span>${esc(b.label)}</span>`).join(' › ');
   const sd = schema ? `<script type="application/ld+json">${JSON.stringify(schema)}</script>` : '';
+  
+  const interactiveBanner = spaLink ? `
+  <div style="background:#fffcf2;border:1px solid #e2c07a;border-radius:12px;padding:16px 20px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;box-shadow:0 4px 12px rgba(0,0,0,0.05);">
+    <div style="flex:1;min-width:240px;">
+      <h3 style="margin:0 0 4px;font-size:1.1rem;color:#7b1c1c;">Unlock the Full Experience</h3>
+      <p style="margin:0;font-size:0.9rem;color:#6b5b4b;">You are viewing the text-only directory. Switch to the interactive app for the map, advanced filters, and to submit temples.</p>
+    </div>
+    <a href="${spaLink}" style="background:#7b1c1c;color:#fff;padding:10px 20px;border-radius:999px;text-decoration:none;font-weight:700;font-size:0.95rem;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;">
+      ✨ Open Interactive Map
+    </a>
+  </div>` : '';
+
   return `<!DOCTYPE html><html lang="en"><head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>${esc(title)}</title><meta name="description" content="${esc(desc)}"/>
@@ -143,7 +155,7 @@ function page({ title, desc, canonical, bc, h1, body, schema }) {
 </head><body>${NAV}
 <div class="td-s"><div class="td-bc">${bcHtml}</div></div>
 <div class="td-hero"><div class="td-s"><h1>${h1}</h1><p>${esc(desc)}</p></div></div>
-<div class="td-s">${body}</div>
+<div class="td-s">${interactiveBanner}${body}</div>
 ${FOOT}</body></html>`;
 }
 
@@ -158,10 +170,17 @@ function cards(temples) {
   return `<div class="td-grid">${temples.map(t => {
     const name = t.name || t.Temple || 'Unknown';
     const hasPage = hasOwnPage(t);
-    const href = hasPage ? `/temples/${t._state}/${t._districtSlug}/${templeSlug(t)}/` : null;
+    const slug = templeSlug(t);
+    
+    // SEO link for rich temples, fallback SPA link for thin temples
+    const href = hasPage ? `/temples/${t._state}/${t._districtSlug}/${slug}/` : `/?state=${t._state}&temple=${slug}`;
+    
+    // Humans click: always go to SPA
+    const onclick = `window.location.href='/?state=${t._state}&temple=${slug}'; return false;`;
+
     return `<div class="td-card">
 ${t.famous ? '<span class="td-fam">⭐ Famous</span>' : ''}
-<h3>${href ? `<a href="${href}">${esc(name)}</a>` : esc(name)}</h3>
+<h3><a href="${href}" onclick="${onclick}">${esc(name)}</a></h3>
 <div class="td-meta">
 ${t._deity ? `<span>🙏 ${esc(t._deity)}</span>` : ''}
 ${t._district ? `<span>📍 ${esc(t._district)}</span>` : ''}
@@ -224,6 +243,7 @@ for (const [sk, temples] of Object.entries(stateMap)) {
     title: `Temples in ${cfg.label} | TempleDiary`,
     desc: `Explore ${temples.length} Hindu temples in ${cfg.label}. Browse by district or deity with timings and contact info.`,
     canonical: `${BASE_URL}/temples/${sk}/`,
+    spaLink: `/?state=${sk}`,
     bc: [{ label: 'Home', url: '/' }, { label: 'Temples', url: '/temples/' }, { label: cfg.label, url: `/temples/${sk}/` }],
     h1: `${cfg.icon} Temples in ${cfg.label}`,
     body: `<div class="td-sh"><h2>Browse by District</h2></div><div class="td-chips">${distChips || '<p>Coming soon</p>'}</div>
@@ -249,6 +269,7 @@ for (const [sk, dists] of Object.entries(districtMap)) {
       title: `Temples in ${dn}, ${stLabel} | TempleDiary`,
       desc: `Find ${temples.length} Hindu temples in ${dn} district, ${stLabel}.`,
       canonical: `${BASE_URL}/temples/${sk}/${ds}/`,
+      spaLink: `/?state=${sk}&q=${encodeURIComponent(dn)}`,
       bc: [{ label: 'Home', url: '/' }, { label: stLabel, url: `/temples/${sk}/` }, { label: dn, url: `/temples/${sk}/${ds}/` }],
       h1: `Temples in ${dn}`,
       body: `${dyC ? `<div class="td-sh"><h2>Filter by Deity</h2></div><div class="td-chips">${dyC}</div>` : ''}
@@ -270,6 +291,7 @@ for (const [dySlug, { name: dyName, byState }] of Object.entries(deityMap)) {
       title: `${dyName} Temples in ${stLabel} | TempleDiary`,
       desc: `Find all ${temples.length} ${dyName} temples in ${stLabel} with timings and travel info.`,
       canonical: `${BASE_URL}/temples/${sk}/deity/${dySlug}/`,
+      spaLink: `/?state=${sk}&q=${encodeURIComponent(dyName)}`,
       bc: [{ label: 'Home', url: '/' }, { label: stLabel, url: `/temples/${sk}/` }, { label: `${dyName} Temples`, url: `/temples/${sk}/deity/${dySlug}/` }],
       h1: `${dyName} Temples in ${stLabel}`,
       body: `<div class="td-sh"><h2>All ${esc(dyName)} Temples (${temples.length})</h2></div>${cards(temples)}
@@ -294,6 +316,7 @@ for (const [dySlug, { name: dyName, temples }] of Object.entries(globalDeity)) {
     title: `${dyName} Temples in India | TempleDiary`,
     desc: `Complete list of ${temples.length} ${dyName} temples across India. Browse by state.`,
     canonical: `${BASE_URL}/deity/${dySlug}/`,
+    spaLink: `/?q=${encodeURIComponent(dyName)}`,
     bc: [{ label: 'Home', url: '/' }, { label: 'Temples', url: '/temples/' }, { label: `${dyName} Temples`, url: `/deity/${dySlug}/` }],
     h1: `🙏 ${dyName} Temples in India`,
     body: `<div class="td-sh"><h2>Browse by State</h2></div><div class="td-chips">${stChips}</div>

@@ -170,7 +170,7 @@
   function init() {
     if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-    // Read ?state= or ?q= from URL
+    // Read ?state= or ?q= or ?temple= from URL
     const params = new URLSearchParams(window.location.search);
     if (params.get('state') && STATE_REGISTRY[params.get('state')]) {
       activeState = params.get('state');
@@ -186,7 +186,22 @@
     renderStateTabs();
     initStateTabs();
     showGridLoader();
-    loadStateData(activeState).then(() => applyState(activeState, false)); // false = don't push history on first load
+    loadStateData(activeState).then((temples) => {
+      applyState(activeState, false); // false = don't push history on first load
+      
+      // Auto-open temple modal if ?temple= is present
+      const templeParam = params.get('temple');
+      if (templeParam) {
+        // Find temple by comparing generated slug (ignoring the random ID suffix for robustness)
+        const target = temples.find(t => {
+           const slugBase = (t.name || t.Temple || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+           return templeParam.startsWith(slugBase);
+        });
+        if (target) {
+          setTimeout(() => openModal(target), 100);
+        }
+      }
+    });
     initFilterListeners();
     initHeroSearch();
     initBackToTop();
