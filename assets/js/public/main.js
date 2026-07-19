@@ -884,7 +884,11 @@
               </div>
               <div class="sf-group">
                 <label for="sf-temple">Temple name <span class="sf-req">*</span></label>
-                <input type="text" id="sf-temple" name="Temple" placeholder="Temple name" required />
+                <input type="text" id="sf-temple" name="Temple" placeholder="Temple name" autocomplete="off" required />
+                <div id="sf-duplicate-warning" class="sf-duplicate-warning" hidden style="font-size:0.85rem; color:#856404; background:#fff3cd; border:1px solid #ffeeba; padding:10px; border-radius:6px; margin-top:8px;">
+                  <strong>⚠️ Found similar temples. Is it one of these?</strong><br/>
+                  <div style="margin-top:6px; display:flex; flex-direction:column; gap:4px;" id="sf-dup-list"></div>
+                </div>
               </div>
             </div>
             <div class="sf-row">
@@ -997,6 +1001,54 @@
     submitOverlay.querySelector('.submit-form').addEventListener('submit', handleSubmit);
     submitOverlay.querySelector('#sf-location').addEventListener('input', handleSubmitLocationInput);
     submitOverlay.querySelector('#sf-location').addEventListener('change', handleSubmitLocationInput);
+    submitOverlay.querySelector('#sf-temple').addEventListener('input', debounce(handleDuplicateCheck, 400));
+  }
+
+  async function handleDuplicateCheck(e) {
+    if (submitKind !== 'temple-submission') return;
+    const val = e.target.value.trim().toLowerCase();
+    const warning = submitOverlay.querySelector('#sf-duplicate-warning');
+    if (!warning) return;
+    
+    if (val.length < 4) {
+      warning.hidden = true;
+      return;
+    }
+
+    try {
+      const indexData = await loadStateData('all-india');
+      const matches = indexData.filter(t => (t.name || '').toLowerCase().includes(val)).slice(0, 3);
+      
+      if (matches.length > 0) {
+        const list = warning.querySelector('#sf-dup-list');
+        list.innerHTML = '';
+        matches.forEach(t => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.style.cssText = 'text-align:left; background:rgba(255,255,255,0.7); border:1px solid #ffeeba; padding:6px 10px; border-radius:4px; font-size:0.85rem; cursor:pointer; color:#7B1C1C;';
+          const stateName = STATE_REGISTRY[t.state]?.label || t.state;
+          btn.innerHTML = `<strong>${escHtml(t.name)}</strong><br><span style="font-size:0.8rem; color:#5b4631;">${escHtml(t.place || '')}, ${escHtml(stateName)}</span>`;
+          btn.addEventListener('click', () => {
+            const msg = submitOverlay.querySelector('#sf-msg');
+            if (msg) showMsg(msg, 'success', 'Switching to correction form...');
+            warning.hidden = true;
+            loadStateData(t.state).then(temples => {
+              const fullTemple = temples.find(x => String(x.id) === String(t.id));
+              if (fullTemple) {
+                closeSubmitModal();
+                openSubmitModal(fullTemple);
+              }
+            });
+          });
+          list.appendChild(btn);
+        });
+        warning.hidden = false;
+      } else {
+        warning.hidden = true;
+      }
+    } catch (err) {
+      console.warn('Duplicate check failed', err);
+    }
   }
 
   function handleSubmitLocationInput() {
@@ -1013,6 +1065,9 @@
     submitSourceTemple = t || null;
     submitKind = t ? 'temple-correction' : 'temple-submission';
     clearSubmitForm();
+    const warning = submitOverlay.querySelector('#sf-duplicate-warning');
+    if (warning) warning.hidden = true;
+    
     submitOverlay.querySelector('.modal-name').textContent = t ? 'Suggest Correction' : 'Suggest/Add Temple';
     submitOverlay.setAttribute('aria-label', t ? 'Submit temple correction' : 'Submit missing temple');
 

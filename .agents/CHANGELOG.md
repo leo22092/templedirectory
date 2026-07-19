@@ -19,6 +19,21 @@ actor, date, and a clear description of _what_ changed and _why_.
 
 ---
 
+## [2026-07-19] – Live Duplicate Deflector in Submit Form
+**Actor:** Antigravity (AI Agent)
+**Files Changed:**
+- `assets/js/public/main.js`
+
+**Why:**
+- Prevent duplicate submissions from users who did not search before adding a temple.
+- A popup asking "Did you search first?" is often ignored. Live type-ahead interception is much more effective.
+
+**What:**
+- Added a `keyup`/`input` listener to the Temple Name field in the Submit Form.
+- When the user types >= 4 characters, it queries the lightweight `index.json` in the background.
+- If matches are found, a yellow warning box appears below the input: *"⚠️ Found similar temples. Is it one of these?"*
+- Clicking a match automatically switches the modal from "Add New" to "Suggest Correction" for that exact temple, completely deflecting the duplicate into a helpful correction.
+
 ## [2026-07-19] – Standalone Submit Guide Page (`submit.html`)
 **Actor:** Antigravity (AI Agent)
 **Files Changed:**
