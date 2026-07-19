@@ -202,7 +202,7 @@ function copyDir(src, dst) {
   }
 }
 mkdirp(DIST);
-for (const f of ['index.html', 'map.html', 'about.html', 'contact.html', 'festivals.html', 'login.html', 'dashboard.html', 'privacy.html', 'terms.html', 'submit.html', 'robots.txt']) {
+for (const f of ['index.html', 'map.html', 'about.html', 'contact.html', 'festivals.html', 'login.html', 'dashboard.html', 'privacy.html', 'terms.html', 'submit.html', 'disclaimer.html', 'robots.txt']) {
   const src = path.join(ROOT, f);
   if (fs.existsSync(src)) fs.copyFileSync(src, path.join(DIST, f));
 }
@@ -434,7 +434,8 @@ for (const [dySlug, { temples: dt }] of Object.entries(globalDeity))
 // Individual temple pages in sitemap
 for (const t of allRichTemples)
   urls.push(`<url><loc>${BASE_URL}/temples/${t._state}/${t._districtSlug}/${templeSlug(t)}/</loc><lastmod>${today}</lastmod><priority>0.6</priority></url>`);
-for (const pg of ['map.html', 'festivals.html', 'about.html', 'contact.html', 'submit.html', 'privacy.html', 'terms.html'])
+// Sitemap - Static pages
+for (const pg of ['map.html', 'festivals.html', 'about.html', 'contact.html', 'submit.html', 'disclaimer.html', 'privacy.html', 'terms.html'])
   urls.push(`<url><loc>${BASE_URL}/${pg}</loc><lastmod>${today}</lastmod><priority>0.5</priority></url>`);
 write(`${DIST}/sitemap.xml`, `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join('\n')}\n</urlset>`);
 console.log(`✓ sitemap.xml (${urls.length} URLs)`);

@@ -19,6 +19,21 @@ actor, date, and a clear description of _what_ changed and _why_.
 
 ---
 
+## [2026-07-19] – Created Disclaimer Page
+**Actor:** Antigravity (AI Agent)
+**Files Changed:**
+- `disclaimer.html` (created)
+- `scripts/build-static.mjs` (modified to include disclaimer.html in build/sitemap)
+
+**Why:**
+- The footer in `index.html` already contained a link to `disclaimer.html`, but the page did not exist, leading to a 404.
+- Needed a dedicated page to explicitly state the site's non-commercial nature and warn users against donation scams.
+
+**What:**
+- Created `disclaimer.html` using the existing legal page layout.
+- Added a prominent warning box explaining that TempleDiary does NOT accept donations, fees, or money.
+- Explicitly stated that server costs and the Pauranik welfare pledge are funded purely through ad revenue.
+
 ## [2026-07-19] – Live Duplicate Deflector in Submit Form
 **Actor:** Antigravity (AI Agent)
 **Files Changed:**
