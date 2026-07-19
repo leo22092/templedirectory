@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add a Temple to the Directory — TempleDiary</title>
+  <meta name="description" content="Help preserve our heritage. Follow this simple guide to add your missing temple to the TempleDiary directory." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://www.templediary.in/submit.html" />
+
+  <meta property="og:title" content="Add a Temple — TempleDiary" />
+  <meta property="og:description" content="No temple should fade into oblivion. If your temple is missing, add it to the All-India Temple Directory today in just 3 minutes." />
+  <meta property="og:url" content="https://www.templediary.in/submit.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://www.templediary.in/assets/images/hero-bg.jpg" />
+  <meta property="og:site_name" content="TempleDiary" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Add a Temple — TempleDiary" />
+  <meta name="twitter:description" content="No temple should fade into oblivion. If your temple is missing, add it to the All-India Temple Directory today in just 3 minutes." />
+  <meta name="twitter:image" content="https://www.templediary.in/assets/images/hero-bg.jpg" />
+
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicon/apple-touch-icon.png" />
+  <link rel="manifest" href="/assets/images/favicon/site.webmanifest" />
+  <link rel="stylesheet" href="/assets/css/style.css" />
+
+  <style>
+    /* ── Submit guide page specific ── */
+    .submit-hero {
+      background: linear-gradient(160deg, #1C0A02 0%, #2d1200 55%, #1a3a0a 100%);
+      padding: 4rem 1.5rem 3.5rem;
+      text-align: center;
+      border-bottom: 3px solid var(--gold, #C8932A);
+      position: relative;
+      overflow: hidden;
+    }
+    .submit-hero::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, transparent, var(--gold, #C8932A), #e8832a, var(--gold, #C8932A), transparent);
+    }
+    .submit-hero h1 {
+      font-family: var(--font-display, Georgia, serif);
+      color: #fff;
+      font-size: clamp(2rem, 4.5vw, 3.2rem);
+      margin-bottom: 0.8rem;
+    }
+    .submit-hero p { 
+      color: rgba(255,255,255,0.85); 
+      font-size: 1.1rem; 
+      line-height: 1.7; 
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .submit-body {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 3rem 1.25rem 4rem;
+    }
+
+    .guide-section {
+      background: #fff;
+      border: 1px solid var(--border, rgba(100,60,20,0.18));
+      border-radius: 16px;
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    }
+
+    .guide-section h2 {
+      font-family: var(--font-display, Georgia, serif);
+      font-size: 1.6rem;
+      color: var(--maroon, #7B1C1C);
+      margin-bottom: 1.2rem;
+      border-bottom: 1px solid rgba(123, 28, 28, 0.1);
+      padding-bottom: 0.5rem;
+    }
+
+    .guide-section h3 {
+      font-size: 1.2rem;
+      color: #4a2f0d;
+      margin-top: 1.8rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .guide-section p {
+      font-size: 1.05rem;
+      line-height: 1.7;
+      color: #3d2c1e;
+      margin-bottom: 1rem;
+    }
+
+    .guide-section ul, .guide-section ol {
+      margin-bottom: 1.5rem;
+      padding-left: 1.5rem;
+      color: #3d2c1e;
+      line-height: 1.7;
+      font-size: 1.05rem;
+    }
+
+    .guide-section li {
+      margin-bottom: 0.5rem;
+    }
+
+    .highlight-box {
+      background: #fffaf0;
+      border-left: 4px solid var(--maroon, #7B1C1C);
+      padding: 1.2rem;
+      margin: 1.5rem 0;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .highlight-box strong {
+      color: var(--maroon, #7B1C1C);
+    }
+
+    .guide-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.95rem;
+    }
+    
+    .guide-table th, .guide-table td {
+      border: 1px solid var(--border, rgba(100,60,20,0.18));
+      padding: 1rem;
+      text-align: left;
+    }
+
+    .guide-table th {
+      background: #f4ead2;
+      color: #5b4631;
+      font-weight: 700;
+    }
+
+    .guide-table td:first-child {
+      font-weight: 600;
+      color: var(--maroon, #7B1C1C);
+      width: 30%;
+    }
+
+    .cta-container {
+      text-align: center;
+      margin: 3rem 0 2rem;
+    }
+
+    .btn-submit-large {
+      display: inline-block;
+      background: var(--maroon, #7B1C1C);
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.2rem;
+      padding: 1.2rem 2.5rem;
+      border-radius: 99px;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+      box-shadow: 0 4px 15px rgba(123, 28, 28, 0.3);
+    }
+
+    .btn-submit-large:hover {
+      background: #5f1515;
+      transform: translateY(-2px);
+    }
+
+    .disclaimer {
+      font-size: 0.85rem;
+      color: #6B5040;
+      background: #f9f9f9;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      line-height: 1.5;
+      margin-top: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      .guide-section { padding: 1.5rem; }
+      .guide-table th, .guide-table td { padding: 0.75rem; }
+      .btn-submit-large { width: 100%; box-sizing: border-box; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ HEADER / NAV ═══ -->
+  <header>
+    <nav class="nav-inner" aria-label="Main navigation">
+      <a href="index.html" class="logo" aria-label="TempleDiary home">
+        <img class="logo-mark" src="/assets/images/favicon/favicon-96x96.png" alt="" width="36" height="36" aria-hidden="true" />
+        <span class="logo-text">
+          <span class="logo-main">TempleDiary</span>
+          <span class="logo-sub">India Temple Directory</span>
+        </span>
+      </a>
+      <ul class="nav-links" id="nav-menu" role="list">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="map.html">Map</a></li>
+        <li><a href="festivals.html">Festivals</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- ═══ HERO ═══ -->
+  <section class="submit-hero">
+    <h1>Add Your Temple</h1>
+    <p>No temple should fade into oblivion. Join the effort to preserve the history, traditions, and significance of our sacred spaces.</p>
+  </section>
+
+  <!-- ═══ MAIN CONTENT ═══ -->
+  <main class="submit-body">
+    
+    <div class="guide-section">
+      <h2>🙏 Why This Matters</h2>
+      <p>Every temple carries a sacred history and a spiritual legacy. TempleDiary.in is a community-driven platform dedicated to preserving these stories and sharing them with the world.</p>
+      
+      <p>In Bharat, hundreds of temples were destroyed by invasions — but thousands went into oblivion because of our own negligence and coordinated efforts to disregard and erase our heritage from the minds of the people.</p>
+      
+      <div class="highlight-box">
+        <strong>Now it's our turn to put a full stop to it.</strong>
+        <p style="margin:0; margin-top:0.5rem; font-size:0.95rem;">Join hands in building a comprehensive All-India Temple Directory. It already contains over 3,800 temples. Now it's your chance to keep the legacy of your temple online — visible to the world and future generations.</p>
+      </div>
+
+      <p>We don't need iron pillars or grand encyclopedias to preserve our heritage today. The infrastructure is already in place. All it takes is 3 minutes of your time, and not a single penny.</p>
+    </div>
+
+    <div class="guide-section">
+      <h2>📋 Step-by-Step Guide</h2>
+      
+      <h3>Step 1 &amp; 2 — Check if it's listed</h3>
+      <p>Before adding, search for your temple on the <a href="index.html">homepage</a>. Select your state or use the All India search bar. If it doesn't appear, you're ready to add it.</p>
+
+      <h3>Step 3 — Open the form and fill the details</h3>
+      <p>Click the big red button at the bottom of this page to open the submission form. Here is what you'll need to enter:</p>
+
+      <table class="guide-table">
+        <thead>
+          <tr>
+            <th>Field</th>
+            <th>What to Enter</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Temple Name</td>
+            <td>Full name of the temple (e.g. Pazhavangadi Ganapathy Temple)</td>
+          </tr>
+          <tr>
+            <td>State &amp; District</td>
+            <td>Select the state from the dropdown, and type the district.</td>
+          </tr>
+          <tr>
+            <td>Location</td>
+            <td>The town, village, or a direct Google Maps link.</td>
+          </tr>
+          <tr>
+            <td>Description / History</td>
+            <td>The backstory, history, and significance. <em>This is the most important part — let the whole world know the history of your temple!</em></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Step 4 — Adding Exact Location Coordinates</h3>
+      <p>You have two easy options to provide the exact location:</p>
+      
+      <div style="margin-left: 1rem;">
+        <strong>Option A — You are inside or near the temple 📍</strong>
+        <ul>
+          <li>Simply tick ✅ <em>"I am inside the temple"</em> on the form.</li>
+          <li>It will automatically fetch your location (allow location permission when prompted). That's it!</li>
+        </ul>
+
+        <strong>Option B — You are at home 🗺️</strong>
+        <ol>
+          <li>Open Google Maps on your phone or computer.</li>
+          <li>Find your temple's location on the map.</li>
+          <li>Drop a red pin on the exact location (long press on the spot).</li>
+          <li>You'll see two numbers pop up (for example: <code>8.3569, 78.25978</code>).</li>
+          <li>The first number is Latitude, the second is Longitude. Copy-paste these into the form.</li>
+        </ol>
+      </div>
+
+      <h3>Step 5 — Submit! ✅</h3>
+      <p>Review the details once and hit Submit. Your temple will be reviewed and added to the directory.</p>
+    </div>
+
+    <div class="cta-container">
+      <a href="/?add=temple" class="btn-submit-large">Open Submission Form →</a>
+    </div>
+
+    <div class="guide-section">
+      <h2>🙌 Share This Message</h2>
+      <p>If you've added your temple, share this page and encourage others to do the same. Every temple deserves to be documented. Every story deserves to live on.</p>
+      <p style="font-style: italic; color: #7B1C1C;">"The best time to preserve our heritage was yesterday. The next best time is today."<br>🙏 जय सनातन धर्म 🙏</p>
+    </div>
+
+    <div class="disclaimer">
+      <strong>⚠️ Disclaimer:</strong> TempleDiary.in is a purely community-driven, non-commercial initiative. We do not accept any donations, fees, or money transactions — now or in the future. This is, and will always remain, a completely free platform. If anyone approaches you asking for money in the name of TempleDiary, please do not entertain them — they are not associated with us.
+    </div>
+
+  </main>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer>
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <p class="footer-logo">TempleDiary</p>
+        <p class="footer-tagline">Temples of Incredible India</p>
+      </div>
+      <nav class="footer-links" aria-label="Footer navigation">
+        <div class="footer-col">
+          <h3>Site</h3>
+          <ul role="list">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 TempleDiary. All rights reserved.</p>
+    </div>
+  </footer>
+
+</body>
+</html>

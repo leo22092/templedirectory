@@ -899,8 +899,8 @@
             </div>
             <div class="sf-row">
               <div class="sf-group" style="grid-column: 1 / -1;">
-                <label for="sf-location">Location / Address / Google Maps link</label>
-                <input type="text" id="sf-location" name="Location" placeholder="Town, District, or paste Google Maps link here" />
+                <label for="sf-location">Location / Address / Google Maps link <span class="sf-req">*</span></label>
+                <input type="text" id="sf-location" name="Location" placeholder="Town, District, or paste Google Maps link here" required />
               </div>
             </div>
             <div class="sf-row">
@@ -925,7 +925,7 @@
             </div>
             <div class="sf-group">
               <label for="sf-description">Description</label>
-              <textarea id="sf-description" name="Description" rows="3" placeholder="Brief history and significance..."></textarea>
+              <textarea id="sf-description" name="Description" rows="3" placeholder="What makes this temple special? (e.g. 1000 years old, famous for a specific festival, unique architecture...)"></textarea>
             </div>
             <div class="sf-row">
               <div class="sf-group">
@@ -1522,6 +1522,12 @@ async function handleSubmit(e) {
   const submitState = submitOverlay.querySelector('#sf-state').value;
   if (!submitState) {
     showMsg(msg, 'error', 'Please select a state.');
+    return;
+  }
+
+  const locationVal = submitOverlay.querySelector('#sf-location').value.trim();
+  if (!locationVal) {
+    showMsg(msg, 'error', 'Please provide a location, address, or Google Maps link.');
     return;
   }
 
