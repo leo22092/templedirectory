@@ -5,6 +5,19 @@
   const sourcePath = 'assets/images/sources/';
 
   const states = {
+    'all-india': {
+      label: 'All India',
+      eyebrow: 'Explore Temples Across India',
+      heroSub: 'Search temples across all 29 states — by name, deity, district or location.<br>Timings, contact numbers, travel info and more.',
+      statTemples: '3,800+',
+      statDistricts: '400+',
+      mapLabel: 'Explore All India Map',
+      heroImage: fallbackHero,
+      dataFile: null,
+      bodyClass: 'state-all-india',
+      icon: '🇮🇳',
+      view: { center: [22.5, 80.0], zoom: 5 },
+    },
     'kerala': {
       label: 'Kerala',
       eyebrow: "God's Own Country",
@@ -385,7 +398,7 @@
   };
 
   window.TD_STATES = Object.freeze({
-    defaultState: 'kerala',
+    defaultState: 'all-india',
     registry: states,
     keys: Object.freeze(Object.keys(states)),
   });

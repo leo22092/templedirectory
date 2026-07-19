@@ -24,6 +24,18 @@
   async function loadStateData(stateKey) {
     if (_dataCache[stateKey]) return _dataCache[stateKey];
 
+    if (stateKey === 'all-india') {
+      try {
+        const res = await fetch('data/index.json');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        _dataCache[stateKey] = await res.json();
+      } catch (err) {
+        console.warn('TempleDiary: failed to load data/index.json', err);
+        _dataCache[stateKey] = [];
+      }
+      return _dataCache[stateKey];
+    }
+
     const cfg = STATE_REGISTRY[stateKey];
     if (!cfg || !cfg.dataFile) return [];
 
@@ -269,10 +281,25 @@
     activeState = stateKey;
 
     // SEO Updates
-    document.title = `${cfg.label} Temple Directory | TempleDiary`;
+    document.title = stateKey === 'all-india' 
+      ? `India Temple Directory | TempleDiary` 
+      : `${cfg.label} Temple Directory | TempleDiary`;
     let canonical = document.querySelector('link[rel="canonical"]');
     if (canonical) {
-      canonical.href = `https://www.templediary.in/?state=${stateKey}`;
+      canonical.href = stateKey === 'all-india' 
+        ? `https://www.templediary.in/` 
+        : `https://www.templediary.in/?state=${stateKey}`;
+    }
+
+    // Toggle grid/districts visibility for all-india
+    const dir = document.getElementById('directory');
+    const qd = document.getElementById('quick-districts');
+    if (stateKey === 'all-india') {
+      if (dir) dir.style.display = 'none';
+      if (qd) qd.style.display = 'none';
+    } else {
+      if (dir) dir.style.display = '';
+      if (qd) qd.style.display = '';
     }
 
     // Update tab UI
@@ -484,10 +511,18 @@
       btn.id = `hero-search-suggestion-${index}`;
       btn.setAttribute('aria-selected', 'false');
       btn.dataset.index = String(index);
-      btn.innerHTML = `
-        <strong>${escHtml(t.name || '')}</strong>
-        <span>${escHtml([t.deity, t.district, t.location].filter(Boolean).join(' · '))}</span>
-      `;
+      if (activeState === 'all-india') {
+        const stateName = STATE_REGISTRY[t.state]?.label || t.state;
+        btn.innerHTML = `
+          <strong>${escHtml(t.name || '')}</strong>
+          <span>${escHtml([t.place, stateName].filter(Boolean).join(' · '))}</span>
+        `;
+      } else {
+        btn.innerHTML = `
+          <strong>${escHtml(t.name || '')}</strong>
+          <span>${escHtml([t.deity, t.district, t.location].filter(Boolean).join(' · '))}</span>
+        `;
+      }
       btn.addEventListener('mousedown', e => e.preventDefault());
       btn.addEventListener('click', () => selectHeroSuggestion(t));
       heroSuggest.appendChild(btn);
@@ -505,6 +540,17 @@
     state.page = 1;
     if (filterSearch) filterSearch.value = state.query;
     hideHeroSuggestions();
+
+    if (activeState === 'all-india') {
+      showGridLoader();
+      loadStateData(t.state).then(temples => {
+        applyState(t.state, true);
+        const fullTemple = temples.find(x => String(x.id) === String(t.id));
+        if (fullTemple) openModal(fullTemple);
+      });
+      return;
+    }
+
     render();
     openModal(t);
   }
@@ -831,20 +877,28 @@
             <input type="hidden" id="sf-subject" name="_subject" value="New Temple Submission" />
             <div class="sf-row">
               <div class="sf-group">
-                <label for="sf-temple">Temple name <span class="sf-req">*</span></label>
-                <input type="text" id="sf-temple" name="Temple" placeholder="Temple name" required />
+                <label for="sf-state">State <span class="sf-req">*</span></label>
+                <select id="sf-state" name="State" required>
+                  <option value="">Select state...</option>
+                </select>
               </div>
               <div class="sf-group">
-                <label for="sf-deity">Deity</label>
-                <input type="text" id="sf-deity" name="Deity" placeholder="e.g. Lord Shiva" />
+                <label for="sf-temple">Temple name <span class="sf-req">*</span></label>
+                <input type="text" id="sf-temple" name="Temple" placeholder="Temple name" required />
               </div>
             </div>
             <div class="sf-row">
               <div class="sf-group">
+                <label for="sf-deity">Deity</label>
+                <input type="text" id="sf-deity" name="Deity" placeholder="e.g. Lord Shiva" />
+              </div>
+              <div class="sf-group">
                 <label for="sf-district">District</label>
                 <input type="text" id="sf-district" name="District" placeholder="District" />
               </div>
-              <div class="sf-group">
+            </div>
+            <div class="sf-row">
+              <div class="sf-group" style="grid-column: 1 / -1;">
                 <label for="sf-location">Location / Address / Google Maps link</label>
                 <input type="text" id="sf-location" name="Location" placeholder="Town, District, or paste Google Maps link here" />
               </div>
@@ -923,6 +977,19 @@
         </div>
       </div>`;
     document.body.appendChild(submitOverlay);
+    
+    // Populate states
+    const stateSelect = submitOverlay.querySelector('#sf-state');
+    if (stateSelect) {
+      Object.entries(STATE_REGISTRY).forEach(([key, cfg]) => {
+        if (key === 'all-india') return;
+        const opt = document.createElement('option');
+        opt.value = key;
+        opt.textContent = cfg.label;
+        stateSelect.appendChild(opt);
+      });
+    }
+
     submitOverlay.querySelector('.modal-close').addEventListener('click', closeSubmitModal);
     submitOverlay.querySelector('.sf-cancel').addEventListener('click', closeSubmitModal);
     submitOverlay.addEventListener('click', e => { if (e.target === submitOverlay) closeSubmitModal(); });
@@ -950,6 +1017,7 @@
     submitOverlay.setAttribute('aria-label', t ? 'Submit temple correction' : 'Submit missing temple');
 
     if (t) {
+      submitOverlay.querySelector('#sf-state').value       = t.state || activeState;
       submitOverlay.querySelector('#sf-temple').value      = t.name     || '';
       submitOverlay.querySelector('#sf-district').value    = t.district || '';
       submitOverlay.querySelector('#sf-deity').value       = t.deity    || '';
@@ -968,13 +1036,19 @@
     }
     const msg = submitOverlay.querySelector('#sf-msg');
     msg.hidden = true; msg.textContent = '';
+    
+    // Default the state if we are not editing
+    if (!t) {
+      submitOverlay.querySelector('#sf-state').value = activeState === 'all-india' ? '' : activeState;
+    }
+
     submitOverlay.classList.add('open');
     document.body.style.overflow = 'hidden';
     if (modalOverlay) modalOverlay.classList.remove('open');
   }
 
   function clearSubmitForm() {
-    ['sf-temple','sf-deity','sf-district','sf-location','sf-lat','sf-lng','sf-phone','sf-timing','sf-description','sf-tags','sf-dressCode','sf-photography','sf-nearestBus','sf-nearestRail','sf-name','sf-email'].forEach(id => {
+    ['sf-state','sf-temple','sf-deity','sf-district','sf-location','sf-lat','sf-lng','sf-phone','sf-timing','sf-description','sf-tags','sf-dressCode','sf-photography','sf-nearestBus','sf-nearestRail','sf-name','sf-email'].forEach(id => {
       const el = submitOverlay.querySelector('#' + id);
       if (el) el.value = '';
     });
@@ -1445,10 +1519,16 @@ async function handleSubmit(e) {
     return;
   }
 
+  const submitState = submitOverlay.querySelector('#sf-state').value;
+  if (!submitState) {
+    showMsg(msg, 'error', 'Please select a state.');
+    return;
+  }
+
   const formData = new FormData();
   const isCorrection = submitKind === 'temple-correction';
   const subject = (isCorrection ? 'Temple Correction: ' : 'New Temple Submission: ') + temple;
-  const fallbackBody = buildSubmissionEmailBody(temple, submitter, email);
+  const fallbackBody = buildSubmissionEmailBody(temple, submitter, email, submitState);
   const fallbackHref = `mailto:${FORM_SUBMIT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(fallbackBody)}`;
 
   submitOverlay.querySelector('#sf-subject').value = subject;
@@ -1456,7 +1536,7 @@ async function handleSubmit(e) {
   formData.append('_captcha', 'false');
   formData.append('_template', 'table');
 
-  formData.append('State', activeState);
+  formData.append('State', submitState);
   formData.append('Request Type', isCorrection ? 'correction' : 'submission');
   formData.append('Admin Label', isCorrection ? 'COMMUNITY CORRECTED' : 'COMMUNITY SUBMITTED');
   formData.append('Temple', temple);
@@ -1568,9 +1648,9 @@ async function handleSubmit(e) {
     }
   }
 
-  function buildSubmissionEmailBody(temple, submitter, email) {
+  function buildSubmissionEmailBody(temple, submitter, email, submitState) {
     const fields = [
-      ['State', activeState],
+      ['State', submitState],
       ['Temple', temple],
       ['Deity', submitOverlay.querySelector('#sf-deity').value.trim()],
       ['District', submitOverlay.querySelector('#sf-district').value.trim()],

@@ -603,16 +603,87 @@ switch public frontend to /api/temples with caching
 For lowest cost, keeping public JSON and publishing D1 exports remains preferred.
 
 
-======================================NOTES============================
-  5. If output looks correct, write into data/*.json:
+## SSG Build Layer
 
-  node scripts/split-d1-export-bundle.mjs templediary-d1-export-2026-06-01.json
-  --write
+A static site generator (`scripts/build-static.mjs`) was added in June 2026 to
+pre-render temple listing pages so search engines can index temple content.
 
-  For only one state:
+```mermaid
+flowchart TD
+  JSONData[data/*.json] --> SSG[scripts/build-static.mjs]
+  DeityAliases[scripts/deity-aliases.mjs] --> SSG
+  SSG --> Dist[dist/]
+  Dist --> Pages[Cloudflare Pages deploy]
+```
 
-  node scripts/split-d1-export-bundle.mjs templediary-d1-export-2026-06-01.json
-  --write --states kerala
+### What the SSG generates
 
-  That updates the public data/<state>.json files from the D1 export. Then
-  review git diff data/ before committing.
+```
+dist/
+├── index.html, map.html, assets/, data/  ← copied from root unchanged
+├── sitemap.xml                           ← auto-generated
+├── _redirects                            ← auto-generated
+├── temples/
+│   ├── index.html                        ← All-India directory
+│   ├── {state}/index.html                ← State listing
+│   ├── {state}/{district}/index.html     ← District listing
+│   └── {state}/deity/{slug}/index.html   ← State × Deity listing
+└── deity/
+    └── {slug}/index.html                 ← All-India deity listing
+```
+
+### Build command
+
+```bash
+node scripts/build-static.mjs
+```
+
+Cloudflare Pages is configured with build command `node scripts/build-static.mjs`
+and output directory `dist`.
+
+### Deity normalization
+
+`scripts/deity-aliases.mjs` maps 208 raw deity name strings to ~80 canonical names
+so that "Lord Subramanya", "Muruga", and "Lord Shanmuga" all group under "Lord Murugan".
+
+---
+
+## D1-to-JSON Publish Options
+
+Three ways to publish D1 data back to `data/*.json`:
+
+### Option A: Dashboard bundle split (no Wrangler needed)
+
+```bash
+# Download all-state export from admin dashboard
+node scripts/split-d1-export-bundle.mjs templediary-d1-export-YYYY-MM-DD.json
+# dry-run shows what will change
+
+node scripts/split-d1-export-bundle.mjs templediary-d1-export-YYYY-MM-DD.json --write
+# writes data/*.json
+
+# For only selected states:
+node scripts/split-d1-export-bundle.mjs templediary-d1-export-YYYY-MM-DD.json --write --states kerala
+```
+
+### Option B: Direct Wrangler export (Wrangler configured locally)
+
+```bash
+node scripts/export-d1-to-json.mjs          # dry-run
+node scripts/export-d1-to-json.mjs --write  # write files
+node scripts/export-d1-to-json.mjs --write --states kerala,sikkim
+```
+
+### Option C: GitHub Action (automated)
+
+`.github/workflows/export-d1-json.yml` runs daily at 00:00 IST and on manual trigger.
+Requires `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` as GitHub secrets.
+
+After any option, review and commit:
+
+```bash
+git diff data/
+git add data/
+git commit -m "Publish D1 temple data [date]"
+git push
+```

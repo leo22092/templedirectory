@@ -8,12 +8,22 @@ It is not a Python `uv` project; there is no `pyproject.toml` or `uv.lock`.
 Start here before opening broad files:
 
 1. `AGENTS.md` - current agent instructions and file ownership.
-2. `PROJECT_MAP.md` - compact project graph and common workflows.
-3. `ARCHITECTURE.md` - deeper system notes, D1 tables, and API flows.
-4. Only then open the specific HTML/JS/API/data file needed for the task.
+2. `.agents/CHANGELOG.md` - recent changes by agents or developers (newest first).
+3. `.agents/DEVELOPER_MANUAL.md` - full route reference, decisions, conventions, playbooks.
+4. `.agents/PROJECT_HISTORY.md` - full evolution story: why KV→D1, SSG, naming changes, etc.
+5. `PROJECT_MAP.md` - compact project graph and common workflows.
+6. `ARCHITECTURE.md` - deeper system notes, D1 tables, and API flows.
+7. `SSG-CONTEXT.md` - SSG build layer details (only if touching SEO/build/dist).
+8. Only then open the specific HTML/JS/API/data file needed for the task.
 
 Avoid reading all `data/*.json`, all HTML pages, or all generated SQL batches unless
 the task explicitly needs them.
+
+## Agent Logging Rule
+
+**Before ending any session where files were changed**, add a dated entry to
+`.agents/CHANGELOG.md` that includes: actor, files changed, motivation, and a bullet
+list of what changed. This keeps the change history visible across sessions.
 
 ## Project Shape
 
@@ -32,7 +42,11 @@ the task explicitly needs them.
 - Cloudflare Pages Functions live in `functions/api/*.js`.
 - D1 schema and migrations live in `schema.sql` and `scripts/d1/*.sql`.
 - D1 import tooling lives in `scripts/d1/import-json-to-d1.mjs`.
-- D1-to-public JSON publishing helper lives in `scripts/split-d1-export-bundle.mjs`.
+- D1-to-public JSON publishing: three paths — `scripts/split-d1-export-bundle.mjs`
+  (dashboard export), `scripts/export-d1-to-json.mjs` (direct Wrangler),
+  `.github/workflows/export-d1-json.yml` (automated GH Action).
+- SSG build script is `scripts/build-static.mjs`; output goes to `dist/`.
+- Cloudflare Pages serves from `dist/` with build command `node scripts/build-static.mjs`.
 
 ## Main Workflows
 

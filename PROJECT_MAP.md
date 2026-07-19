@@ -9,6 +9,7 @@ flowchart TD
   Visitor[Public visitor] --> Home[index.html]
   Visitor --> MapPage[map.html]
   Visitor --> Festivals[festivals.html]
+  Visitor --> SSGPages[dist/temples/** dist/deity/**]
 
   StateConfig[assets/js/core/states.js] --> MainJS[assets/js/public/main.js]
   StateConfig --> MapJS[assets/js/public/map.js]
@@ -40,9 +41,21 @@ flowchart TD
   ImportScript[scripts/d1/import-json-to-d1.mjs] --> StaticData
   ImportScript --> ImportSQL[tmp/d1-import-batches/*.sql]
   ImportSQL --> Temples
-  Admin --> ExportBundle[D1 all-state export bundle]
-  ExportBundle --> SplitScript[scripts/split-d1-export-bundle.mjs]
-  SplitScript --> StaticData
+
+  subgraph D1 to JSON publish
+    Admin --> ExportBundle[D1 all-state export bundle]
+    ExportBundle --> SplitScript[scripts/split-d1-export-bundle.mjs]
+    ExportD1[scripts/export-d1-to-json.mjs] --> StaticData
+    GHAction[.github/workflows/export-d1-json.yml] --> ExportD1
+    SplitScript --> StaticData
+  end
+
+  subgraph SSG build
+    StaticData --> SSGScript[scripts/build-static.mjs]
+    DeityAliases[scripts/deity-aliases.mjs] --> SSGScript
+    SSGScript --> Dist[dist/]
+    Dist --> CloudflarePages[Cloudflare Pages]
+  end
 ```
 
 ## File Ownership
@@ -62,8 +75,12 @@ flowchart TD
 | API: requests | `functions/api/temple-requests.js` | Admin request queue, editable payloads, and approve/reject/needs-review actions. |
 | Database | `schema.sql`, `scripts/d1/add-request-workflow.sql` | D1 table definitions and migration history. |
 | D1 import | `scripts/d1/import-json-to-d1.mjs` | Generates import batches from `data/*.json`. |
-| D1 export publish | `scripts/split-d1-export-bundle.mjs` | Splits dashboard all-state D1 export bundle into `data/<state>.json` files. |
-| Deployment notes | `CLOUDFLARE-DEPLOY.md`, `_redirects`, `sitemap.xml`, `Robots.txt` | Cloudflare Pages/static deployment support. Some deploy doc examples are old. |
+| D1 export (dashboard) | `scripts/split-d1-export-bundle.mjs` | Splits dashboard all-state D1 export bundle into `data/<state>.json` files. |
+| D1 export (Wrangler) | `scripts/export-d1-to-json.mjs` | Direct Wrangler D1→JSON export; no dashboard needed. |
+| D1 export (automated) | `.github/workflows/export-d1-json.yml` | GH Action — runs daily at 00:00 IST, commits changed JSON files. |
+| SSG build | `scripts/build-static.mjs`, `scripts/deity-aliases.mjs` | Pre-renders temple/district/deity listing pages into `dist/` for SEO. |
+| SSG output | `dist/` | Cloudflare Pages serves from here. Contains pre-rendered `/temples/` and `/deity/` routes. |
+| Deploy notes | `CLOUDFLARE-DEPLOY.md`, `_redirects` | Cloudflare Pages deploy config. See also `.agents/DEVELOPER_MANUAL.md`. |
 
 ## Common Entry Points
 
@@ -100,12 +117,16 @@ flowchart TD
 
 ## Current Architecture Summary
 
-- Public visitors mostly read static JSON.
-- D1 holds canonical/admin-managed records and community request queues.
+- Public visitors read pre-rendered HTML from `dist/` (SSG) for temple/deity pages,
+  and dynamic JSON-driven pages for homepage/map.
+- D1 holds canonical/admin-managed records (`temples`) and community request queues
+  (`temple_requests`).
 - Admin maintenance discovers available states from D1 via `/api/temple-states`,
   then merges those states with static display metadata.
 - Community submissions, corrections, and deletions are editable in the admin
   request queue before approval.
-- Static JSON is not automatically synced from D1; publish with a dashboard D1
-  bundle and `scripts/split-d1-export-bundle.mjs`.
-- Cloudflare Pages deploys the root static files and `functions/api` routes.
+- Static JSON (`data/*.json`) is not automatically synced from D1; three publish
+  paths exist: dashboard bundle → `split-d1-export-bundle.mjs`, direct Wrangler
+  `export-d1-to-json.mjs`, or the GitHub Action (daily automated).
+- Cloudflare Pages builds via `node scripts/build-static.mjs` and serves from `dist/`.
+- `functions/api/` routes are auto-served by Cloudflare Pages Functions alongside the static build.

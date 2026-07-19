@@ -2,6 +2,21 @@
 
 All notable project changes are summarized here from the Git history.
 
+## 2026-07-19 – Documentation cleanup
+
+- Rewrote `CLOUDFLARE-DEPLOY.md`: fixed stale project name (BharatDevasthanam → TempleDiary),
+  corrected storage model (KV → D1), corrected output directory (`/` → `dist/`).
+- Removed orphaned `New Document.txt` scratch file from repo root.
+- Cleaned up raw NOTES block at bottom of `ARCHITECTURE.md`; replaced with formatted
+  SSG build section and all three D1-to-JSON publish options.
+- Updated `PROJECT_MAP.md` flowchart to include SSG layer, `dist/` output, GH Action,
+  and `export-d1-to-json.mjs`.
+- Updated `AGENTS.md` read order to include `.agents/PROJECT_HISTORY.md`,
+  `SSG-CONTEXT.md`, and the three D1 publish paths.
+- Created `.agents/PROJECT_HISTORY.md` documenting the full project evolution
+  (BharatDevasthanam → TempleDiary, KV → D1, two-table model, SSG build) with dates
+  and reasoning.
+
 ## Unreleased - 2026-05-25
 
 - Changed the home page flow so search, district chips, filters, and temple cards appear before the map and submit sections.
@@ -14,6 +29,22 @@ All notable project changes are summarized here from the Git history.
 - Added and expanded confirmed seed temple data and site/map navigation for Gujarat, Assam, West Bengal, Madhya Pradesh, Maharashtra, Jammu & Kashmir, and Odisha.
 - Added those new state JSON files to the D1 import batch generator.
 - Added compressed JPEG hero assets for Gujarat, Assam, West Bengal, and Odisha from existing source images.
+
+## SSG Build - 2026-06-22
+
+- Added `scripts/build-static.mjs` — SSG that pre-renders temple, district, and deity
+  listing pages into `dist/` for SEO (Googlebots previously saw zero temples).
+- Added `scripts/deity-aliases.mjs` — maps 208 raw deity name strings to ~80 canonical
+  names for grouped deity listing pages.
+- Added `scripts/export-d1-to-json.mjs` — direct Wrangler D1→JSON export, avoiding the
+  manual dashboard bundle download step.
+- Added `.github/workflows/export-d1-json.yml` — GitHub Action that runs D1→JSON export
+  daily at 00:00 IST and on manual trigger.
+- Added `SSG-CONTEXT.md` documenting the SSG build, URL structure, and build stats.
+- Cloudflare Pages output directory changed from `/` (root) to `dist/`.
+- Build stats: 3,843 temples, 29 states, 585 HTML pages, 592 sitemap URLs.
+
+Commits: `a217111`, `66f56bf`, `d6b39cc`
 
 ## v14 / Admin + D1 Completion - 2026-05-24
 
