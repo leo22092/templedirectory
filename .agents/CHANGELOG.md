@@ -38,10 +38,12 @@ actor, date, and a clear description of _what_ changed and _why_.
 **Actor:** Antigravity (AI Agent)
 **Files Changed:**
 - `submit.html` (created)
+- `scripts/build-static.mjs` (modified)
 
 **Why:**
 - Needed a standalone, highly-sharable page (for WhatsApp, Facebook, etc.) with detailed instructions on why and how to submit a temple.
 - Avoided duplicating complex modal and API logic by linking the CTA button to `/?add=temple`, which seamlessly triggers the existing form in `main.js`.
+- Fixed the SSG build script ignoring `submit.html` (which was causing Cloudflare to serve the fallback `index.html` when navigating directly to `/submit.html`).
 
 **What:**
 - Created `submit.html` with a beautiful Hero section and the emotive user-provided copy ("No Temple Should Fade Into Oblivion").
