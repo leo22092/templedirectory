@@ -3144,6 +3144,37 @@
       "nearestRail": "Kanyakumari Railway Station (0.5 km)"
     },
     {
+      "id": 3846,
+      "name": "Kumarakovil",
+      "deity": "Murugan",
+      "district": "Kanyakumari",
+      "location": "Near thakkala",
+      "lat": null,
+      "lng": null,
+      "famous": false,
+      "status": "unverified",
+      "adminLabel": "COMMUNITY SUBMITTED",
+      "tags": [
+        "murugan  valli temple"
+      ],
+      "State": "tamil-nadu",
+      "Request Type": "submission",
+      "Admin Label": "COMMUNITY SUBMITTED",
+      "Temple": "Kumarakovil",
+      "Deity": "Murugan",
+      "District": "Kanyakumari",
+      "Location": "Near thakkala",
+      "Tags": "Murugan  valli temple",
+      "Famous": "No",
+      "Nearest Bus": "Kumarkovil",
+      "Nearest Rail": "Thakala",
+      "Submitted By": "Salini v",
+      "kind": "temple-submission",
+      "source": "submit-modal",
+      "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Mobile Safari/537.36",
+      "receivedAt": "2026-06-16T08:57:21.399Z"
+    },
+    {
       "id": 153,
       "name": "Nagaraja Temple",
       "deity": "Lord Nagaraja",
