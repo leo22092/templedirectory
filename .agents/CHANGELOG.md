@@ -17,7 +17,18 @@ actor, date, and a clear description of _what_ changed and _why_.
 - bullet list of changes
 ```
 
----
+## [2026-08-08] – Documented All-India Live Submissions & Automated GitHub Action Workflow
+**Actor:** Antigravity (AI Agent)
+**Files Changed:**
+- `.agents/DEVELOPER_MANUAL.md`
+
+**Why:**
+- User requested architectural identification of why community-submitted temples were not appearing in All-India search, and requested the automated GitHub Action workflow guide and requirements recorded for future implementation.
+
+**What:**
+- Documented root cause and solution design for All-India real-time community submissions (`functions/api/public-submissions.js` all-state query + `assets/js/public/main.js` `data/index.json` merging).
+- Added detailed playbook and secret setup instructions for Option 3 (Automated D1 export & `data/index.json` rebuild via `.github/workflows/export-d1-json.yml`).
+- Updated Future Work roadmap in `.agents/DEVELOPER_MANUAL.md`.
 
 ## [2026-07-19] – Created Disclaimer Page
 **Actor:** Antigravity (AI Agent)
