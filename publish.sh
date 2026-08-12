@@ -6,7 +6,7 @@
 #   1. Verifies repo root and a clean main branch
 #   2. Exports live D1 data to data/*.json  (export-d1-to-json.mjs --remote)
 #   3. Rebuilds the All-India search index  (generate-index.mjs)
-#   4. Commits to main  (skips commit + promotion if nothing changed)
+#   4. Commits to main and pushes origin/main  (skips if nothing changed)
 #   5. Resets production branch to match main and force-pushes it
 #   6. Returns to main — always, even on failure
 #
@@ -85,6 +85,11 @@ else
   git add .
   git commit -m "$COMMIT_MSG"
   ok "Committed to main: \"$COMMIT_MSG\""
+
+  log "Pushing main to origin..."
+  git push origin main
+  ok "origin/main is up to date."
+
   COMMITTED=true
 fi
 
