@@ -104,6 +104,8 @@ location           address / locality
 lat, lng           coordinates
 admin_label        display/trust label, typed by admin
 status             verified, unverified, removed, needs_review
+submitted_by       name of community submitter; surfaced publicly only for
+                   COMMUNITY SUBMITTED and COMMUNITY CORRECTED records
 raw_json           original imported or submitted source blob
 ```
 
@@ -126,6 +128,20 @@ COMMUNITY CORRECTED record updated from accepted correction
 ```
 
 The label is flexible. Admin can type other labels later.
+
+**Labels that trigger public submitter attribution:**
+When `scripts/export-d1-to-json.mjs` builds `data/*.json`, it includes
+`submittedBy` in the temple object only when `admin_label` is one of:
+
+```text
+COMMUNITY SUBMITTED
+COMMUNITY CORRECTED
+```
+
+All other labels (including `COMMUNITY`, `ADMIN VERIFIED`, `ADMIN ADDED`) result
+in no `submittedBy` field in the public JSON, so `'admin'` or null values never
+appear on the public site. The public temple card renders the name via the
+existing `.card-submitter` element in `main.js` (line ~682) and `style.css`.
 
 ### `temple_requests`
 
@@ -601,6 +617,15 @@ switch public frontend to /api/temples with caching
 ```
 
 For lowest cost, keeping public JSON and publishing D1 exports remains preferred.
+
+### submittedBy in public JSON
+
+The export script (`scripts/export-d1-to-json.mjs`) includes `submitted_by` as
+`submittedBy` in the public temple object, but only for records whose
+`admin_label` is `COMMUNITY SUBMITTED` or `COMMUNITY CORRECTED`. All other
+records omit the field entirely. The public card template in `main.js` and
+`.card-submitter` in `style.css` already handle this conditionally — no template
+change is needed when new approved community temples are exported.
 
 
 ## SSG Build Layer

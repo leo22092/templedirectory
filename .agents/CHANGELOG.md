@@ -17,6 +17,70 @@ actor, date, and a clear description of _what_ changed and _why_.
 - bullet list of changes
 ```
 
+## [2026-08-12] – Add 48-hour D1 publish pipeline script
+**Actor:** Antigravity (AI Agent)
+**Files Changed:**
+- `scripts/publish.sh` (new)
+
+**Why:**
+- User needed a single script to run the full 48-hour publish cycle: export D1 → rebuild index → commit to main → promote production branch → return to main.
+
+**What:**
+- Created `scripts/publish.sh` (executable, bash, `set -euo pipefail`).
+- Steps: repo root check → clean working tree check → `export-d1-to-json.mjs --write --yes --remote` → `generate-index.mjs` → timestamped `git commit` on main → `git checkout production` → `git reset --hard main` → `git push origin production --force` → back to main.
+- `trap` on EXIT ensures the script always returns to `main` even if any step fails.
+- Skips commit and production promotion entirely if D1 export produced no data changes.
+- Commit message is timestamped: `D1 export YYYY-MM-DD HH:MM IST`.
+
+---
+
+## [2026-08-12] – Fix state dropdown not reloading D1 tabs
+**Actor:** Antigravity (AI Agent)
+**Files Changed:**
+- `assets/js/admin/dashboard.js`
+
+**Why:**
+- Switching the active state via the top dropdown correctly updated the local JSON views (Overview, Published JSON Preview) but silently left the Temple Maintenance (D1) and Requests tabs showing the previous state's records. The only workaround was to navigate away and back to the tab.
+
+**What:**
+- In `switchState()`, added section-active checks: if `section-db` is currently visible, `loadDbTemples()` is called for the new state; if `section-requests` is currently visible, `loadTempleRequests()` is called. Overview and JSON tabs were already correct.
+
+---
+
+## [2026-08-12] – Add Facebook social link to footer
+**Actor:** Antigravity (AI Agent)
+**Files Changed:**
+- `index.html`
+- `festivals.html`
+- `assets/css/style.css`
+
+**Why:**
+- User requested the live Facebook page (`https://www.facebook.com/templediaryin`) be linked from the site.
+
+**What:**
+- Added `.footer-social` CSS block to `style.css` (flex row, muted white, gold on hover, consistent with existing footer link styles).
+- Added inline Facebook SVG icon + "Facebook" label link in the `footer-brand` block of `index.html` and `festivals.html` (the only two pages that share this footer structure).
+- Link opens in new tab with `rel="noopener noreferrer"` and has `aria-label` for accessibility.
+
+---
+
+## [2026-08-12] – Include submittedBy in D1 → public JSON export
+**Actor:** Antigravity (AI Agent)
+**Files Changed:**
+- `scripts/export-d1-to-json.mjs`
+
+**Why:**
+- The `submitted_by` field existed in D1 and was already conditionally rendered by `main.js` (`.card-submitter`) and styled in `style.css`, but the export script never included it in `data/*.json`, so the public site never showed it.
+- User confirmed no structural redesign was needed — just include the field in the export.
+
+**What:**
+- Added `submitted_by` to the SQL `SELECT` in `export-d1-to-json.mjs`.
+- Added `submittedBy` to `FIELD_ORDER` (after `sourceUrl`) so it has a stable position in exported JSON.
+- Added `COMMUNITY_LABELS` set (`COMMUNITY SUBMITTED`, `COMMUNITY CORRECTED`) — `submittedBy` is only written to the public JSON when the temple's `admin_label` is one of these values. Bulk-imported and admin-added records (where `submitted_by` would be `'admin'` or `null`) are excluded, so `'admin'` never surfaces as a public credit.
+- `split-d1-export-bundle.mjs` required no changes — it is a pass-through that preserves all fields from the dashboard export bundle.
+
+---
+
 ## [2026-08-08] – Documented All-India Live Submissions & Automated GitHub Action Workflow
 **Actor:** Antigravity (AI Agent)
 **Files Changed:**

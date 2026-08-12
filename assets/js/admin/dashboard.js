@@ -197,6 +197,14 @@
         renderOverview();
         renderTempleTable();
         runHealthChecks();
+        // If the user is already on a D1-backed tab, reload it for the new state
+        // so the table doesn't silently keep showing the previous state's records.
+        if (document.getElementById('section-db')?.classList.contains('active')) {
+          loadDbTemples();
+        }
+        if (document.getElementById('section-requests')?.classList.contains('active')) {
+          loadTempleRequests();
+        }
       }
       updateDirtyIndicator();
     }

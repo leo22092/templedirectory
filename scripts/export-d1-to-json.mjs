@@ -45,6 +45,7 @@ const FIELD_ORDER = [
   'nearestRail',
   'famousFor',
   'sourceUrl',
+  'submittedBy',
 ];
 
 if (args.includes('--help') || args.includes('-h')) {
@@ -71,6 +72,7 @@ const sql = `
     tags,
     admin_label,
     status,
+    submitted_by,
     source_url,
     raw_json
   FROM temples
@@ -180,9 +182,27 @@ function groupByState(rows) {
   return grouped;
 }
 
+// Labels that indicate a record originated from a community member rather
+// than a bulk import or direct admin entry. Only these get a public submitter
+// credit so that 'admin' never leaks onto the public site.
+const COMMUNITY_LABELS = new Set([
+  'COMMUNITY SUBMITTED',
+  'COMMUNITY CORRECTED',
+]);
+
 function d1RowToPublicJson(row) {
   const raw = parseJson(row.raw_json, {});
   const tags = parseJson(row.tags, []);
+
+  // Only surface the submitter name for records that were approved from the
+  // community queue. Bulk-imported and admin-added records have submitted_by
+  // set to 'admin' or null, which should not appear on the public site.
+  const label = (row.admin_label || '').trim().toUpperCase();
+  const submittedBy =
+    COMMUNITY_LABELS.has(label) && row.submitted_by
+      ? row.submitted_by
+      : undefined;
+
   return orderedRecord({
     ...raw,
     id: row.source_json_id || row.id,
@@ -205,6 +225,7 @@ function d1RowToPublicJson(row) {
     nearestRail: raw.nearestRail,
     famousFor: raw.famousFor,
     sourceUrl: row.source_url || raw.sourceUrl || '',
+    submittedBy,
   });
 }
 

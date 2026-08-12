@@ -1030,6 +1030,24 @@ footer::before {
   font-size: 0.78rem; color: rgba(255,255,255,0.45);
   line-height: 1.6; margin-top: 0.5rem;
 }
+.footer-social {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+  flex-wrap: wrap;
+}
+.footer-social a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.55);
+  text-decoration: none;
+  transition: color 0.18s;
+}
+.footer-social a:hover { color: var(--gold-light); }
+.footer-social svg { flex-shrink: 0; }
 
 /* The nav inside footer */
 .footer-links {
