@@ -81,6 +81,14 @@ const sql = `
   ORDER BY state COLLATE NOCASE ASC, district COLLATE NOCASE ASC, name COLLATE NOCASE ASC
 `;
 
+// Labels that indicate a record originated from a community member rather
+// than a bulk import or direct admin entry. Only these get a public submitter
+// credit so that 'admin' never leaks onto the public site.
+const COMMUNITY_LABELS = new Set([
+  'COMMUNITY SUBMITTED',
+  'COMMUNITY CORRECTED',
+]);
+
 const rows = await queryD1(sql);
 const grouped = groupByState(rows);
 const outputs = Object.entries(grouped).map(([state, temples]) => {
@@ -182,13 +190,6 @@ function groupByState(rows) {
   return grouped;
 }
 
-// Labels that indicate a record originated from a community member rather
-// than a bulk import or direct admin entry. Only these get a public submitter
-// credit so that 'admin' never leaks onto the public site.
-const COMMUNITY_LABELS = new Set([
-  'COMMUNITY SUBMITTED',
-  'COMMUNITY CORRECTED',
-]);
 
 function d1RowToPublicJson(row) {
   const raw = parseJson(row.raw_json, {});
