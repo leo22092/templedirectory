@@ -219,3 +219,8 @@ agents working on this codebase.
 ---
 
 <!-- Add new entries above this line, newest first -->
+
+### 2026-09-19 (Antigravity)
+**Files changed:** `functions/api/temple-requests.js`
+**Motivation:** Fix a bug where approving corrections for newly submitted temples (which lack a `source_json_id`) would fail with "No matching D1 temple found".
+- Updated `findTargetTemple` in `temple-requests.js` to look up by `id` as a fallback when `source_json_id` is null, because the frontend correctly uses the primary D1 ID as a fallback when `source_json_id` is absent.

@@ -289,8 +289,8 @@ async function findTargetTemple(env, requestData, payload) {
   }
 
   if (requestData.sourceJsonId) {
-    return env.DB.prepare('SELECT * FROM temples WHERE state = ? AND source_json_id = ? LIMIT 1')
-      .bind(requestData.state, requestData.sourceJsonId)
+    return env.DB.prepare('SELECT * FROM temples WHERE state = ? AND (source_json_id = ? OR (source_json_id IS NULL AND id = ?)) LIMIT 1')
+      .bind(requestData.state, requestData.sourceJsonId, requestData.sourceJsonId)
       .first();
   }
 
