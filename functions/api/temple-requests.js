@@ -294,12 +294,29 @@ async function findTargetTemple(env, requestData, payload) {
       .first();
   }
 
-  const name = cleanText(payload.Temple || payload.temple);
-  if (!name) return null;
+  const currentPublicJson = typeof payload.currentPublicJson === 'string' 
+    ? parseJson(payload.currentPublicJson, {}) 
+    : (payload.currentPublicJson || {});
+  
+  const oldName = cleanText(currentPublicJson.name || currentPublicJson.Temple || currentPublicJson.temple);
+  const newName = cleanText(payload.Temple || payload.temple);
+  const state = requestData.state || cleanState(payload.State);
 
-  return env.DB.prepare('SELECT * FROM temples WHERE state = ? AND name = ? COLLATE NOCASE LIMIT 1')
-    .bind(requestData.state || cleanState(payload.State), name)
-    .first();
+  if (oldName) {
+    const target = await env.DB.prepare('SELECT * FROM temples WHERE state = ? AND name = ? COLLATE NOCASE LIMIT 1')
+      .bind(state, oldName)
+      .first();
+    if (target) return target;
+  }
+
+  if (newName) {
+    const target = await env.DB.prepare('SELECT * FROM temples WHERE state = ? AND name = ? COLLATE NOCASE LIMIT 1')
+      .bind(state, newName)
+      .first();
+    if (target) return target;
+  }
+
+  return null;
 }
 
 async function archiveRequest(env, id, status, decidedBy, adminLabel) {
