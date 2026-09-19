@@ -78,6 +78,7 @@ flowchart TD
 | D1 export (dashboard) | `scripts/split-d1-export-bundle.mjs` | Splits dashboard all-state D1 export bundle into `data/<state>.json` files. |
 | D1 export (Wrangler) | `scripts/export-d1-to-json.mjs` | Direct Wrangler D1→JSON export; no dashboard needed. |
 | D1 export (automated) | `.github/workflows/export-d1-json.yml` | GH Action — runs daily at 00:00 IST, commits changed JSON files. |
+| Publish pipeline | `publish.sh` (repo root) | Shell script: exports D1 → rebuilds index → commits main → pushes origin/main → promotes production branch. Run from repo root: `bash publish.sh`. |
 | SSG build | `scripts/build-static.mjs`, `scripts/deity-aliases.mjs` | Pre-renders temple/district/deity listing pages into `dist/` for SEO. |
 | SSG output | `dist/` | Cloudflare Pages serves from here. Contains pre-rendered `/temples/` and `/deity/` routes. |
 | Deploy notes | `CLOUDFLARE-DEPLOY.md`, `_redirects` | Cloudflare Pages deploy config. See also `.agents/DEVELOPER_MANUAL.md`. |
@@ -130,3 +131,29 @@ flowchart TD
   `export-d1-to-json.mjs`, or the GitHub Action (daily automated).
 - Cloudflare Pages builds via `node scripts/build-static.mjs` and serves from `dist/`.
 - `functions/api/` routes are auto-served by Cloudflare Pages Functions alongside the static build.
+
+---
+
+## Known Issues / Pending Work
+
+> Update this section at the end of every session so the next agent starts informed.
+> Last updated: 2026-08-12
+
+### 1. Edit-before-approve bugs (not yet fixed — user said don't code at the time)
+In `functions/api/temple-requests.js`, the request editor has four known limitations:
+- **Cannot clear/empty a field** — `copyText` helper skips empty strings, so blanking a phone number or timing is silently ignored during merge into `temples`.
+- **Cannot clear Admin Label** — SQL uses `COALESCE(NULLIF(?, ''), admin_label)`, so an empty string keeps the old label.
+- **Cannot remove a linked Temple ID / Source JSON ID** — `parseInteger` returns `null` on empty, but the update is skipped when `templeId === null`, so wrong D1 links can't be cleared.
+- **Undefined binding crash** — if `templeId` or `sourceJsonId` resolves to `undefined` (not `null`), Cloudflare D1 `.bind()` will 500. Use `?? null` guards.
+
+### 2. submittedBy requires next export run
+`scripts/export-d1-to-json.mjs` now includes `submitted_by` for `COMMUNITY SUBMITTED` / `COMMUNITY CORRECTED` records. But existing `data/*.json` files were exported before this change. The public site won't show submitter names until the next `publish.sh` / export run.
+
+### 3. Admin panel: uneditable IDs not shown as read-only
+The Request Detail editor hides `id` entirely and shows D1 Temple ID / Source JSON ID as editable inputs. A future UX improvement would show the Request UUID and matched D1 ID as read-only labels so the admin knows exactly which record will be affected without opening DevTools.
+
+### 4. State dropdown on Overview does not refresh D1 stats
+`switchState()` now correctly reloads the Temple Maintenance and Requests D1 tabs. However, the D1 status counts shown in the Overview card (`COMMUNITY SUBMITTED: N`, etc.) still come from the initial page load and are not re-fetched when the state dropdown changes.
+
+### 5. source_url not shown publicly
+`sourceUrl` is exported to `data/*.json` but is never rendered on the public temple card or modal. It is admin/data-integrity only. If public display is ever wanted, add it to the modal template in `main.js`.
