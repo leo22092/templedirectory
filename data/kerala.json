@@ -19298,26 +19298,6 @@
       "nearestRail": "Kottayam Railway Station"
     },
     {
-      "id": 385,
-      "name": "Cherukannambra Siva Temple",
-      "deity": "Lord Shiva",
-      "district": "Kottayam",
-      "location": "Cherukannambara, Alathur, Palakkad",
-      "lat": 9.588547,
-      "lng": 76.773786,
-      "description": "Cochin Devaswom Board lists this as a Sivan shrine at Cherukannambara, Alathur taluk, Palakkad district. Devaswom: NEMMARA DEVASWOM. Group: Thiruvilwamala Group.",
-      "famous": false,
-      "status": "unverified",
-      "adminLabel": "COMMUNITY",
-      "tags": [
-        "shiva"
-      ],
-      "dressCode": "Men: Dhoti or mundu preferred; neat formal wear acceptable in outer areas. Women: Saree or churidar with dupatta. Modest dress required.",
-      "photography": "Permitted in outer areas. Not allowed near sanctum during rituals.",
-      "nearestBus": "Bus services to Cherukannambara",
-      "nearestRail": "Palakkad Junction Railway Station"
-    },
-    {
       "id": 861,
       "name": "Cherumalapashchima Devi Temple [MINOR]",
       "deity": "Goddess Bhagavathi",
@@ -32028,7 +32008,7 @@
     {
       "id": 1924,
       "name": "Wandoor Siva Temple",
-      "deity": "Lord Shiva",
+      "deity": "ശിവ വിഷ്ണു ക്ഷേത്രം",
       "district": "Malappuram",
       "location": "Wandoor, Malappuram",
       "lat": null,
@@ -32036,15 +32016,15 @@
       "description": "Malabar Devaswom Board temple listed in the Nilambur taluk section; place listed as Wandoor.",
       "famous": false,
       "status": "unverified",
-      "adminLabel": "COMMUNITY",
+      "adminLabel": "COMMUNITY CORRECTED",
       "tags": [
         "malabar-devaswom",
         "siva"
       ],
       "dressCode": "Men: Dhoti or mundu preferred; neat formal wear acceptable in outer areas. Women: Saree or churidar with dupatta. Modest dress required.",
       "photography": "Permitted in outer areas. Not allowed near sanctum during rituals.",
-      "nearestBus": "Bus services to Wandoor",
-      "nearestRail": "Tirur Railway Station",
+      "nearestBus": "വണ്ടൂർ",
+      "nearestRail": "വാണിയമ്പലം",
       "sourceUrl": "https://templesinindiainfo.com/list-of-temples-maintained-by-malabar-devaswom-board-kerala/"
     },
     {
@@ -33251,6 +33231,26 @@
       "nearestBus": "Bus services to Peroor",
       "nearestRail": "Palakkad Junction Railway Station",
       "sourceUrl": "https://templesinindiainfo.com/list-of-temples-maintained-by-malabar-devaswom-board-kerala/"
+    },
+    {
+      "id": 385,
+      "name": "Cherukannambra Siva Temple",
+      "deity": "Lord Shiva",
+      "district": "Palakkad",
+      "location": "Cherukannambara, Alathur, Palakkad",
+      "lat": 9.588547,
+      "lng": 76.773786,
+      "description": "Cochin Devaswom Board lists this as a Sivan shrine at Cherukannambara, Alathur taluk, Palakkad district. Devaswom: NEMMARA DEVASWOM. Group: Thiruvilwamala Group.",
+      "famous": false,
+      "status": "unverified",
+      "adminLabel": "COMMUNITY CORRECTED",
+      "tags": [
+        "shiva"
+      ],
+      "dressCode": "Men: Dhoti or mundu preferred; neat formal wear acceptable in outer areas. Women: Saree or churidar with dupatta. Modest dress required.",
+      "photography": "Permitted in outer areas. Not allowed near sanctum during rituals.",
+      "nearestBus": "Bus services to Cherukannambara",
+      "nearestRail": "Palakkad Junction Railway Station"
     },
     {
       "id": 2239,
