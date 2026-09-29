@@ -202,7 +202,7 @@ function copyDir(src, dst) {
   }
 }
 mkdirp(DIST);
-for (const f of ['index.html', 'map.html', 'about.html', 'contact.html', 'festivals.html', 'login.html', 'dashboard.html', 'privacy.html', 'terms.html', 'submit.html', 'disclaimer.html', 'robots.txt']) {
+for (const f of ['index.html', 'map.html', 'about.html', 'contact.html', 'festivals.html', 'login.html', 'dashboard.html', 'privacy.html', 'terms.html', 'submit.html', 'disclaimer.html', 'robots.txt', 'ads.txt']) {
   const src = path.join(ROOT, f);
   if (fs.existsSync(src)) fs.copyFileSync(src, path.join(DIST, f));
 }

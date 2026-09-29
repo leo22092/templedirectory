@@ -17,6 +17,15 @@ actor, date, and a clear description of _what_ changed and _why_.
 - bullet list of changes
 ```
 
+## [2026-09-29] - Google AdSense Groundwork
+**Actor:** Antigravity
+**Files Changed:** `index.html`, `ads.txt`, `scripts/build-static.mjs`
+**Why:** User encountered an error with Google AdSense not finding the site for preview because the Publisher ID was missing on the live site.
+**What:**
+- Replaced dummy Publisher ID in `index.html` with real ID `pub-6858578839146970` and uncommented the script.
+- Created `ads.txt` at root with the required Google AdSense record.
+- Added `ads.txt` to the static copy list in `scripts/build-static.mjs` so it gets deployed to Cloudflare Pages.
+
 ## [2026-08-12] – Add 48-hour D1 publish pipeline script
 **Actor:** Antigravity (AI Agent)
 **Files Changed:**
